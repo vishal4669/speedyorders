@@ -1,0 +1,49 @@
+/** TYPEAHEAD AUTOCOMPLETE CSS**/
+.twitter-typeahead{
+    width: 100%;
+}
+
+.tt-dropdown-menu {
+    min-height: 60px;
+    max-height: 60px;
+    overflow-y: auto;
+}
+
+.tt-query {
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+}
+
+.tt-hint {
+    color: #999999;
+}
+
+.tt-menu {
+    box-shadow: 0 0 16px 10px rgba(0,0,0,.19);
+    background-color: #FFFFFF;
+    border: none;
+    /* box-shadow: inset 0 -8px 15px #fff;*/
+    margin-top: 8px;
+    padding: 8px 0;
+    width: 330px !important;
+    max-height: 350px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.tt-suggestion {
+    font-size: 14px;
+    padding: 3px 20px;
+    border-bottom: 1px solid #dddddd;
+}
+
+.tt-suggestion:hover {
+    cursor: pointer;
+    color: #C1272D;
+    /*color: #FFFFFF;*/
+}
+
+.tt-suggestion p {
+    margin: 0;
+}
+
+/** TYPEAHEAD CSS ENDS **/

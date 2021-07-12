@@ -1,0 +1,1 @@
+<?php /**PATH /var/www/html/speedyorder/Modules/AdminReport/Resources/views/tax-index.blade.php ENDPATH**/ ?>

@@ -1,0 +1,362 @@
+.breadcrumb {
+    background-color: #e6e6e6 !important;
+}
+
+.breadcrumb > li.active > a {
+    color: #484848;
+    font-weight: 700;
+}
+
+.form-control {
+    border-color: #c7c7c7 !important;
+}
+
+#search-form .form-control {
+    border-radius: 0px !important;
+}
+
+.header-menu {
+    float: left;
+}
+
+.header-menu a {
+    padding: 18px 18px 18px 18px;
+    display: inline-block;
+    border-right: 1px solid #eaeaea;
+}
+
+.header-menu a.active {
+    color: #060606;
+    font-weight: 600;
+}
+
+.nav-tabs {
+    border-bottom: 1px solid #d4cece !important;
+}
+
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
+    border-bottom-color: transparent;
+    border-top: 1px solid #d4cece;
+    border-left: 1px solid #d4cece;
+    border-right: 1px solid #d4cece;
+}
+
+.radio label, .checkbox label {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+}
+
+.pax-dropdown {
+    border: 1px solid #c7c7c7;
+}
+
+.pax-info-container {
+    width: 93%;
+    padding: 15px;
+    border: 1px solid #c7c7c7;
+    position: absolute;
+    background: #fff;
+    top: 40px;
+    display: none;
+    z-index: 1;
+}
+
+.text-bold {
+    font-weight: 800;
+}
+
+.error-flight-search {
+    font-size: 14px;
+    color: #c11919;
+    padding: 15px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-style: italic;
+    display: none;
+}
+
+.traveller-pax-info .input-group {
+    margin-bottom: 5px;
+    font-size: 15px;
+    padding: 0;
+    width: 100%;
+    text-align: center;
+}
+
+.traveller-pax-info .input-group button {
+    height: 30px;
+    width: 30px;
+    border: 1px solid #34495e;
+    color: #34495e;
+    background: none;
+}
+
+.traveller-pax-info input.quantity-field {
+    pointer-events: none;
+    border: none;
+    width: 30px;
+}
+
+.traveller-pax-info .input-group button {
+    height: 30px;
+    width: 30px;
+    border: 1px solid #34495e;
+    color: #34495e;
+    background: none;
+}
+
+ol,
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+a {
+    transition: 0.3s all ease-in-out;
+}
+
+a:hover,
+a:focus {
+    text-decoration: none;
+}
+
+/* === flight search === */
+
+/* fight tab */
+
+.flight-tab ul {
+    display: flex;
+    margin-top: 10px;
+}
+
+.flight-tab ul li {
+    background-color: #eee;
+    padding: 10px 35px;
+    position: relative;
+}
+
+.flight-tab ul li::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-left: 20px solid #eee;
+    top: 0;
+    left: 100%;
+    z-index: 1;
+}
+
+.flight-tab ul li::before {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-left: 20px solid #fff;
+    top: 0;
+    left: 100%;
+    margin-left: 2px;
+    z-index: 1;
+}
+
+.flight-tab li.active {
+    background-color: #63bee1;
+    color: #fff;
+}
+
+.flight-tab li.active::after {
+    border-left-color: #63bee1;
+}
+
+.flight-search {
+    background: #fff;
+    padding: 15px;
+    margin: 15px 0px;
+}
+
+.flight-search form {
+    margin-top: 30px;
+}
+
+.flight-search form .form-control {
+    height: 38px;
+    border-radius: 0;
+}
+
+.count p {
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+.count-body button {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+    width: 35px;
+    height: 35px;
+}
+
+.count-body .count-value {
+    width: 35px;
+    height: 35px;
+    text-align: center;
+    color: #666;
+    border: 1px solid #ccc;
+}
+
+.btn-search {
+    border: none;
+    background-color: #3f92b3;
+    color: #fff;
+    padding: 9px 50px;
+}
+
+.search-btn {
+    text-align: center;
+}
+
+.search-result-body [class*="col-"] {
+    padding: 0;
+}
+
+.search-result-body [class*="col-"]:first-child {
+    padding-left: 15px;
+}
+
+.input-group-addon {
+    border-radius: 0;
+}
+
+.more-details {
+    border: 1px solid #ccc;
+    margin: 10px 0;
+}
+
+.more-toggle span:last-child {
+    display: none;
+}
+
+.more-toggle.open span:last-child {
+    display: block;
+}
+
+.more-toggle.more-toggle.open span:first-child {
+    display: none;
+}
+
+.only-arrow {
+    min-height: 175px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+}
+
+.details-body {
+    background-color: #f9f9f9;
+    padding: 10px;
+}
+
+.details-body h3 {
+    font-size: 16px;
+}
+
+.details-body p {
+    margin-bottom: 15px;
+}
+
+.flight-dur {
+    text-align: right;
+}
+
+.flight-dur p {
+    display: inline-block;
+    background-color: #3f92b3;
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    margin-bottom: 0;
+}
+
+
+.modify_search {
+    background-color: #3f92b3;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius-left-top: -7;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border: 1px solid #e6e6e6;
+}
+
+.modifydest {
+    color: #2e2960;
+    border: 1px solid #e6e6e6;
+    padding: 12px 15px;
+    background: white;
+    font-weight: 600;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+    display: inline-block;
+}
+
+.toast-message {
+    color: #0a0a0a;
+}
+
+/*tr, td, th {
+    text-align: center;
+}*/
+
+.create-passenger-panel {
+    margin-top: 10px;
+}
+
+div.tt-menu {
+    width: 421px !important;
+}
+
+.pnr-panel {
+    margin-top: 10px;
+}
+.city{
+    text-transform: uppercase;
+}
+
+.speedy-table tr th {
+    background: #2588ca;
+    color: #ffffff;
+}
+
+.speedy-table td {
+    color: #212224;
+}
+
+.form-control {
+    border-radius: 0px !important;
+}
+
+.side-bar-active {
+    color: #449d44 !important;
+}
+
+#side-menu li a {
+    padding: 8px;
+}
+.btn-primary-fade {
+    background: #2588ca7a;
+    color: #ffffff;
+}
+
+.select2-container {
+    width: 100% !important;
+}
