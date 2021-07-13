@@ -1,7 +1,7 @@
 <?php
-namespace Modules\AdminCategory\Services;
+namespace Modules\AdminStateTax\Services;
 
-use App\Models\StateTax;
+use App\Models\StateTaxManager;
 use Illuminate\Support\Facades\DB;
 
 
@@ -14,18 +14,9 @@ class UpdateStateTaxService
         {
             DB::beginTransaction();
 
-            $category = StateTax::find($id);
-        
-            if(isset($validatedDatas['image']))
-            {
-                $image = $validatedDatas['image'];
-                $imageName = uniqid().time().'.'.$image->getClientOriginalExtension();
-                $image->move(public_path('images/categories'),$imageName);
-                @unlink(public_path('images/categories/'.$category->image));
-                $validatedDatas['image'] = $imageName;
-            }
-           
-            $category->update($validatedDatas);
+            $tax = StateTaxManager::find($id);
+            
+            $tax->update($validatedDatas);
             DB::commit();
             return true;
         }

@@ -11,23 +11,14 @@
         <div class="hpanel">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h4 class="panel-title">Add category</h4>
+                <h4 class="panel-title">Add State Tax</h4>
             </div>
             <div class="panel-body">
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            <form method="POST" action="{{ route('admin.categories.store') }}" class="form-horizontal" enctype="multipart/form-data" id="createProductForm">
+            
+            <form method="POST" action="{{ route('admin.reports.tax.store') }}" class="form-horizontal" enctype="multipart/form-data" id="createProductForm">
                     @csrf
 
-                    @include ('admincategory::form', ['formMode' => 'create'])
+                    @include ('adminstatetax::form', ['formMode' => 'create'])
 
                 </form>
             </div>

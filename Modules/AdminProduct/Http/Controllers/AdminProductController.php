@@ -18,6 +18,7 @@ use Modules\AdminProduct\Services\UpdateProductService;
 use Modules\AdminProduct\Http\Requests\CreateProductRequest;
 use Modules\AdminProduct\Http\Requests\UpdateProductRequest;
 use App\Models\ShippingZoneGroup;
+use App\Models\ShippingZonePrice;
 
 class AdminProductController extends Controller
 {
@@ -233,4 +234,11 @@ class AdminProductController extends Controller
         $deletedMedia = ProductGallery::where('id',$id)->delete();
         return response()->json(['data'=>$id], 200);
     }
+
+    public function getProductGroupData($id)
+    {
+        $groupData = ShippingZonePrice::with(['deliverytime','group','package'])->where('shipping_zone_groups_id',$id)->get();
+        return response()->json(['data'=>$groupData], 200);
+    }
+
 }

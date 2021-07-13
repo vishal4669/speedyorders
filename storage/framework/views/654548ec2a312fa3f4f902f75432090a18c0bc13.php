@@ -1,6 +1,4 @@
-@extends('layouts.main')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="hpanel">
     <div class="panel-body">
         <div class="row">
@@ -8,12 +6,12 @@
                 <h4>State Tax List</h4>
             </div>
             <div class="col-md-1 pull-right text-right">
-                <a href="{{ route('admin.reports.tax.create') }}" class="btn btn-primary-fade" data-toggle="tooltip" data-placement="top" data-original-title="Create State Tax">
+                <a href="<?php echo e(route('admin.reports.tax.create')); ?>" class="btn btn-primary-fade" data-toggle="tooltip" data-placement="top" data-original-title="Create State Tax">
                     <i class="fa fa-plus"></i>
                 </a>
             </div>
             <div class="col-md-4 pull-right text-right">
-                <form method="GET" action="{{ route('admin.reports.tax.index') }}" accept-charset="UTF-8" role="search">
+                <form method="GET" action="<?php echo e(route('admin.reports.tax.index')); ?>" accept-charset="UTF-8" role="search">
                     <div class="input-group"><input type="text" class="form-control" placeholder="Search">
                         <span class="input-group-btn">
                                 <button type="button" class="btn btn-primary-fade"><i class="fa fa-search"></i></button>
@@ -34,35 +32,36 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($tax as $taxData)
+                    <?php $__empty_1 = true; $__currentLoopData = $tax; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $taxData): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <tr>
-                            <td>{{ $taxData->state_code }}</td>
-                            <td>{{ $taxData->tax_percentage }}</td>
+                            <td><?php echo e($taxData->state_code); ?></td>
+                            <td><?php echo e($taxData->tax_percentage); ?></td>
                             <td>
-                                {{ $taxData->is_default=='1' ? 'Yes':'No'  }}
+                                <?php echo e($taxData->is_default=='1' ? 'Yes':'No'); ?>
+
                             </td>
                             <td>
-                                <a class="btn btn-primary btn-sm" href="{{ route('admin.reports.tax.edit', $taxData->id  ) }}">
+                                <a class="btn btn-primary btn-sm" href="<?php echo e(route('admin.reports.tax.edit', $taxData->id  )); ?>">
                                     <i class="fa fa-edit"></i>
                                 </a>
                                 <button data-toggle="modal" data-target="#delete-modal"
-                                    data-url="{{route('admin.reports.tax.destroy',$taxData->id)}}"
+                                    data-url="<?php echo e(route('admin.reports.tax.destroy',$taxData->id)); ?>"
                                     class="btn btn-danger delete">
                                     <i class="fa fa-trash"></i>
                                 </button>
                             </td>
                         </tr>
-                    @empty
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                     <tr>
                         <td class="text-center" colspan="6">
                             <span>No data available in the table...</span>
                         </td>
                     </tr>
-                    @endforelse
+                    <?php endif; ?>
                     <tfoot>
                         <tr>
                             <td class="text-center" colspan="6">
-                                <span>{!! $tax->render() !!}</span>
+                                <span><?php echo $tax->render(); ?></span>
                             </td>
                         </tr>
                     </tfoot>
@@ -72,10 +71,10 @@
     </div>
 </div>
 
-@include('commons.delete_modal')
-@endsection
+<?php echo $__env->make('commons.delete_modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+<?php $__env->stopSection(); ?>
 
-@section('ext_js')
+<?php $__env->startSection('ext_js'); ?>
     <script>
         $(document).on('click', '.delete', function () {
             var actionUrl = $(this).attr('data-url');
@@ -90,4 +89,6 @@
         });
 
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/html/speedyorders/Modules/AdminStateTax/Resources/views/index.blade.php ENDPATH**/ ?>

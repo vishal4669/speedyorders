@@ -1,13 +1,13 @@
 
-    @php
+    <?php
         $firstGroup = '';
-    @endphp
+    ?>
 
-@if(isset($product->groups) && !empty($product->groups))
-    @php
+<?php if(isset($product->groups) && !empty($product->groups)): ?>
+    <?php
         $firstGroup = (isset($product->groups[0]) && (isset($product->groups[0]->group_id))) ? $product->groups[0]->group_id : '';
-    @endphp
-@endif
+    ?>
+<?php endif; ?>
 
 <div class="col-md-12">
     <div class="col-md-7">
@@ -16,9 +16,9 @@
                 <label for="option">Group Name</label>
                 <select name="groups[]" class="form-control js-dropdown-select2" id="group_div_11111">
                     <option value="">Select Group</option>
-                    @foreach ($groups as $group)
-                        <option value="{{ $group->id }}" {{(isset($firstGroup) && $firstGroup==$group->id) ? 'selected' : ''}} >{{ $group->group_name }}</option>
-                    @endforeach
+                    <?php $__currentLoopData = $groups; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $group): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($group->id); ?>" <?php echo e((isset($firstGroup) && $firstGroup==$group->id) ? 'selected' : ''); ?> ><?php echo e($group->group_name); ?></option>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
             </div>   
              <div class="col-md-3">
@@ -30,43 +30,43 @@
         </div>
 
         <div id="other_divs">
-            @if(isset($product->groups) && !empty($product->groups))
-                    @php
+            <?php if(isset($product->groups) && !empty($product->groups)): ?>
+                    <?php
                         $i = 0;
-                    @endphp
+                    ?>
 
-                @foreach($product->groups as $addedGroup)
-                    @php
+                <?php $__currentLoopData = $product->groups; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $addedGroup): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <?php
 
                         $idunique = 'div_'.rand(10000,50000);
-                    @endphp
+                    ?>
 
-                    @if($i > 0)
-                        <div class="row morediv" id="{{$idunique}}">
+                    <?php if($i > 0): ?>
+                        <div class="row morediv" id="<?php echo e($idunique); ?>">
                             <br>
                             <div class="col-md-9">
                                 <label class="option">Group Name</label>
-                                <select class="form-control js-dropdown-select2" id="group_{{$idunique}}" type="number" name="groups[]">
+                                <select class="form-control js-dropdown-select2" id="group_<?php echo e($idunique); ?>" type="number" name="groups[]">
                                     <option value="">Select Group</option>
-                                    @foreach ($groups as $group)
-                                        <option {{(isset($addedGroup->group_id) && $addedGroup->group_id==$group->id) ? 'selected' : ''}} value="{{ $group->id }}">{{ $group->group_name }}</option>
-                                    @endforeach
+                                    <?php $__currentLoopData = $groups; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $group): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option <?php echo e((isset($addedGroup->group_id) && $addedGroup->group_id==$group->id) ? 'selected' : ''); ?> value="<?php echo e($group->id); ?>"><?php echo e($group->group_name); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </select>
                             </div>
                             <div class="col-md-3">
                                 <label for="option " class="rows"></label>
-                                <button type='button' class='btn btn-danger' onclick='removeWithNum("{{$idunique}}")'>-</button>
-                                <button type='button' title="View Selected Group Details" class='btn btn-info' onclick='showDetails("{{$idunique}}")'>i</button>
+                                <button type='button' class='btn btn-danger' onclick='removeWithNum("<?php echo e($idunique); ?>")'>-</button>
+                                <button type='button' title="View Selected Group Details" class='btn btn-info' onclick='showDetails("<?php echo e($idunique); ?>")'>i</button>
                             </div>
                            
                         </div>
-                    @endif    
-                    @php
+                    <?php endif; ?>    
+                    <?php
                         $i++;
-                    @endphp
+                    ?>
 
-                @endforeach
-            @endif
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <?php endif; ?>
         </div>
     </div>
     <div class="col-md-5">
@@ -105,10 +105,10 @@
 }
 </style>
 
-@section('ext_js')
+<?php $__env->startSection('ext_js'); ?>
 
  <script type="text/javascript">
-        var imgSrc = '{{ asset("/images/products/") }}';
+        var imgSrc = '<?php echo e(asset("/images/products/")); ?>';
 
         $(document).ready(function(e){
             $('#uploadImagesBtn').hide();
@@ -354,5 +354,5 @@ function makeid() {
 }
 
 </script>
-@endsection
-      
+<?php $__env->stopSection(); ?>
+      <?php /**PATH /var/www/html/speedyorders/Modules/AdminProduct/Resources/views/forms/shipping_zone.blade.php ENDPATH**/ ?>

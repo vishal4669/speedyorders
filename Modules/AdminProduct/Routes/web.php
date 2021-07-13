@@ -32,4 +32,6 @@ Route::group(['prefix' => 'admin/products', 'middleware' => 'auth:admin','as'=>'
     
     Route::post('/option/value', 'AdminProductAjaxController@optionValue')->name('ajax.option.value')->middleware('can:edit-product');
 
+    Route::get('/get-group-details/{group_id}', 'AdminProductController@getProductGroupData')->name('get.group')->middleware('can:store-product');
+
 });

@@ -1,7 +1,7 @@
 <?php
 namespace Modules\AdminStateTax\Services;
 
-use App\Models\StateTax;
+use App\Models\StateTaxManager;
 use Illuminate\Support\Facades\DB;
 
 
@@ -14,15 +14,7 @@ class CreateStateTaxService
         {
             DB::beginTransaction();
 
-            if(isset($validatedDatas['image']))
-            {
-                $image = $validatedDatas['image'];
-                $imageName = uniqid().time().$image->getClientOriginalName();
-                $image->move(public_path('images/categories'),$imageName);
-                $validatedDatas['image'] = $imageName;
-            }
-            
-            StateTax::create($validatedDatas);
+            StateTaxManager::create($validatedDatas);
             DB::commit();
 
             return true;

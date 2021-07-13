@@ -3,7 +3,7 @@
 <div class="panel-heading">
     <div class="row">
         <div class="col-md-3">
-            <h5><strong>{{ $action ?? null }} Product</strong> </h5>
+            <h5><strong>{{ ucfirst($action) ?? null }} Product</strong> </h5>
         </div>
         <div class="col-md-4 pull-right text-right">
             <button class="btn btn-success" type="submit">{{ $action == 'create' ? 'SAVE' : 'UPDATE' }}</button>

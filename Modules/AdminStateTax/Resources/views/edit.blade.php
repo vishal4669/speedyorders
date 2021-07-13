@@ -11,21 +11,13 @@
     <div class="col-md-12">
         <div class="hpanel">
             <div class="panel-heading">
-                Edit category
+                Edit State Tax
             </div>
             <div class="panel-body">
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-            <form method="POST" action="{{ route('admin.categories.update',[$category->id]) }}" accept-charset="UTF-8" class="form-horizontal" enctype="multipart/form-data">
+            
+            <form method="POST" action="{{ route('admin.reports.tax.update',[$tax->id]) }}" accept-charset="UTF-8" class="form-horizontal" enctype="multipart/form-data">
                     @csrf
-                    @include ('admincategory::form', ['formMode' => 'edit'])
+                    @include ('adminstatetax::form', ['formMode' => 'edit'])
 
                 </form>
             </div>

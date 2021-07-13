@@ -11,15 +11,14 @@
 |
 */
 
-Route::group(['prefix' => 'admin/tax', 'middleware' => 'auth:admin','as'=>'admin.tax.'],function() {
+Route::group(['prefix' => 'admin/reports/tax', 'middleware' => 'auth:admin','as'=>'admin.reports.tax.'],function() {
 
-    Route::get('/', 'AdminStateTaxController@index')->name('index')->middleware('can:list-product-option');
-    Route::get('/create', 'AdminStateTaxController@create')->name('create')->middleware('can:create-product-option');
-    Route::post('/store', 'AdminStateTaxController@store')->name('store')->middleware('can:store-product-option');
-    Route::get('/{id}/edit', 'AdminStateTaxController@edit')->name('edit')->middleware('can:edit-product-option');
-    Route::post('/update/{id}', 'AdminStateTaxController@update')->name('update')->middleware('can:update-product-option');
-    Route::delete('/delete/{id}', 'AdminStateTaxController@destroy')->name('destroy')->middleware('can:delete-product-option');
-
-    Route::get('/change/status/{id}', 'AdminStateTaxController@updateCategoryStatus')->name('update.status')->middleware('can:edit-product-option');
+    Route::get('/', 'AdminStateTaxController@index')->name('index');
+    Route::get('/create', 'AdminStateTaxController@create')->name('create');
+    Route::post('/store', 'AdminStateTaxController@store')->name('store');
+    Route::get('/{id}/edit', 'AdminStateTaxController@edit')->name('edit');
+    Route::post('/update/{id}', 'AdminStateTaxController@update')->name('update');
+    Route::delete('/delete/{id}', 'AdminStateTaxController@destroy')->name('destroy');
+    Route::get('/change/status/{id}', 'AdminStateTaxController@updateCategoryStatus')->name('update.status');
 
 });
