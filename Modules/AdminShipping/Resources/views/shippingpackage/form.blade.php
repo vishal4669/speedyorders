@@ -52,8 +52,8 @@
 
                 <div class="col-md-2">
                    <select class="form-control m-b js-dropdown-select2" name="package_weight_unit">
-                        <option value="1" @if (old('type', isset($package) ? $package->package_weight_unit : null) == '1') selected @endif>KG</option>
-                        <option value="2" @if (old('type', isset($package) ? $package->package_weight_unit : null) == '2') selected @endif>LB</option>
+                        <option value="1" @if (old('type', isset($package) ? $package->package_weight_unit : null) == 'kg') selected @endif>KG</option>
+                        <option value="2" @if (old('type', isset($package) ? $package->package_weight_unit : null) == 'lb') selected @endif>LB</option>
                     </select>
                 </div>
             </div>

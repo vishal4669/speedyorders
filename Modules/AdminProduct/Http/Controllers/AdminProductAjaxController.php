@@ -12,24 +12,19 @@ class AdminProductAjaxController extends Controller
 {
 
     public function option(Request $request){
-
+        $returnHTML = '';
         if(!$request->optionId){
             return;
         }
-        $option = Option::where('id',$request->optionId)->with('optionValues')->first();
+        $options = Option::with('optionValues')->get();
         $counter = $request->counter;
 
-        switch($option->type){
-            
-            case "input":
-                $returnHTML = view('adminproduct::htmlelement.input',compact('option','counter'))->render();
-                return response()->json(array('success' => true, 'html'=>$returnHTML));
-                break;
-            case "select":
-                $returnHTML = view('adminproduct::htmlelement.select',compact('option','counter'))->render();
-                return response()->json(array('success' => true, 'html'=>$returnHTML));
-                break;
-        }
+        $colspan = count($options) +1;
+
+        $returnHTML .= view('adminproduct::htmlelement.radio',compact('options','counter', 'colspan'))->render();
+                
+
+        return response()->json(array('success' => true, 'html'=>$returnHTML));     
     }
 
     public function group(Request $request){
@@ -41,7 +36,7 @@ class AdminProductAjaxController extends Controller
         
         $returnHTML = view('adminproduct::htmlelement.input',compact('option','counter'))->render();
         return response()->json(array('success' => true, 'html'=>$returnHTML));
-        break;
+      
 
     }
 

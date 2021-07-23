@@ -149,43 +149,7 @@
     }
     </script>
 
-    <script>
-        $(document).ready(function() {
-            var url = '<?php echo e(route('admin.products.ajax.option')); ?>';
-            var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-            var counter = 0;
-            $("#options").change(function() {
-
-                var optionsId = $(this).val();
-                $.ajax({
-                    /* the route pointing to the post function */
-                    url: url,
-                    type: 'post',
-                    /* send the csrf-token and the input to the controller */
-                    data: {
-                        "_token": "<?php echo e(csrf_token()); ?>",
-                        "counter": counter,
-                        "optionId": optionsId
-                    },
-                    dataType: 'JSON',
-                    /* remind that 'data' is the response of the AjaxController */
-                    success: function(data) {
-                        $('.options-panel').append(data.html);
-                        counter++;
-                    }
-                });
-            });
-
-            $('.hpanel').on('click', '.delete-hpanel', function() {
-                $(this).parent().parent().parent().parent().remove();
-            });
-
-            $('.hpanel').on('click', '#option-values-table tbody', function() {
-                $("#option-values-table tbody").last().append("<tr id </td></tr>");
-            });
-        });
-
-    </script>
+    
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /var/www/html/speedyorders/Modules/AdminProduct/Resources/views/create.blade.php ENDPATH**/ ?>

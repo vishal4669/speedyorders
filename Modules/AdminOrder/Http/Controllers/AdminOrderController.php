@@ -151,6 +151,24 @@ class AdminOrderController extends Controller
     }
 
     /**
+     * Process the specified resource.
+     *
+     * @param  int  $id
+     *
+     * @return \Illuminate\View\Process
+     */
+    public function process($id)
+    {
+        $data = [
+            'menu' => 'orders',
+        ];
+
+        $order = Order::with('orderedProducts','orderedProducts.orderProductOptions')->findOrFail($id);
+
+        return view('adminorder::process', compact('order'),$data);
+    }
+
+    /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
@@ -244,6 +262,10 @@ class AdminOrderController extends Controller
 
         $productOptions = ProductOption::where('product_id',$request->productId)
         ->with('product','optionValues','option')->get();
+
+
+        print_r($productOptions);die;
+
         $responseHtml = '';
         foreach($productOptions as $po){
             switch($po->option->type){
@@ -293,11 +315,12 @@ class AdminOrderController extends Controller
         $responseHtml = '';
 
         $returnHTML = view('adminorder::htmlelement.package',[
+            'option'=> 'Package',
             'productPackage'=>$productPackages,
             'productId'=>$request->productId,
             ])->render();
         
-        $responseHtml .= $returnHTML;           
+        $responseHtml .= $returnHTML;   
         
         return response()->json(array('success' => true, 'html'=>$responseHtml));
     }

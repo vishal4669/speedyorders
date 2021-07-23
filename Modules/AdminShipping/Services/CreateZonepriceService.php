@@ -93,26 +93,88 @@ class CreateZonepriceService
                                 $price = $data[4];
 
 
+                                // check if package already exists
+                                $package_Data = ShippingPackage::where('package_name', $group_name)->first();
+                                if(!empty($package_Data)){
+                                    $shipping_packages_id = $package_Data["id"];
+                                } else{
+
+                                    $package_data = explode(' ', $package_name);
+
+                                    $package_size_unit = 'inch';
+                                    $package_length = $package_width = $package_height = '';
+                                    if(isset($package_data[0]) && $package_data[0]!=''){
+                                        $sizes = explode('x', $package_data[0]);
+
+                                        $package_length = (isset($sizes[0])) ? $sizes[0] : '';
+                                        $package_width = (isset($sizes[1])) ? $sizes[1] : '';
+                                        $package_height = (isset($sizes[2])) ? $sizes[2] : '';
+                                    }
+                                    
+
+                                    $package_weight = $package_weight_unit = '';
+                                    if(isset($package_data[0]) && $package_data[0]!=''){
+                                        $package_weight = preg_replace('/[^0-9]/', '', $package_data[1]);
+                                        $package_weight_unit = preg_replace('/[^a-zA-Z]/', '', $package_data[1]);
+                                    }
+
+                                    $package = new ShippingPackage();
+                                    $package->package_name = $package_name;
+                                    $package->package_length = $package_length;
+                                    $package->package_width = $package_width;
+                                    $package->package_height = $package_height;
+                                    $package->package_weight = $package_weight;
+                                    $package->package_size_unit = $package_size_unit;
+                                    $package->package_weight_unit = $package_weight_unit;
+                                    $package->created_at = now();
+                                    $package->save();
+
+                                    $shipping_packages_id = $package->id;
+                                }
+
+
+                                // check if group name already exists
+                                $shipping_zone_groups_Data = ShippingZoneGroup::where('group_name', $group_name)->first();
+                                if(!empty($shipping_zone_groups_Data)){
+                                    $shipping_zone_groups_id = $shipping_zone_groups_Data["id"];
+                                } else{
+                                    $shipping_zone_group = new ShippingZoneGroup();
+                                    $shipping_zone_group->group_name = $group_name;
+                                    $shipping_zone_group->created_at = now();
+                                    $shipping_zone_group->save();
+
+                                    $shipping_zone_groups_id = $shipping_zone_group->id;
+                                }
+
+                                // check if delivery time already exists
+                                $shipping_delivery_times_Data = ShippingDeliveryTime::where('name', $delivery_time)->first();
+                                if(!empty($shipping_delivery_times_Data)){
+                                    $shipping_delivery_times_id = $shipping_delivery_times_Data["id"];
+                                } else{
+                                    $shipping_delivery_times = new ShippingDeliveryTime();
+                                    $shipping_delivery_times->name = $delivery_time;
+                                    $shipping_delivery_times->is_available = 1;
+                                    $shipping_delivery_times->created_at = now();
+                                    $shipping_delivery_times->save();
+
+                                    $shipping_delivery_times_id = $shipping_delivery_times->id;
+                                }
+                                
                                 // Check if same value available for the group/package/delivery time combination then update it else add new one
-                                $shippingzoneprice = ShippingZonePrice::leftjoin('shipping_packages', 'shipping_packages.id', '=', 'shipping_zone_prices.shipping_packages_id')
-                                                            ->leftjoin('shipping_delivery_times', 'shipping_delivery_times.id', '=', 'shipping_zone_prices.shipping_delivery_times_id')
-                                                            ->where('shipping_zone_prices.zip_code', $zip_code)
-                                                            ->where('shipping_zone_prices.group_name', $group_name)
-                                                            ->where('shipping_delivery_times.name', $delivery_time);
+                                $shippingzoneprice = ShippingZonePrice::where('shipping_zone_prices.zip_code', $zip_code)
+                                                        ->where('shipping_zone_prices.shipping_zone_groups_id', $group_name)
+                                                        ->where('shipping_zone_prices.shipping_delivery_times_id', $shipping_delivery_times_id);
                                 $shippingzonepriceCount = $shippingzoneprice->count();
+
                                 if($shippingzonepriceCount > 0){
                                     $shippingzoneprice->update(["file_name" => $fileName,"price" => $price]);
-                                } else {
-                                    // Get package id
-                                    $package_id = ShippingPackage::where('package_name', $package_name)->first()->id;
-                                    $deliveryTime_id = ShippingDeliveryTime::where('name', $delivery_time)->first()->id;
-
+                                } else {                                    
                                     $shippingPrice = new ShippingZonePrice();
-                                    $shippingPrice->group_name = $group_name;
+                                    $shippingPrice->shipping_zone_groups_id = $shipping_zone_groups_id;
                                     $shippingPrice->zip_code = $zip_code;
                                     $shippingPrice->price = $price;
-                                    $shippingPrice->shipping_delivery_times_id = $deliveryTime_id;
-                                    $shippingPrice->shipping_packages_id = $package_id;
+                                    $shippingPrice->shipping_delivery_times_id = $shipping_delivery_times_id;
+                                    $shippingPrice->shipping_packages_id = $shipping_packages_id;
                                     $shippingPrice->file_name = $fileName;
                                     $shippingPrice->save();
                                 }                                                         
@@ -134,7 +196,7 @@ class CreateZonepriceService
         catch(\Exception $e)
         {
             Log::info('Error'.$e->getMessage());
-            DB::rollback();
+           // DB::rollback();
            return false;
         }
     }

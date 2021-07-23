@@ -26,7 +26,7 @@
             <table id="productTable" class="table table-bordered table-striped speedy-table">
                 <thead>
                     <tr>
-                        <th>#</th>
+                        
                         <th>State Code</th>
                         <th>Tax Percentage</th>
                         <th>Default</th>

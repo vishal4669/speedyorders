@@ -28,7 +28,11 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Customer User</th><th>Invoice Number</th><th>Invoice Prefix</th><th>First Name</th>
+                        <th>Order Id</th>
+                        <th>Customer User</th>
+                        <th>Invoice Number</th>
+                        <th>Invoice Prefix</th>
+                        <th>First Name</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -43,7 +47,8 @@
 
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $name}}</td>
+                            <td>{{ $item->uuid}}</td>
+                            <td>{{ $name}}</td>                            
                             <td>{{ $item->invoice_number }}</td>
                             <td>{{ $item->invoice_prefix }}</td>
                             <td>{{ $item->first_name }}</td>
@@ -52,6 +57,10 @@
                                 <a href="{{ route('admin.orders.update.status',$item->id) }}" class="text-danger"><strong>Change</strong></a>
                             </td>
                             <td>
+                                <a class="btn btn-info btn-sm" title="process" href="{{ route('admin.orders.process', $item->id  ) }}">
+                                    <i class="fa fa-tasks"></i>
+                                </a>
+
                                 <a class="btn btn-primary btn-sm" title="view" href="{{ route('admin.orders.show', $item->id  ) }}">
                                     <i class="fa fa-eye"></i>
                                 </a>

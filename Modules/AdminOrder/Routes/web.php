@@ -14,6 +14,7 @@
 Route::group(['prefix' => 'admin/orders', 'middleware' => 'auth:admin','as'=>'admin.orders.'],function() {
     Route::get('/', 'AdminOrderController@index')->name('index')->middleware('can:list-order');
     Route::get('/show/{id}', 'AdminOrderController@show')->name('show')->middleware('can:show-order');
+    Route::get('/process/{id}', 'AdminOrderController@process')->name('process')->middleware('can:show-order');
     Route::get('/create', 'AdminOrderController@create')->name('create')->middleware('can:create-order');
     Route::post('/store', 'AdminOrderController@store')->name('store')->middleware('can:store-order');
     Route::get('/{id}/edit', 'AdminOrderController@edit')->name('edit')->middleware('can:edit-order');

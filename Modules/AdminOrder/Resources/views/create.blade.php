@@ -125,45 +125,51 @@ $('.add-product').on('click', function (e)
     else
     {
         $('.validate-msg').hide();
-      var $inputs =$('input.'+productId+'[type=text]');
-      var row = "";
-      var inputDisplay = '';
-      var inputsHtml ='';
-      $inputs.each(function() {
+        var $inputs =$('input.'+productId+'[type=text]');
+        var row = "";
+        var inputDisplay = '';
+        var inputsHtml ='';
+
+        $inputs.each(function() {
           row += this.name+'['+$(this).val()+']';
           inputsHtml += '<input type="text" data-id='+this.id+' class="hiddenInput" name="" value='+$(this).val()+'>';
           inputDisplay += '<p>'+this.placeholder+' : '+$(this).val()+'</p></br>';
-      });
+        });
 
 
-      var selects =$('select.'+productId);
+        var selects =$('select.'+productId);
 
-      var selectDisplay = '';
-      var selectHtml ='';
-      selects.each(function() {
+        var selectDisplay = '';
+        var selectHtml ='';
+
+
+        console.log(selects);
+
+        selects.each(function() {
           row += this.name+'['+$(this).find(":selected").val()+']';
 
           selectHtml += '<input type="text" data-id='+this.id+' class="hiddenInput" name="" value='+$(this).find(":selected").val()+'>' ;
-          selectDisplay += '<p>'+$(this).attr("data-option")+' : '+$(this).find(":selected").text()+'</p></br>';
-      });
 
-      if(row == "")
-      {
-        row = productId;
-      }
+            if($(this).find(":selected").text()){
+                selectDisplay += '<p>'+$(this).attr("data-option")+' : '+$(this).find(":selected").text()+'</p></br>';
+            }
+        });
 
-      if($('#option-values-table tr').length>0)
-      {
-         var rowExist = document.getElementById(row);
-         if(rowExist){
+        if(row == ""){
+            row = productId;
+        }
 
-              $(rowExist).remove();
-          }
-      }
-      $('#option-values-table').append("<tr style='display: table-row;' class='footable-even' id='"+row+"'> <td class='footable-visible footable-first-column'> <input type='hidden' name='product_id[]' value="+productId+">"+productName+"</td><td class='footable-visible'> <input type='text' name='product_quantity[]' value="+totalQuantity+"></td><td>"+inputDisplay + selectDisplay+"</td><td class='footable-visible footable-last-column'> <button type='button' class='btn btn-danger dlt-product'><i class='fa fa-trash'></i></button> </td><td class='hidden'>"+inputsHtml + selectHtml +"</td></tr>");
-      arrangeOrder();
+        if($('#option-values-table tr').length>0){
+            var rowExist = document.getElementById(row);
+            if(rowExist){
+                $(rowExist).remove();
+            }
+        }
 
-    $('#add-product-modal').modal('hide');
+        $('#option-values-table').append("<tr style='display: table-row;' class='footable-even' id='"+row+"'> <td class='footable-visible footable-first-column'> <input type='hidden' name='product_id[]' value="+productId+">"+productName+"</td><td class='footable-visible'> <input type='text' name='product_quantity[]' value="+totalQuantity+"></td><td>"+inputDisplay + selectDisplay+"</td><td class='footable-visible footable-last-column'> <button type='button' class='btn btn-danger dlt-product'><i class='fa fa-trash'></i></button> </td><td class='hidden'>"+inputsHtml + selectHtml +"</td></tr>");
+        arrangeOrder();
+
+        $('#add-product-modal').modal('hide');
   }
     
 });
@@ -197,5 +203,36 @@ $(document).on('click','.dlt-product',function(e)
     arrangeOrder();
 
 });
+
+$(document).ready(function(){
+    $("#same_as_customer_details").on('change',function(){
+        if($('input[name="same_as_customer_details"]:checked').val()==1){
+            $("#payment_first_name").val($("#first_name").val());
+            $("#payment_last_name").val($("#last_name").val());
+            $("#payment_company").val($("#company").val());
+            $("#payment_address_1").val($("#address_1").val());
+            $("#payment_address_2").val($("#address_2").val());
+            $("#payment_city").val($("#city").val());
+            $("#payment_postcode").val($("#postcode").val());
+            $("#payment_country_name").val($("#country_name").val());
+        }
+    });
+
+    $("#same_as_customer_details_shipping").on('change',function(){
+        if($('input[name="same_as_customer_details_shipping"]:checked').val()==1){
+            $("#shipping_first_name").val($("#first_name").val());
+            $("#shipping_last_name").val($("#last_name").val());
+            $("#shipping_company").val($("#company").val());
+            $("#shipping_address_1").val($("#address_1").val());
+            $("#shipping_address_2").val($("#address_2").val());
+            $("#shipping_city").val($("#city").val());
+            $("#shipping_postcode").val($("#postcode").val());
+            $("#shipping_country_name").val($("#country_name").val());
+        }
+    });
+});
+
+
+
 </script>
 @endsection

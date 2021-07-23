@@ -1,10 +1,8 @@
 <div class="form-group">
     <label> Package</label>
-    <select id="product_package_{{$productId}}" name="product_package_{{$productId}}" class="form-control {{ $productId }}" required>
-        <option value="">Select Product Shipping Package</option>
-        @foreach ($productPackage as $package)
-
-        <option value="{{ $package->id }}">{{ $package->package_name }}</option>           
+    <select data-option="Package" id="[select][{{$productId}}]" name="option[{{ $productId }}][select][{{ $productId }}]" class="form-control {{ $productId }}" required>
+        @foreach ($productPackage as $ov)
+        <option value="{{ $ov->id }}">{{ $ov->package_name }}</option>           
         @endforeach
     </select>
 </div>

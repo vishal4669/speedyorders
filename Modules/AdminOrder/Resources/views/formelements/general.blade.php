@@ -1,4 +1,4 @@
-<div class="form-group">
+        <div class="form-group">
             <label class="control-label">Choose Existing Customer</label>
                 <select name="customer_user_id" class="form-control js-dropdown-select2" id="customer_id">
                     <option value="" selected>Select any customer</option>

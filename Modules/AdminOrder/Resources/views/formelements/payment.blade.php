@@ -1,4 +1,10 @@
 <div class="form-group {{ $errors->has('payment_first_name') ? 'has-error' : ''}} payment_fields">
+    
+    <input type="checkbox" name="same_as_customer_details" id="same_as_customer_details" value="1">&nbsp;
+    <label for="copy" class="control-label">{{ ' Same As Customer Details ' }}</label>
+</div>
+
+<div class="form-group {{ $errors->has('payment_first_name') ? 'has-error' : ''}} payment_fields">
     <label for="payment_first_name" class="control-label">{{ ' First Name ' }}</label>
     <input class="form-control" type="text" name="payment_first_name" id="payment_first_name" value="{{ isset($order->payment_first_name) ? $order->payment_first_name : old('payment_first_name')}}">
 

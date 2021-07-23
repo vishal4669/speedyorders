@@ -26,7 +26,11 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Customer User</th><th>Invoice Number</th><th>Invoice Prefix</th><th>First Name</th>
+                        <th>Order Id</th>
+                        <th>Customer User</th>
+                        <th>Invoice Number</th>
+                        <th>Invoice Prefix</th>
+                        <th>First Name</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -41,7 +45,8 @@
 
                         <tr>
                             <td><?php echo e($loop->iteration); ?></td>
-                            <td><?php echo e($name); ?></td>
+                            <td><?php echo e($item->uuid); ?></td>
+                            <td><?php echo e($name); ?></td>                            
                             <td><?php echo e($item->invoice_number); ?></td>
                             <td><?php echo e($item->invoice_prefix); ?></td>
                             <td><?php echo e($item->first_name); ?></td>
@@ -51,6 +56,10 @@
                                 <a href="<?php echo e(route('admin.orders.update.status',$item->id)); ?>" class="text-danger"><strong>Change</strong></a>
                             </td>
                             <td>
+                                <a class="btn btn-info btn-sm" title="process" href="<?php echo e(route('admin.orders.process', $item->id  )); ?>">
+                                    <i class="fa fa-tasks"></i>
+                                </a>
+
                                 <a class="btn btn-primary btn-sm" title="view" href="<?php echo e(route('admin.orders.show', $item->id  )); ?>">
                                     <i class="fa fa-eye"></i>
                                 </a>

@@ -1,3 +1,9 @@
+<div class="form-group {{ $errors->has('payment_first_name') ? 'has-error' : ''}}">
+    
+    <input type="checkbox" name="same_as_customer_details_shipping" id="same_as_customer_details_shipping" value="1">&nbsp;
+    <label for="copy" class="control-label">{{ ' Same As Customer Details ' }}</label>
+</div>
+
 <div class="form-group {{ $errors->has('shipping_first_name') ? 'has-error' : ''}}">
     <label for="shipping_first_name" class="control-label">{{ 'First Name *' }}</label>
     <input class="form-control" type="text" name="shipping_first_name" id="shipping_first_name" value="{{ isset($order->shipping_first_name) ? $order->shipping_first_name : old('shipping_first_name')}}">

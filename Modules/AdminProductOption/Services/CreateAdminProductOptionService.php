@@ -5,6 +5,7 @@ namespace Modules\AdminProductOption\Services;
 use App\Models\Option;
 use App\Models\OptionValue;
 use Illuminate\Support\Facades\DB;
+use Log;
 
 class CreateAdminProductOptionService
 {
@@ -28,7 +29,10 @@ class CreateAdminProductOptionService
                         'created_at'=>$time,
                         'updated_at'=>$time
                     ];
+
+                    Log::info('Data : '.json_encode($inserData));
                 }
+
                 OptionValue::insert($inserData);
             }
 

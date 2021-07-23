@@ -1,5 +1,8 @@
                 <tr style="display: table-row;" class="footable-even">
                     <td class="footable-visible">
+                      
+                        <input type="hidden" name="option[select][option_data][{{ $counter }}][]" value="{{$option->id}}">
+
                         <select name="option[select][option_values][{{$counter}}][]" class="form-control">
                             @foreach ($option->optionValues ?? [] as $item)
                                 <option value="{{$item->id}}">{{$item->name}}</option>

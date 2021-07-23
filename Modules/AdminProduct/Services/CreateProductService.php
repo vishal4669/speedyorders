@@ -68,6 +68,8 @@ class CreateProductService
                 isset($validatedData['option']) &&
                 count($validatedData['option']) > 0
             ) {
+
+                print_r($validatedData);die;
                 foreach ($validatedData['option'] as $optionKey => $option) {
                     switch ($optionKey) {
                         case 'input':
@@ -90,14 +92,10 @@ class CreateProductService
                             break;
 
                         case 'select':
-                            foreach (
-                                $option['option_values']
-                                as $counter => $optionValue
-                            ) {
+                            foreach ($option['option_values'] as $counter => $optionValue) {
                                 $productOption = ProductOption::create([
                                     'product_id' => $product->id,
-                                    'option_id' =>
-                                        $validatedData['option_id'][$counter],
+                                    'option_id' => $option['option_data'][$counter][0],
                                     'required' =>
                                         (bool) $validatedData[
                                             'option_required'
@@ -108,10 +106,7 @@ class CreateProductService
                                     ProductOptionValue::create([
                                         'product_option_id' =>
                                             $productOption->id,
-                                        'option_id' =>
-                                            $validatedData['option_id'][
-                                                $counter
-                                            ],
+                                        'option_id' => $option['option_data'][$counter][0],
                                         'option_value_id' => $item,
                                         'quantity' =>
                                             $option['quantity'][$counter][

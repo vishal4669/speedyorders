@@ -73,6 +73,7 @@ class UpdateProductService
                 if(count($ids)>0){
                     ProductOption::where('id',$ids)->delete();
                 }
+
                 foreach ($validatedData['option'] as $optionKey => $option) {
                     switch ($optionKey) {
                         case 'input':
@@ -95,14 +96,12 @@ class UpdateProductService
                             break;
 
                         case 'select':
-                            foreach (
-                                $option['option_values']
-                                as $counter => $optionValue
-                            ) {
+                       
+                            foreach ($option['option_values'] as $counter => $optionValue) {
+                             
                                 $productOption = ProductOption::create([
                                     'product_id' => $product->id,
-                                    'option_id' =>
-                                        $validatedData['option_id'][$counter],
+                                    'option_id' => $option['option_data'][$counter][0],
                                     'required' =>
                                         (bool) $validatedData[
                                             'option_required'
@@ -113,10 +112,7 @@ class UpdateProductService
                                     ProductOptionValue::create([
                                         'product_option_id' =>
                                             $productOption->id,
-                                        'option_id' =>
-                                            $validatedData['option_id'][
-                                                $counter
-                                            ],
+                                        'option_id' => $option['option_data'][$counter][0],
                                         'option_value_id' => $item,
                                         'quantity' =>
                                             $option['quantity'][$counter][
@@ -141,8 +137,14 @@ class UpdateProductService
                             }
                             break;
                     }
+
+
+                    
+                    
                 }
             }
+
+            
 
             if(count($validatedData['related_products'])>0){
                 if($product->related_products){
