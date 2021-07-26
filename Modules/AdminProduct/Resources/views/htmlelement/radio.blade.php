@@ -19,6 +19,9 @@
                 @foreach($options as $option)
 
                     <tr style="display: table-row;" class="footable-even">
+
+                        <input type="hidden" name="option[select][option_data][{{ $counter }}][]" value="{{$option->id}}">
+                        
                         <td class="footable-visible">
                             <h5><strong>{{$option->name}}</strong> </h5>
                         </td>

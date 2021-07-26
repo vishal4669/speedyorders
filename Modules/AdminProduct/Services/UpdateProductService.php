@@ -10,6 +10,8 @@ use App\Models\ProductOption;
 use App\Models\ProductOptionValue;
 use App\Models\ProductRelatedProduct;
 use App\Models\ProductGroup;
+use Log;
+
 class UpdateProductService
 {
     public function handle(array $validatedData,$id)
@@ -96,9 +98,14 @@ class UpdateProductService
                             break;
 
                         case 'select':
-                       
+                        
+
+                            Log::info(array("option" => $option));
+
                             foreach ($option['option_values'] as $counter => $optionValue) {
-                             
+                                
+                                Log::info(array("Option Data" => $option['option_data']));
+
                                 $productOption = ProductOption::create([
                                     'product_id' => $product->id,
                                     'option_id' => $option['option_data'][$counter][0],
@@ -107,6 +114,8 @@ class UpdateProductService
                                             'option_required'
                                         ],
                                 ]);
+
+                                Log::info(array("Option Values" => $optionValue));
 
                                 foreach ($optionValue as $vaueKey => $item) {
                                     ProductOptionValue::create([
@@ -122,12 +131,7 @@ class UpdateProductService
                                             $option['subtract_from_stock'][
                                                 $counter
                                             ][$vaueKey],
-                                        'price_prefix' =>
-                                            $option['price_prefix'][$counter][
-                                                $vaueKey
-                                            ] == '+'
-                                                ? 1
-                                                : 0,
+                                        'price_prefix' => (isset($option['price_prefix'][$counter][$vaueKey]) && $option['price_prefix'][$counter][$vaueKey] == '+') ? 1: 0,
                                         'price' =>
                                             $option['price'][$counter][
                                                 $vaueKey

@@ -31,20 +31,22 @@
                            @php
                                $oldRow ='';
                            @endphp 
-                          
-                            @foreach (old('option')[$key] as $optionType=>$options)
                             
-                                @foreach ($options as $optionId => $optionValue)
-                                        @php
-                                        $productOption = App\Models\ProductOption::where('id', $optionId)->with('option')->first();
-                                        $productOptionValue = App\Models\ProductOptionValue::where('id', $optionValue)->first();
-                                             $oldRow .= 'option['.$productId.']['.$productOption->option->type.']['.$optionId.']['.$optionValue.']' ;
+                            @if(isset(old('option')[$key])){
+                                @foreach (old('option')[$key] as $optionType=>$options)
+                                
+                                    @foreach ($options as $optionId => $optionValue)
+                                            @php
+                                            $productOption = App\Models\ProductOption::where('id', $optionId)->with('option')->first();
+                                            $productOptionValue = App\Models\ProductOptionValue::where('id', $optionValue)->first();
+                                                 $oldRow .= 'option['.$productId.']['.$productOption->option->type.']['.$optionId.']['.$optionValue.']' ;
+                                                
+                                            @endphp
                                             
-                                        @endphp
-                                        
-                                      
+                                          
+                                    @endforeach
                                 @endforeach
-                            @endforeach
+                            @endif
                            
                         <tr style='display: table-row;' class='footable-even' id='{{$oldRow}}'>
 

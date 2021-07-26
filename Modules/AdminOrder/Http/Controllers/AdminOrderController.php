@@ -24,6 +24,7 @@ use Modules\AdminOrder\Http\Requests\UpdateOrderRequest;
 use Modules\AdminOrder\Services\CreateOrderHistoryService;
 use Modules\AdminOrder\Http\Requests\CreateOrderHistoryRequest;
 use LaravelShipStation\ShipStation;
+use Log;
 
 class AdminOrderController extends Controller
 {
@@ -263,36 +264,39 @@ class AdminOrderController extends Controller
         $productOptions = ProductOption::where('product_id',$request->productId)
         ->with('product','optionValues','option')->get();
 
-
-        print_r($productOptions);die;
-
         $responseHtml = '';
-        foreach($productOptions as $po){
-            switch($po->option->type){
-                case 'input':
-                    $returnHTML = view('adminorder::htmlelement.input',[
-                        'option'=>$po->option,
-                        'productId'=>$request->productId,
-                        'productOption'=>$po
-                        ])->render();
-                    $responseHtml .= $returnHTML;
-                break;
-                case 'text':
-                    $returnHTML = view('adminorder::htmlelement.input',[
-                        'option'=>$po->option,
-                        'productId'=>$request->productId,
-                        'productOption'=>$po
-                        ])->render();
-                    $responseHtml .= $returnHTML;
-                break;
-                case 'select':
-                    $returnHTML = view('adminorder::htmlelement.select',[
-                        'option'=>$po->option,
-                        'productId'=>$request->productId,
-                        'productOption'=>$po
-                    ])->render();
-                    $responseHtml .= $returnHTML;
-                break;
+        if(!empty($productOptions)){
+            foreach($productOptions as $po){
+
+                Log::info("PO:".json_encode($po));
+                if(isset($po->option) && !empty($po->option)){
+                    switch($po->option->type){
+                        case 'input':
+                            $returnHTML = view('adminorder::htmlelement.input',[
+                                'option'=>$po->option,
+                                'productId'=>$request->productId,
+                                'productOption'=>$po
+                                ])->render();
+                            $responseHtml .= $returnHTML;
+                        break;
+                        case 'text':
+                            $returnHTML = view('adminorder::htmlelement.input',[
+                                'option'=>$po->option,
+                                'productId'=>$request->productId,
+                                'productOption'=>$po
+                                ])->render();
+                            $responseHtml .= $returnHTML;
+                        break;
+                        case 'select':
+                            $returnHTML = view('adminorder::htmlelement.select',[
+                                'option'=>$po->option,
+                                'productId'=>$request->productId,
+                                'productOption'=>$po
+                            ])->render();
+                            $responseHtml .= $returnHTML;
+                        break;
+                    }
+                }
             }
         }
         return response()->json(array('success' => true, 'html'=>$responseHtml));
@@ -304,20 +308,37 @@ class AdminOrderController extends Controller
             return;
         }
 
-        $productPackages = ProductGroup::where('product_id',$request->productId)
+        $productId = $request->productId;
+        $productPackages = ProductGroup::where('product_id',$productId)
                             ->join('shipping_zone_prices', 'shipping_zone_prices.shipping_zone_groups_id', '=', 'product_groups.group_id')
                             ->join('shipping_packages', 'shipping_packages.id', '=', 'shipping_zone_prices.shipping_packages_id')
-                            ->select(['group_id', 'shipping_packages.id','shipping_packages.package_name'])
+                            ->select(['group_id', 'shipping_packages.id','shipping_packages.package_name']);
+
+        if(isset($request->shipping_postcode) && $request->shipping_postcode!=''){                    
+            $productPackages = $productPackages->where('shipping_zone_prices.zip_code', $request->shipping_postcode)
                             ->groupBy('product_groups.group_id')
+                            ->get();                          
+        } else{
+            $productPackages = $productPackages->groupBy('product_groups.group_id')
                             ->get();
+        }
 
                             
         $responseHtml = '';
+
+
+        $selectname = 'option[$productId][select][$productId]';
+
+        if(isset($request->selectname) && $request->selectname!=''){
+            $selectname = 'single_product_package_'.$productId;
+        }
+
 
         $returnHTML = view('adminorder::htmlelement.package',[
             'option'=> 'Package',
             'productPackage'=>$productPackages,
             'productId'=>$request->productId,
+            'selectname' => $selectname
             ])->render();
         
         $responseHtml .= $returnHTML;   

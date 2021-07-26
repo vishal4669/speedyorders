@@ -19,6 +19,7 @@
             <div class="boxed">
                 <div class="boxed-wrapper">
                     <div class="hpanel">
+
                         <form method="POST" action="{{ route('admin.products.update', [$product->id]) }}"
                             class="form-horizontal" enctype="multipart/form-data" id="createProductForm">
                             @csrf
@@ -62,6 +63,9 @@
         <form action="{{ route('admin.products.update.single.media') }}" method="POST" enctype="multipart/form-data" id="updateSingleGallery">
             @csrf
         <div class="modal-body">
+
+
+
             <input type="hidden" name="singleGalleryId" id="singleGalleryId" value="">
             <input type="file" name="galleryImage" id="galleryImage"> <br>
             <img src="" alt="" id="galleryImg" style="width: 100px;"> <br>
@@ -69,7 +73,7 @@
             <select name="optionValueId" id="optionValueId" class="form-control">
                 <option value="">None</option>
                 @foreach($productOptionValues as $optionValue)
-                <option value="{{ $optionValue->id }}">{{ $optionValue->optionValue->name }}</option>
+                    <option value="{{ $optionValue->id }}">{{ (isset($optionValue->optionValue->name) && $optionValue->optionValue->name!='') ? $optionValue->optionValue->name : '' }}</option>
                 @endforeach
             </select>
         </div>

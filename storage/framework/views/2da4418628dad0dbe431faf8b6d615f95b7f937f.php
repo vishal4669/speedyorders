@@ -17,6 +17,7 @@
             <div class="boxed">
                 <div class="boxed-wrapper">
                     <div class="hpanel">
+
                         <form method="POST" action="<?php echo e(route('admin.products.update', [$product->id])); ?>"
                             class="form-horizontal" enctype="multipart/form-data" id="createProductForm">
                             <?php echo csrf_field(); ?>
@@ -60,6 +61,9 @@
         <form action="<?php echo e(route('admin.products.update.single.media')); ?>" method="POST" enctype="multipart/form-data" id="updateSingleGallery">
             <?php echo csrf_field(); ?>
         <div class="modal-body">
+
+
+
             <input type="hidden" name="singleGalleryId" id="singleGalleryId" value="">
             <input type="file" name="galleryImage" id="galleryImage"> <br>
             <img src="" alt="" id="galleryImg" style="width: 100px;"> <br>
@@ -67,7 +71,7 @@
             <select name="optionValueId" id="optionValueId" class="form-control">
                 <option value="">None</option>
                 <?php $__currentLoopData = $productOptionValues; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $optionValue): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <option value="<?php echo e($optionValue->id); ?>"><?php echo e($optionValue->optionValue->name); ?></option>
+                    <option value="<?php echo e($optionValue->id); ?>"><?php echo e((isset($optionValue->optionValue->name) && $optionValue->optionValue->name!='') ? $optionValue->optionValue->name : ''); ?></option>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </select>
         </div>

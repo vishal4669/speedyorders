@@ -6,6 +6,12 @@
 
 @section('content')
 
+<style type="text/css">
+    #wrapper{
+        min-height: 1100px !important;
+    }
+</style>
+
     <div class="col-md-12">
         <div class="row">
             <div class="col-md-4">
@@ -101,14 +107,109 @@
                            <table class="table table-bordered">
                               <thead>
                                  <tr>
-                                    <td><b>Product ID</b></td>
-                                    <td><b>Product</b></td>
-                                    <td class="text-right"><b>Unit Price</b></td>
-                                    <td class="text-right"><b>Quantity</b></td>
-                                    <td class="text-right"><b>Total</b></td>
-                                    <td><b>Single</b></td>
-                                    <td><b>Combo</b></td>
-                                    <td><b>Select Package</b></td>
+                                    <td style="width:10%;"><b>Product ID</b></td>
+                                    <td style="width:10%;"><b>Product</b></td>
+                                    <td style="width:10%;" class="text-right"><b>Unit Price</b></td>
+                                    <td style="width:10%;" class="text-right"><b>Quantity</b></td>
+                                    <td style="width:10%;" class="text-right"><b>Total</b></td>
+                                    <td style="width:10%;"><b>Single</b></td>
+                                    <td style="width:10%;"><b>Combo</b></td>
+                                    <td style="width:30%;"><b>Select Package</b></td>
+                                 </tr>
+                              </thead>
+                              <tbody>
+                                   <?php
+
+                                     $subTotal = 0;
+                                     $totalTax=0;
+                                     $totalShipping=0;
+
+                                     // define all the selected fields
+                                     $productIds = [];
+                                     $productNames = [];
+                                     $productUnitPrices = [];
+                                     $productQuantities = [];
+                                     $productTotals = [];
+                                     $productSingle = [];
+                                     $productCombos = [];
+                                     ?>
+
+                                  @forelse($order->orderedProducts as $orderedProduct)
+                                  <?php
+
+                                       $individualTotal = $orderedProduct->quantity*$orderedProduct->price;
+                                       $subTotal += $individualTotal;
+                                       $totalTax += $orderedProduct->tax;
+                                       $totalShipping += $orderedProduct->shipping_price;
+
+                                       $productIds[] = $orderedProduct->product->id;
+                                       $productNames[] = $orderedProduct->product->name;                                       
+                                       $productUnitPrices[] = $orderedProduct->price;    
+                                       $productQuantities[] = $orderedProduct->quantity;
+                                       $productTotals[] = $individualTotal;
+
+                                   ?>
+                                 <tr>
+                                    <td>{{ $orderedProduct->product->id }}</td>
+                                    <td>
+                                       {{ $orderedProduct->product->name }}
+
+                                       @if(count($orderedProduct->orderProductOptions)>0)
+                                            <p><b>Variant</b></p>
+                                            @foreach($orderedProduct->orderProductOptions ??[] as $orderProductOption)
+                                                    <p>[{{$orderProductOption->productOption->option->name }} : {{($orderProductOption->productOption->option->type == "select")?$orderProductOption->productOptionValue->optionValue->name:$orderProductOption->value}} ]</p>
+                                            @endforeach
+                                       @endif
+                                    </td>                                  
+                                    <td class="text-right">{{ $orderedProduct->quantity }}</td>
+                                    <td class="text-right">{{ $orderedProduct->price }}</td>
+                                    <td class="text-right">{{ $individualTotal }}</td>
+                                    <td><input type="checkbox" onclick="getProductPackages('{{$orderedProduct->product->id}}', '{{$order->shipping_postcode}}')" name="order_product_single[]" id="order_product_single_{{$orderedProduct->product->id}}"></td>
+                                    <td><input type="checkbox" onclick="resetPackages('{{$orderedProduct->product->id}}')"  name="order_product_combo[]" id="order_product_combo_{{$orderedProduct->product->id}}"></td>
+                                    <td><div id="packages_{{$orderedProduct->product->id}}">
+                                        <b>Package</b> <select class="form-control" name="single_product_package[]">
+                                            
+                                        </select>
+                                    </div></td>
+                                 </tr>
+                                 @empty
+                                 <tr>
+                                     No data found
+                                 </tr>
+                                 @endforelse
+                              </tbody>
+                           </table>
+
+                        </div>
+
+                         <div class="row">
+                               <div class="col-md-12">  
+                                <button type="button" id="" onclick="showSelectedDetails()" class="btn btn-primary pull-right">Continue Shipping</button>
+                               </div>
+                           </div>
+                    </div>
+
+
+                </div>
+
+              
+            </div>
+
+             <div class="col-md-12" id="step_2_div">
+                <div class="hpanel">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                           <table class="table table-bordered">
+                              <thead>
+                                 <tr>
+                                    <td style="width:10%;"><b>Product ID</b></td>
+                                    <td style="width:10%;"><b>Product</b></td>
+                                    <td style="width:10%;" class="text-right"><b>Unit Price</b></td>
+                                    <td style="width:10%;" class="text-right"><b>Quantity</b></td>
+                                    <td style="width:10%;" class="text-right"><b>Total</b></td>
+                                    <td style="width:10%;"><b>Single</b></td>
+                                    <td style="width:10%;"><b>Combo</b></td>
+                                    <td style="width:30%;"><b>Select Package</b></td>
                                  </tr>
                               </thead>
                               <tbody>
@@ -145,9 +246,13 @@
                                     <td class="text-right">{{ $orderedProduct->quantity }}</td>
                                     <td class="text-right">{{ $orderedProduct->price }}</td>
                                     <td class="text-right">{{ $individualTotal }}</td>
-                                    <td><input type="checkbox" name="order_product_single[]" id="order_product_single_{{$orderedProduct->product->id}}"></td>
-                                    <td><input type="checkbox" name="order_product_combo[]" id="order_product_combo_{{$orderedProduct->product->id}}"></td>
-                                    <td></td>
+                                    <td><input type="checkbox" onclick="getProductPackages('{{$orderedProduct->product->id}}', '{{$order->shipping_postcode}}')" name="order_product_single[]" id="order_product_single_{{$orderedProduct->product->id}}"></td>
+                                    <td><input type="checkbox" onclick="resetPackages('{{$orderedProduct->product->id}}')"  name="order_product_combo[]" id="order_product_combo_{{$orderedProduct->product->id}}"></td>
+                                    <td><div id="packages_{{$orderedProduct->product->id}}">
+                                        <b>Package</b> <select class="form-control" name="single_product_package[]">
+                                            
+                                        </select>
+                                    </div></td>
                                  </tr>
                                  @empty
                                  <tr>
@@ -158,15 +263,88 @@
                            </table>
 
                         </div>
-                    </div>
-                </div>
 
-              
+                         <div class="row">
+                               <div class="col-md-12">  
+                                <button type="button" id="" class="btn btn-primary pull-right">Continue Shipping</button>
+                               </div>
+                           </div>
+                    </div>
+
+
+                </div>
             </div>
+
         </div>
+
+        <br>
     </div>
 @endsection
 
 @section('ext_js')
+<script type="text/javascript">
+const productsIds = '<?php echo json_encode($productIds)?>';
+const productNames = '<?php echo json_encode($productNames)?>';
+const productUnitPrices = '<?php echo json_encode($productUnitPrices)?>';
+const productQuantities = '<?php echo json_encode($productQuantities)?>';
+const productTotals = '<?php echo json_encode($productTotals)?>';
+function showSelectedDetails(){
+    $("#"+checkoboxIdCombo).attr("checked", false)
+    var url = '{{ route('admin.orders.product.packages') }}';
 
+    $.ajax({
+        url: url,
+        type: 'post',
+        data: {
+            "_token": "{{ csrf_token() }}",
+            "productId": productId,
+            "shipping_postcode" : shipping_postcode,
+            "selectname" : "single_product_package_"+productId
+        },
+        dataType: 'JSON',
+        success: function(data) {
+           $("#packages_"+productId).html(data.html);
+        }
+    });
+}
+        
+
+function getProductPackages(productId, shipping_postcode){
+    var checkoboxId = "order_product_single_"+productId;
+    var checkoboxIdCombo = "order_product_combo_"+productId;
+
+
+    if($("#"+checkoboxId).prop("checked")){
+        $("#"+checkoboxIdCombo).attr("checked", false)
+        var url = '{{ route('admin.orders.product.packages') }}';
+
+        $.ajax({
+            url: url,
+            type: 'post',
+            data: {
+                "_token": "{{ csrf_token() }}",
+                "productId": productId,
+                "shipping_postcode" : shipping_postcode,
+                "selectname" : "single_product_package_"+productId
+            },
+            dataType: 'JSON',
+            success: function(data) {
+               $("#packages_"+productId).html(data.html);
+            }
+        });
+    } else {
+        $("#packages_"+productId).html('');
+    }
+
+    
+}
+
+function resetPackages(product_id){
+    var checkoboxIdSingle = "order_product_single_"+product_id;
+
+    $("#packages_"+product_id).html('');
+    $("#"+checkoboxIdSingle).attr("checked", false);
+}
+        
+</script>
 @endsection
