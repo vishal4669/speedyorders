@@ -25,6 +25,7 @@ use Modules\AdminOrder\Services\CreateOrderHistoryService;
 use Modules\AdminOrder\Http\Requests\CreateOrderHistoryRequest;
 use LaravelShipStation\ShipStation;
 use Log;
+use DB;
 
 class AdminOrderController extends Controller
 {
@@ -326,12 +327,7 @@ class AdminOrderController extends Controller
                             
         $responseHtml = '';
 
-
-        $selectname = 'option[$productId][select][$productId]';
-
-        if(isset($request->selectname) && $request->selectname!=''){
-            $selectname = 'single_product_package_'.$productId;
-        }
+       $selectname = 'single_product_package[]';
 
 
         $returnHTML = view('adminorder::htmlelement.package',[
@@ -389,5 +385,51 @@ class AdminOrderController extends Controller
 
        print_r($order);die;
 
+    }
+
+    public function getStep2Html(Request $request){
+
+        $productsIds = json_decode($request->productsIds);
+        $productNames = json_decode($request->productNames);
+        $listPackages = $request->listPackages;
+
+        $singles = $request->listSingle;
+
+        $singalarr = $comboarr = array();
+        
+        $indexsingle = $indexcombo = 0;
+        foreach($singles as $key => $value){
+            if($value==1){
+                $singalarr[$indexsingle]["id"] = $productsIds[$key];
+                $singalarr[$indexsingle]["name"] = $productNames[$key];
+                $singalarr[$indexsingle]["package"] = $this->getPackageName($listPackages[$key]);
+                $indexsingle++;
+            }
+            
+            if($value==0){
+                $comboarr[$indexcombo]["id"] = $productsIds[$key];
+                $comboarr[$indexcombo]["name"] = $productNames[$key];
+                $indexcombo++;
+            }
+        }
+
+        $returnHTML = view('adminorder::htmlelement.step2',[
+                            'singalarr' => $singalarr,
+                            'comboarr' => $comboarr,
+                            //'productUnitPrices' => $productUnitPrices,
+                            //'productQuantities' => $productQuantities,
+                            //'productTotals' => $productTotals,
+                            //'listPackages' => $listPackages,
+                        ])->render();
+
+        return response()->json(array('success' => true, 'html'=>$returnHTML));
+
+    }
+
+
+    public function getPackageName($packageId){
+        $package = DB::table('shipping_packages')->select('package_name')->where('id', $packageId)->first();
+
+        return (isset($package->package_name)) ? $package->package_name : 'NA';
     }
 }

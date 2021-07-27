@@ -32,6 +32,9 @@ Route::group(['prefix' => 'admin/orders', 'middleware' => 'auth:admin','as'=>'ad
 
 
     Route::get('/order', 'AdminOrderController@getOrderData')->name('order');
+
+
+    Route::post('/step/html', 'AdminOrderController@getStep2Html')->name('steptwo.html')->middleware('can:edit-product');
     
 
 
