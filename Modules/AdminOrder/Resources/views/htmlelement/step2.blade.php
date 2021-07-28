@@ -56,21 +56,21 @@
 <div class="form-group">
     <label class="col-md-1 control-label">Length</label>
     <div class="col-md-1">
-        <input type="number" placeholder="Length" min="0" name="package_length" class="form-control">
+        <input type="number" placeholder="Length" min="0" id="package_length" name="package_length" class="form-control">
     </div>
 
     <label class="col-md-1 control-label">Width</label>
     <div class="col-md-1">
-        <input type="number" placeholder="Width" min="0" name="package_width" class="form-control">
+        <input type="number" placeholder="Width" min="0" id="package_width" name="package_width" class="form-control">
     </div>
 
     <label class="col-md-1 control-label">Height</label>
     <div class="col-md-1">
-        <input type="number" min="0" placeholder="Height" name="package_height" class="form-control">
+        <input type="number" min="0" placeholder="Height" id="package_height" name="package_height" class="form-control">
     </div>
 
     <div class="col-md-1">
-       <select class="form-control m-b js-dropdown-select2" name="package_size_unit" required>
+       <select class="form-control m-b js-dropdown-select2" id="package_size_unit" name="package_size_unit" required>
             <option value="cm" selected>CM</option>
             <option value="inch">INCH</option>
         </select>
@@ -79,14 +79,14 @@
     <label class="col-md-1 control-label">Weight</label>
 
     <div class="col-md-1">
-        <input type="text" name="package_weight" placeholder="Weight" class="form-control">
+        <input type="text" name="package_weight" id="package_weight" placeholder="Weight" class="form-control">
     </div>
 
 
     <div class="col-md-1">
-       <select class="form-control m-b js-dropdown-select2" name="package_weight_unit">
-            <option value="1" selected>KG</option>
-            <option value="2">LB</option>
+       <select class="form-control m-b js-dropdown-select2" id="package_weight_unit" name="package_weight_unit">
+            <option value="kg" selected>KG</option>
+            <option value="lb">LB</option>
         </select>
     </div>
 

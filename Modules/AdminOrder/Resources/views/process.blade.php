@@ -204,7 +204,7 @@
 
                          <div class="row">
                                <div class="col-md-12">  
-                                <button type="button" id="" class="btn btn-primary pull-right">Mark As Fullfill</button>
+                                <button type="button" id="" onclick="processOrderDetails()" class="btn btn-primary pull-right">Mark As Fullfill</button>
                                </div>
                            </div>
                     </div>
@@ -226,6 +226,7 @@ const productNames = '<?php echo json_encode($productNames)?>';
 const productUnitPrices = '<?php echo json_encode($productUnitPrices)?>';
 const productQuantities = '<?php echo json_encode($productQuantities)?>';
 const productTotals = '<?php echo json_encode($productTotals)?>';
+const orderId = '<?php echo $order_id?>';
 function showSelectedDetails(){
 
     var listSingle = $("input[name='order_product_single[]']").map(function () {
@@ -267,6 +268,58 @@ function showSelectedDetails(){
         dataType: 'JSON',
         success: function(data) {
            $("#step_2_data").html(data.html);
+        }
+    });
+}
+
+function processOrderDetails(){
+
+    var listSingle = $("input[name='order_product_single[]']").map(function () {
+        if(this.checked){
+            return 1;
+        } else{
+            return 0;
+        }
+    }).get();
+    
+    var listCombo = $("input[name='order_product_combo[]']").map(function () {
+        if(this.checked){
+            return 1;
+        } else{
+            return 0;
+        }
+    }).get();
+
+    var listPackages = $("select[name='single_product_package[]']").map(function () {
+        return this.value;
+    }).get();
+
+    var url = "{{ route('admin.orders.steptwo.process') }}";
+
+    $.ajax({
+        url: url,
+        type: 'post',
+        data: {
+            "_token": "{{ csrf_token() }}",
+            "orderId" : orderId,
+            "productsIds": productsIds,
+            "productNames" : productNames,
+            "productUnitPrices" : productUnitPrices,
+            "productQuantities" : productQuantities,
+            "productTotals" : productTotals,
+            "listSingle" : listSingle,
+            "listCombo" : listCombo,
+            "listPackages" : listPackages,
+            "package_length" : $("#package_length").val(),
+            "package_width" : $("#package_width").val(),
+            "package_height" : $("#package_height").val(),
+            "package_weight" : $("#package_weight").val(),
+            "package_size_unit" : $("#package_size_unit").val(),
+            "package_weight_unit" : $("#package_weight_unit").val(),
+        },
+        dataType: 'JSON',
+        success: function(data) {
+           console.log(data);
         }
     });
 }

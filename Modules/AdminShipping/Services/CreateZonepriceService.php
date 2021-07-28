@@ -94,7 +94,7 @@ class CreateZonepriceService
 
 
                                 // check if package already exists
-                                $package_Data = ShippingPackage::where('package_name', $group_name)->first();
+                                $package_Data = ShippingPackage::where('package_name', $package_name)->first();
                                 if(!empty($package_Data)){
                                     $shipping_packages_id = $package_Data["id"];
                                 } else{

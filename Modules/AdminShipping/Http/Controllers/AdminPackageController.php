@@ -22,7 +22,7 @@ class AdminPackageController extends Controller
         $data = [
             'menu' => 'packagesList',
         ];
-        $packages = ShippingPackage::orderByDesc('id')->get();
+        $packages = ShippingPackage::orderByDesc('id')->groupBy('package_name')->get();
         
         return view('adminshipping::shippingpackage.index',compact('packages'),$data);
     }

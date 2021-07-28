@@ -23,6 +23,9 @@ use Modules\AdminOrder\Http\Requests\CreateOrderRequest;
 use Modules\AdminOrder\Http\Requests\UpdateOrderRequest;
 use Modules\AdminOrder\Services\CreateOrderHistoryService;
 use Modules\AdminOrder\Http\Requests\CreateOrderHistoryRequest;
+    
+use Modules\AdminOrder\Services\CreateShipstationOrderService;
+
 use LaravelShipStation\ShipStation;
 use Log;
 use DB;
@@ -163,6 +166,7 @@ class AdminOrderController extends Controller
     {
         $data = [
             'menu' => 'orders',
+            'order_id' => $id
         ];
 
         $order = Order::with('orderedProducts','orderedProducts.orderProductOptions')->findOrFail($id);
@@ -431,5 +435,24 @@ class AdminOrderController extends Controller
         $package = DB::table('shipping_packages')->select('package_name')->where('id', $packageId)->first();
 
         return (isset($package->package_name)) ? $package->package_name : 'NA';
+    }
+
+    /**
+     * added the order details related to send on shipstation and send the details there in pending state.
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function processOrder(Request $request, CreateShipstationOrderService $shipstationService)
+    {
+        if($shipstationService->handle($request)){
+            $message = 'Order successfully sent on shipstation.';
+        } else {
+            $message = 'Order could not be sent on shipstation, Please refresh the page and try again.';            
+        }
+
+        return response()->json(array('success' => true, 'message'=>$message));
+
     }
 }

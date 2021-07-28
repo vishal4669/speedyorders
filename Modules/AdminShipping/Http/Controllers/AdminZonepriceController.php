@@ -40,7 +40,7 @@ class AdminZonepriceController extends Controller
             'menu' => 'zonepricesList',
         ];
         
-        $packages = ShippingPackage::all();
+        $packages = ShippingPackage::groupBy('package_name')->get();
         $deliverytimes = ShippingDeliveryTime::all();
         $data['form'] = 'add';
 
