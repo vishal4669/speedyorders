@@ -77,6 +77,8 @@ $('#openProductModal').on('click',function(e){
   }
 
   function getProductPackages(productId){
+    alert(productId);
+
     var url = '{{ route('admin.orders.product.packages') }}';
 
     $.ajax({

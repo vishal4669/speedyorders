@@ -39,7 +39,9 @@
                                             @php
                                             $productOption = App\Models\ProductOption::where('id', $optionId)->with('option')->first();
                                             $productOptionValue = App\Models\ProductOptionValue::where('id', $optionValue)->first();
+                                                if(isset($productOptionValue->option)){
                                                  $oldRow .= 'option['.$productId.']['.$productOption->option->type.']['.$optionId.']['.$optionValue.']' ;
+                                                }
                                                 
                                             @endphp
                                             

@@ -60,6 +60,7 @@ $('#openProductModal').on('click',function(e){
         $('#add-product-modal').modal('show');
         var productId = $('#product_id').val();
         getProductVariants(productId);
+        getProductPackages(productId);
     });
 
   function getProductVariants(productId){
@@ -78,6 +79,24 @@ $('#openProductModal').on('click',function(e){
         /* remind that 'data' is the response of the AjaxController */
         success: function(data) {
            $('.modal-product-otion-panel').empty().append(data.html);
+        }
+    });
+  }
+
+  function getProductPackages(productId){
+
+    var url = '{{ route('admin.orders.product.packages') }}';
+
+    $.ajax({
+        url: url,
+        type: 'post',
+        data: {
+            "_token": "{{ csrf_token() }}",
+            "productId": productId
+        },
+        dataType: 'JSON',
+        success: function(data) {
+           $('.modal-product-package-panel').empty().append(data.html);
         }
     });
   }
@@ -185,6 +204,7 @@ $('#product_id').on('change',function(){
    
    var productId = $(this).val();
    getProductVariants(productId);
+   getProductPackages(productId);
 });
 
 </script>

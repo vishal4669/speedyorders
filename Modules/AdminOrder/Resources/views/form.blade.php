@@ -9,7 +9,6 @@
 <br>
 
 <div class="tab-content">
-
     <div id="tab-1" class="tab-pane active">
         @include('adminorder::formelements.general')
     </div>

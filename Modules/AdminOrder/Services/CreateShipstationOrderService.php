@@ -65,28 +65,30 @@ class CreateShipstationOrderService
                 $productItem->name = $product->name;
                 $productItem->quantity = $productQuantities[$key];
                 $productItem->unitPrice  = $product->base_price;
-                $productItem->productId = $product->id;
-
+                
                 $porder = new ProductOrder();
 
                 $porder->orderNumber = $product->uuid;
+                $porder->orderKey = $orderData['uuid'];
                 $porder->orderDate = $orderData['created_at'];
                 $porder->orderStatus = 'awaiting_shipment';
-                $porder->amountPaid = $product->base_price;
+                $porder->amountPaid += $product->base_price;
                 $porder->taxAmount = '0.00';
                 $porder->shippingAmount = '0.00';
                 $porder->billTo = $address;
                 $porder->shipTo = $address;
                 $porder->items[] = $productItem;
-
-                $response = $shipStation->orders->create($porder);
-
-                if(isset($response->orderId) && $response->orderId!=''){
-                    $orderProductData = OrderProduct::where('order_id',$orderData["id"])->where('product_id', $product->id)->first();
-                    $orderProductData->shipstation_order_id = $response->orderId;
-                    $orderProductData->save();
-                }
+                
             }
+
+            $response = $shipStation->orders->create($porder);
+
+            if(isset($response->orderId) && $response->orderId!=''){
+                $orderProductData = OrderProduct::where('order_id',$orderData["id"])->where('product_id', $product->id)->first();
+                $orderProductData->shipstation_order_id = $response->orderId;
+                $orderProductData->save();
+            }
+
 
             $customerTransaction = CustomerTransaction::create([
                 'order_id' => $orderData["id"],
