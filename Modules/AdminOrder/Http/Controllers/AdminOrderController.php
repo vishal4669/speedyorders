@@ -321,7 +321,7 @@ class AdminOrderController extends Controller
 
         if(isset($request->shipping_postcode) && $request->shipping_postcode!=''){                    
             $productPackages = $productPackages->where('shipping_zone_prices.zip_code', $request->shipping_postcode)
-                            ->groupBy('product_groups.group_id')
+                            ->groupBy('shipping_packages.id')
                             ->get();                          
         } else{
             $productPackages = $productPackages->groupBy('product_groups.group_id')

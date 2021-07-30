@@ -78,17 +78,15 @@ class CreateShipstationOrderService
                 $porder->billTo = $address;
                 $porder->shipTo = $address;
                 $porder->items[] = $productItem;
-                
-            }
 
-            $response = $shipStation->orders->create($porder);
+                $response = $shipStation->orders->create($porder);
 
-            if(isset($response->orderId) && $response->orderId!=''){
-                $orderProductData = OrderProduct::where('order_id',$orderData["id"])->where('product_id', $product->id)->first();
-                $orderProductData->shipstation_order_id = $response->orderId;
-                $orderProductData->save();
-            }
-
+                if(isset($response->orderId) && $response->orderId!=''){
+                    $orderProductData = OrderProduct::where('order_id',$orderData["id"])->where('product_id', $product->id)->first();
+                    $orderProductData->shipstation_order_id = $response->orderId;
+                    $orderProductData->save();
+                }                
+            }           
 
             $customerTransaction = CustomerTransaction::create([
                 'order_id' => $orderData["id"],
