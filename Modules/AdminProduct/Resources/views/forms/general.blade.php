@@ -103,6 +103,16 @@
             <div class="hr-line-dashed"></div>
 
             <div class="row">
+                <label class="col-md-2 control-label">Sale Price</label>
+                <div class="col-md-8">
+                    <input type="text" name="sale_price"
+                        value="{{ old('sale_price', isset($product) ? $product->sale_price : null) }}" class="form-control">
+                </div>
+            </div>
+
+            <div class="hr-line-dashed"></div>
+
+            <div class="row">
                 <label class="col-md-2 control-label">Product Quantity</label>
                 <div class="col-md-8">
                     <input type="text" name="quantity"
@@ -187,6 +197,16 @@
                 <div class="col-md-8">
                     <textarea name="meta_description" id="" cols="85"
                         rows="3"> {{ old('meta_description', isset($product) ? $product->meta_description : null) }} </textarea>
+                </div>
+            </div>
+
+            <div class="hr-line-dashed"></div>
+
+            <div class="row">
+                <label class="col-md-2 control-label">Meta Keywords</label>
+                <div class="col-md-8">
+                    <textarea name="meta_keywords" id="" cols="85"
+                        rows="3"> {{ old('meta_keywords', isset($product) ? $product->meta_keywords : null) }} </textarea>
                 </div>
             </div>
 
