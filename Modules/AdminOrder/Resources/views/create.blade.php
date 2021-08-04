@@ -77,7 +77,6 @@ $('#openProductModal').on('click',function(e){
   }
 
   function getProductPackages(productId){
-    alert(productId);
 
     var url = '{{ route('admin.orders.product.packages') }}';
 
@@ -169,6 +168,7 @@ $('.add-product').on('click', function (e)
         }
 
         $('#option-values-table').append("<tr style='display: table-row;' class='footable-even' id='"+row+"'> <td class='footable-visible footable-first-column'> <input type='hidden' name='product_id[]' value="+productId+">"+productName+"</td><td class='footable-visible'> <input type='text' name='product_quantity[]' value="+totalQuantity+"></td><td>"+inputDisplay + selectDisplay+"</td><td class='footable-visible footable-last-column'> <button type='button' class='btn btn-danger dlt-product'><i class='fa fa-trash'></i></button> </td><td class='hidden'>"+inputsHtml + selectHtml +"</td></tr>");
+        
         arrangeOrder();
 
         $('#add-product-modal').modal('hide');

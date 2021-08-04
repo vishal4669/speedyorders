@@ -39,9 +39,11 @@
                                             @php
                                             $productOption = App\Models\ProductOption::where('id', $optionId)->with('option')->first();
                                             $productOptionValue = App\Models\ProductOptionValue::where('id', $optionValue)->first();
-                                                if(isset($productOptionValue->option)){
+                                            if(isset($productOptionValue->option)){
+                                                if(isset($productOption->option)){
                                                  $oldRow .= 'option['.$productId.']['.$productOption->option->type.']['.$optionId.']['.$optionValue.']' ;
                                                 }
+                                            }
                                                 
                                             @endphp
                                             
@@ -66,7 +68,7 @@
                             </td>
 
                             <td>
-                                @if (old('option'))
+                                @if (old('option') && isset(old('option')[$key]))
                                     @foreach (old('option')[$key] as $optionType=>$options)
                                        
                                             @foreach ($options as $optionId => $optionValue)
@@ -80,7 +82,7 @@
                                                         $productOptionValue = $optionValue;
                                                     }
                                                @endphp
-                                                <p>{{$productOption->option->name}} : {{$productOptionValue->optionValue->name ?? $productOptionValue}} </p>
+                                                <p>{{(isset($productOption->option) && $productOption->option->name)}} : {{$productOptionValue->optionValue->name ?? $productOptionValue}} </p>
                                             @endforeach
                                             
                                                                              
@@ -94,7 +96,7 @@
                             
                           
                             <td class="hidden">
-                                @if (old('option'))
+                                @if (old('option') && isset(old('option')[$key]))
                                     @foreach (old('option')[$key] as $optionType=>$options)
                                        
                                             @foreach ($options as $optionId => $optionValue)
@@ -117,14 +119,15 @@
                            $rowId = '';
                          
                            if(count($orderProduct->orderProductOptions)>0){
-                            
-                           foreach($orderProduct->orderProductOptions ??[] as $orderProductOption)
-                            {
-                                $value = "";
-                                $value =($orderProductOption->productOption->option->type == "select")?$orderProductOption->productOptionValue->id:$orderProductOption->value;
+                               foreach($orderProduct->orderProductOptions ??[] as $orderProductOption)
+                                {
+                                    $value = "";
+                                    if(isset($orderProductOption->productOption) && !empty($orderProductOption->productOption) && isset($orderProductOption->productOption->option)){
+                                        $value =($orderProductOption->productOption->option->type == "select")?$orderProductOption->productOptionValue->id:$orderProductOption->value;
 
-                                $rowId.='option['.$orderProduct->product_id.']['.$orderProductOption->productOption->option->type.']['.$orderProductOption->productOption->id.']['.$value.']' ;
-                            }
+                                        $rowId.='option['.$orderProduct->product_id.']['.$orderProductOption->productOption->option->type.']['.$orderProductOption->productOption->id.']['.$value.']' ;
+                                    }
+                                }
                         }
                         else{
                             $rowId = $orderProduct->product_id;
@@ -139,19 +142,24 @@
                             <input type="text" name="product_quantity[]" value="{{ $orderProduct->quantity }}">
                         </td>
                         <td>
-                           
-                            @foreach($orderProduct->orderProductOptions ??[] as $orderProductOption)
-                                <p>{{$orderProductOption->productOption->option->name}} :{{($orderProductOption->productOption->option->type == "select")?$orderProductOption->productOptionValue->optionValue->name:$orderProductOption->value}}  </p>
-                           
-                             @endforeach
+                           @if(isset($orderProduct->orderProductOptions) && !empty($orderProduct->orderProductOptions))
+                                @foreach($orderProduct->orderProductOptions ??[] as $orderProductOption)
+
+                                    @if(isset($orderProductOption->productOption) && !empty($orderProductOption->productOption))
+                                        <p>{{$orderProductOption->productOption->option->name}} :{{($orderProductOption->productOption->option->type == "select")?$orderProductOption->productOptionValue->optionValue->name:$orderProductOption->value}}  </p>
+                                    @endif    
+                               
+                                 @endforeach
+                           @endif  
                         </td>
                         <td class='footable-visible footable-last-column'>
                             <button type='button' class='btn btn-danger dlt-product'><i class='fa fa-trash'></i></button>
                         </td>
                         <td class="hidden">
                             @foreach($orderProduct->orderProductOptions ??[] as $orderProductOption)
-
-                                 <input type="text" data-id="[{{$orderProductOption->productOption->option->type}}][{{$orderProductOption->productOption->id}}]" class="hiddenInput"  name="option[{{ $key }}][{{$orderProductOption->productOption->option->type}}][{{$orderProductOption->productOption->id}}]" value="{{($orderProductOption->productOption->option->type == "select")?$orderProductOption->productOptionValue->id:$orderProductOption->value}}">
+                                @if(isset($orderProductOption->productOption) && !empty($orderProductOption->productOption))
+                                    <input type="text" data-id="[{{$orderProductOption->productOption->option->type}}][{{$orderProductOption->productOption->id}}]" class="hiddenInput"  name="option[{{ $key }}][{{$orderProductOption->productOption->option->type}}][{{$orderProductOption->productOption->id}}]" value="{{($orderProductOption->productOption->option->type == "select")?$orderProductOption->productOptionValue->id:$orderProductOption->value}}">
+                                @endif    
                             @endforeach
                         </td>
                     </tr>

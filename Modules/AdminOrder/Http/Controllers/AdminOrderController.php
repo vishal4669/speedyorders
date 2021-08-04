@@ -307,6 +307,11 @@ class AdminOrderController extends Controller
         return response()->json(array('success' => true, 'html'=>$responseHtml));
     }
 
+    /**
+     * All below packages will show based on the postal code used in the order and selected zone prices in the products edit
+     * @param  Request productId 
+     * @return json  return all available packages
+     */
     public function packageValue(Request $request){
 
         if(!$request->productId){
@@ -327,12 +332,10 @@ class AdminOrderController extends Controller
             $productPackages = $productPackages->groupBy('product_groups.group_id')
                             ->get();
         }
-
                             
         $responseHtml = '';
 
        $selectname = 'single_product_package[]';
-
 
         $returnHTML = view('adminorder::htmlelement.package',[
             'option'=> 'Package',
