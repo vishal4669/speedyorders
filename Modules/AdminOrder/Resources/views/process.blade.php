@@ -195,7 +195,7 @@
               
             </div>
 
-             <div class="col-md-12" id="step_2_div">
+             <div style="display:none" class="col-md-12" id="step_2_div">
                 <div class="hpanel">
                     <div class="panel-body">
                         <div class="table-responsive" id="step_2_data">
@@ -267,6 +267,7 @@ function showSelectedDetails(){
         },
         dataType: 'JSON',
         success: function(data) {
+        $("#step_2_div").show();
            $("#step_2_data").html(data.html);
         }
     });
@@ -319,7 +320,8 @@ function processOrderDetails(){
         },
         dataType: 'JSON',
         success: function(data) {
-           console.log(data);
+            alert('Order successfull processed at shipstation');
+           window.location = "{{ route('admin.orders.index') }}";
         }
     });
 }

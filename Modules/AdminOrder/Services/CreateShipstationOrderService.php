@@ -43,14 +43,12 @@ class CreateShipstationOrderService
             $total_amt = 0; 
             $products = json_decode($validatedData["productsIds"]);
 
-
             // separate the sinngle and combo products 
             $singleProducts = array();
             $comboProducts = array();
             $singlesindexes = $validatedData['listSingle'];
 
             foreach ($products as $key => $productId) {
-
                 if(isset($singlesindexes[$key]) && $singlesindexes[$key]==1){
                     $singleProducts[] = $productId;
                 } else {
@@ -61,7 +59,7 @@ class CreateShipstationOrderService
 
             // create orders for single products
             // 
-           /* $shipStation = new ShipStation(env('SHIPSTATION_API_KEY'),env('SHIPSTATION_API_SECRET'), env('SHIPSTATION_API_URL'));
+            $shipStation = new ShipStation(env('SHIPSTATION_API_KEY'),env('SHIPSTATION_API_SECRET'), env('SHIPSTATION_API_URL'));
             $address = new Address();
 
             $address->name = $orderData['shipping_first_name']." ".$orderData['shipping_last_name'];
@@ -73,13 +71,16 @@ class CreateShipstationOrderService
             $address->phone = $orderData['phone'];
 
             foreach($singleProducts as $productId){
+                //get product quantities
+                $quantity = OrderProduct::where('order_id', $orderId)->where('product_id', $productId)->pluck('quantity')->first();
+
                 $product = Product::find($productId);
 
                 $productItem = new OrderItem();
                 $productItem->lineItemKey = $product->uuid;
                 $productItem->sku = $product->sku;
                 $productItem->name = $product->name;
-                $productItem->quantity = $productQuantities[$key];
+                $productItem->quantity = $quantity;
                 $productItem->unitPrice  = $product->base_price;
                 
                 $porder = new ProductOrder();
@@ -95,15 +96,14 @@ class CreateShipstationOrderService
                 $porder->shipTo = $address;
                 $porder->items[] = $productItem;
 
-                $response = $shipStation->orders->create($porder);
+                $response_single = $shipStation->orders->create($porder);
 
-                if(isset($response->orderId) && $response->orderId!=''){
+                if(isset($response_single->orderId) && $response_single->orderId!=''){
                     $orderProductData = OrderProduct::where('order_id',$orderData["id"])->where('product_id', $product->id)->first();
-                    $orderProductData->shipstation_order_id = $response->orderId;
+                    $orderProductData->shipstation_order_id = $response_single->orderId;
                     $orderProductData->save();
                 }                
-            }*/
-            
+            }
 
             $shipStation2 = new ShipStation(env('SHIPSTATION_API_KEY'),env('SHIPSTATION_API_SECRET'), env('SHIPSTATION_API_URL'));
             $address = new Address();
@@ -120,9 +120,32 @@ class CreateShipstationOrderService
             $package_length = (isset($validatedData["package_length"])) ? $validatedData["package_length"] : 0;
             $package_width = (isset($validatedData["package_width"])) ? $validatedData["package_width"] : 0;
             $package_height = (isset($validatedData["package_height"])) ? $validatedData["package_height"] : 0;
-            $package_size_unit = (isset($validatedData["package_size_unit"]) && $validatedData["package_size_unit"]=="cm") ? "centimeters" : 'inches';
+            $package_size_unit = (isset($validatedData["package_size_unit"]) && $validatedData["package_size_unit"]=="cm") ? "cm" : 'inchs';
+
+            if($package_size_unit=="cm"){
+                $package_length = $package_length * env('CM_TO_INCH');
+                $package_width = $package_width * env('CM_TO_INCH');
+                $package_height = $package_height * env('CM_TO_INCH');
+            }
+
+            $dimensions = new Dimensions();
+            $dimensions->length = $package_length;
+            $dimensions->width = $package_width;
+            $dimensions->height = $package_height;
+            $dimensions->units = 'inchs';
 
             $package_weight = (isset($validatedData["package_weight"])) ? $validatedData["package_weight"] : 0;
+            $package_weight_unit = (isset($validatedData["package_weight_unit"])) ? $validatedData["package_weight_unit"] : '';
+
+            if($package_weight_unit=="kg"){
+                $package_weight = $package_weight * env('KG_TO_OZ');
+            } else if($package_weight_unit=="lb"){
+                $package_weight = $package_weight * env('LB_TO_OZ');
+            }
+
+            $weight = new Weight();
+            $weight->value = $package_weight;
+            $weight->units = 'oz';
 
             // create orders for combo products            
             $porder = new ProductOrder(); 
@@ -132,29 +155,21 @@ class CreateShipstationOrderService
             $porder->orderStatus = 'awaiting_shipment';
             $porder->billTo = $address;
             $porder->shipTo = $address;
-
-            $dimensions = new Dimensions();
-            $dimensions->length = $package_length;
-            $dimensions->width = $package_width;
-            $dimensions->height = $package_height;
-            $dimensions->units = 'inchs';
-            
             $porder->dimensions = $dimensions;
-
-            $weight = new Weight();
-            $weight->value = $package_weight;
-            $weight->units = 'Oz';
-
             $porder->weight = $weight;            
 
             foreach($comboProducts as $productId){
+
+                //get product quantities
+                $quantity = OrderProduct::where('order_id', $orderId)->where('product_id', $productId)->pluck('quantity')->first();
+
                 $product = Product::find($productId);
 
                 $productItem = new OrderItem();
                 $productItem->lineItemKey = $product->uuid;
                 $productItem->sku = $product->sku;
                 $productItem->name = $product->name;
-                $productItem->quantity = $productQuantities[$key];
+                $productItem->quantity = $quantity;
                 $productItem->unitPrice  = $product->base_price;
                 
                 $porder->amountPaid += $product->base_price;
@@ -163,14 +178,16 @@ class CreateShipstationOrderService
                 $porder->items[] = $productItem;                                
             }
 
-            $response = $shipStation2->orders->create($porder);
+            $response_combo = $shipStation2->orders->create($porder);
 
-            print_r($response);die;
+            if(isset($response_combo->orderId) && $response_combo->orderId!=''){
 
-            if(isset($response->orderId) && $response->orderId!=''){
-                $orderProductData = OrderProduct::where('order_id',$orderData["id"])->where('product_id', $product->id)->first();
-                $orderProductData->shipstation_order_id = $response->orderId;
-                $orderProductData->save();
+                foreach($comboProducts as $productId){
+                    $orderProductData = OrderProduct::where('order_id',$orderData["id"])->where('product_id', $productId)->first();
+                    $orderProductData->shipstation_order_id = $response_combo->orderId;
+                    $orderProductData->save();
+                }
+                
             }
 
             $customerTransaction = CustomerTransaction::create([
