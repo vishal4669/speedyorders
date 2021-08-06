@@ -6,6 +6,11 @@
                 <h4>Product List</h4>
             </div>
             <div class="col-md-1 pull-right text-right">
+
+                <a href="<?php echo e(route('admin.products.import')); ?>" class="btn btn-primary" data-toggle="tooltip" data-placement="top" data-original-title="Import">
+                    <i class="fa fa-download"></i>
+                </a>
+
                 <a href="<?php echo e(route('admin.products.create')); ?>" class="btn btn-primary-fade" data-toggle="tooltip" data-placement="top" data-original-title="Create Product">
                     <i class="fa fa-plus"></i>
                 </a>

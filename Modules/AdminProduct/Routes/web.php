@@ -13,6 +13,11 @@
 use Modules\AdminProduct\Http\Controllers\AdminProductController;
 
 Route::group(['prefix' => 'admin/products', 'middleware' => 'auth:admin','as'=>'admin.products.'],function() {
+
+    // import products
+    Route::get('/import', 'AdminProductController@import')->name('import')->middleware('can:create-product');
+    Route::post('/import_products_data', 'AdminProductController@importData')->name('import_data')->middleware('can:store-product');
+
     Route::get('/', 'AdminProductController@index')->name('index')->middleware('can:list-product');
     Route::get('/create', 'AdminProductController@create')->name('create')->middleware('can:create-product');
     Route::post('/store', 'AdminProductController@store')->name('store')->middleware('can:store-product');

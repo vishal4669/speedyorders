@@ -15,8 +15,10 @@ use App\Models\ProductOptionValue;
 use Illuminate\Routing\Controller;
 use Modules\AdminProduct\Services\CreateProductService;
 use Modules\AdminProduct\Services\UpdateProductService;
+use Modules\AdminProduct\Services\ImportProductService;
 use Modules\AdminProduct\Http\Requests\CreateProductRequest;
 use Modules\AdminProduct\Http\Requests\UpdateProductRequest;
+use Modules\AdminProduct\Http\Requests\ImportProductRequest;
 use App\Models\ShippingZoneGroup;
 use App\Models\ShippingZonePrice;
 
@@ -239,6 +241,39 @@ class AdminProductController extends Controller
     {
         $groupData = ShippingZonePrice::with(['deliverytime','group','package'])->where('shipping_zone_groups_id',$id)->get();
         return response()->json(['data'=>$groupData], 200);
+    }
+
+    /**
+     * Import the products from csv file.
+     * @return Response
+     */
+    public function import()
+    {
+        $data = [
+            'menu' => 'products',
+        ];
+        
+        return view('adminproduct::import');
+    }
+
+    /**
+     * import all the csv products in to the DB table products and related tables.
+     * @param Request $request
+     * @return Response
+     */
+    public function importData(ImportProductRequest $request,ImportProductService $service)
+    {
+
+        $validatedData = $request->validated();
+
+        if($service->handle($validatedData))
+        {
+            session()->flash('success_message','Products imported successfully.');
+        } else {
+            session()->flash('error_message','Products imported could not be stored.');
+            return redirect()->back()->withInput();
+        }
+        return redirect()->route('admin.products.index');
     }
 
 }
