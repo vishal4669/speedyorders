@@ -25,7 +25,16 @@
     <label for="image" class="control-label">{{ 'Image' }}</label>
     <input type="file" name="image" class="form-control">
     {!! $errors->first('image', '<p class="help-block">:message</p>') !!}
+
+    @if($category->image && $category->image!='')
+        <br>
+        <span id="categoryImage">
+            <img width="250" src="{{url('images/categories/'.$category->image)}}">    
+        </span>
+    @endif
 </div>
+
+
 <div class="form-group {{ $errors->has('description') ? 'has-error' : ''}}">
     <label for="description" class="control-label">{{ 'Description' }}</label>
     <textarea class="form-control" rows="5" name="description" type="textarea" id="description" >{{ old('description', isset($category->description) ? $category->description : null) }}</textarea>

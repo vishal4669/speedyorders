@@ -6,8 +6,10 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use Modules\AdminCategory\Services\ImportCategoryService;
 use Modules\AdminCategory\Services\CreateCategoryService;
 use Modules\AdminCategory\Services\UpdateCategoryService;
+use Modules\AdminCategory\Http\Requests\ImportCategoryRequest;
 use Modules\AdminCategory\Http\Requests\CreateCategoryRequest;
 use Modules\AdminCategory\Http\Requests\UpdateCategoryRequest;
 
@@ -175,4 +177,38 @@ class AdminCategoryController extends Controller
 
         return redirect()->route('admin.categories.index');
     }
+
+    /**
+     * Import the products from csv file.
+     * @return Response
+     */
+    public function import()
+    {
+        $data = [
+            'menu' => 'categories',
+        ];
+        
+        return view('admincategory::import');
+    }
+
+    /**
+     * import all the csv products in to the DB table products and related tables.
+     * @param Request $request
+     * @return Response
+     */
+    public function importData(ImportCategoryRequest $request,ImportCategoryService $service)
+    {
+
+        $validatedData = $request->validated();
+
+        if($service->handle($validatedData))
+        {
+            session()->flash('success_message','Categories imported successfully.');
+        } else {
+            session()->flash('error_message','Categories imported could not be stored.');
+            return redirect()->back()->withInput();
+        }
+        return redirect()->route('admin.categories.index');
+    }
+
 }

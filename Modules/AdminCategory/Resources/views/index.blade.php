@@ -8,6 +8,11 @@
                 <h4>Categories List</h4>
             </div>
             <div class="col-md-1 pull-right text-right">
+                 <a style="display: none;" href="{{ route('admin.categories.import') }}" class="btn btn-primary" data-toggle="tooltip" data-placement="top" data-original-title="Import">
+                    <i class="fa fa-download"></i>
+                </a>
+                
+
                 <a href="{{ route('admin.categories.create') }}" class="btn btn-primary-fade" data-toggle="tooltip" data-placement="top" data-original-title="Create Product">
                     <i class="fa fa-plus"></i>
                 </a>
@@ -42,7 +47,11 @@
                             <td>{{ $item->parentCategories ?? null }}</td>
                             <td>{{ $item->name }}</td>
                             <td>{{ $item->slug }}</td>
-                            <td><image height="50px" width="50px" src="{{url('/images/categories/'.$item->image)}}"></image></td>
+                            <td>
+                                @if($item->image && $item->image!='')
+                                    <image height="50px" width="50px" src="{{ url('/images/categories/'.$item->image)}}"></image>
+                                @endif
+                            </td>
                             <td>
                                 {{ $item->status=='1' ? 'Active':'Inactive'  }}
                                 <a href="{{ route('admin.categories.update.status',$item->id) }}" class="text-danger"><strong>Change</strong></a>

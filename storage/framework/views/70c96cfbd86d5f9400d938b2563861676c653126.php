@@ -29,7 +29,16 @@
     <input type="file" name="image" class="form-control">
     <?php echo $errors->first('image', '<p class="help-block">:message</p>'); ?>
 
+
+    <?php if($category->image && $category->image!=''): ?>
+        <br>
+        <span id="categoryImage">
+            <img width="250" src="<?php echo e(url('images/categories/'.$category->image)); ?>">    
+        </span>
+    <?php endif; ?>
 </div>
+
+
 <div class="form-group <?php echo e($errors->has('description') ? 'has-error' : ''); ?>">
     <label for="description" class="control-label"><?php echo e('Description'); ?></label>
     <textarea class="form-control" rows="5" name="description" type="textarea" id="description" ><?php echo e(old('description', isset($category->description) ? $category->description : null)); ?></textarea>

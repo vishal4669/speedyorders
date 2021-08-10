@@ -47,7 +47,8 @@ class AdminProductController extends Controller
             'menu' => 'products',
         ];
 
-        $categories = Category::where(['category_id'=>null])->select('id','name')->get();
+        //$categories = Category::where(['category_id'=>null])->select('id','name')->get();
+        $categories = Category::where(['category_id'=>0])->orWhere(['category_id'=>null])->select('id','name')->get();
         $products = Product::where('status',1)->select('id','name')->get();
         $options = Option::orderBy('sort_order')->get();
 
@@ -101,12 +102,11 @@ class AdminProductController extends Controller
         $options = Option::orderBy('sort_order')->get();
         $product = Product::where('id',$id)->with('options','options.optionValues', 'groups')->first();
         $products = Product::where('status',1)->select('id','name')->get();
-        $categories = Category::where(['category_id'=>null])->select('id','name')->get();
+        $categories = Category::where(['category_id'=>0])->orWhere(['category_id'=>null])->select('id','name')->get();
         $productCategories = ProductCategory::where('product_id',$id)->pluck('category_id')->toArray();
         $productGalleries = ProductGallery::where('product_id',$id)->select(['id','image','order'])->get();
         $optionsId = ProductOption::where('product_id',$id)->pluck('option_id');
         $productOptionValues = ProductOptionValue::whereIn('option_id',$optionsId)->get();
-
         $groups = ShippingZoneGroup::select('id','group_name')->get();
             
         return view('adminproduct::edit',compact('product','categories','productCategories','options','products','productGalleries','productOptionValues', 'groups'),$data);

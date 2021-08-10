@@ -23,7 +23,7 @@ Route::group(['prefix' => 'admin/products', 'middleware' => 'auth:admin','as'=>'
     Route::post('/store', 'AdminProductController@store')->name('store')->middleware('can:store-product');
     Route::get('/{id}/edit', 'AdminProductController@edit')->name('edit')->middleware('can:edit-product');
     Route::post('/update/{id}', 'AdminProductController@update')->name('update')->middleware('can:update-product');
-    Route::delete('/delete/{id}', 'AdminProductController@delete')->name('delete')->middleware('can:delete-product');
+    Route::delete('/delete/{id}', 'AdminProductController@destroy')->name('delete')->middleware('can:delete-product');
     Route::post('/upload-product-media', 'AdminProductController@uploadProductMedia')->name('upload.media')->middleware('can:edit-product');
     Route::get('/get-product-media/{ids}', 'AdminProductController@getProductMedia')->name('get.media')->middleware('can:edit-product');
     Route::get('/get-single-product-media/{id}', 'AdminProductController@getSingleProductMedia')->name('get.single.media')->middleware('can:edit-product');

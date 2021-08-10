@@ -13,6 +13,10 @@
 
 Route::group(['prefix' => 'admin/categories', 'middleware' => 'auth:admin','as'=>'admin.categories.'],function() {
 
+    // import categories
+    Route::get('/import', 'AdminCategoryController@import')->name('import')->middleware('can:create-product');
+    Route::post('/import_category_data', 'AdminCategoryController@importData')->name('import_data')->middleware('can:store-product');
+
     Route::get('/', 'AdminCategoryController@index')->name('index')->middleware('can:list-product-option');
     Route::get('/create', 'AdminCategoryController@create')->name('create')->middleware('can:create-product-option');
     Route::post('/store', 'AdminCategoryController@store')->name('store')->middleware('can:store-product-option');
