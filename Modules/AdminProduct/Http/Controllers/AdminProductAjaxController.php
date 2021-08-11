@@ -16,13 +16,19 @@ class AdminProductAjaxController extends Controller
         if(!$request->optionId){
             return;
         }
-        $options = Option::with('optionValues')->get();
+        $option_data = Option::with('optionValues')->where('options.id', $request->optionId)->first();
+
         $counter = $request->counter;
 
-        $colspan = count($options) +1;
+        switch($option_data->type){
+            case 'select' :                 
+                $returnHTML .= view('adminproduct::htmlelement.select',compact('option_data','counter'))->render();
+            break;
 
-        $returnHTML .= view('adminproduct::htmlelement.radio',compact('options','counter', 'colspan'))->render();
-                
+            case 'input' : 
+                $returnHTML .= view('adminproduct::htmlelement.input',compact('option_data','counter'))->render();
+            break;
+        }       
 
         return response()->json(array('success' => true, 'html'=>$returnHTML));     
     }

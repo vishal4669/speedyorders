@@ -95,7 +95,7 @@
                                             @foreach ($productOption->optionValues as $productOptionValue)
                                                 <tr style="display: table-row;" class="footable-even">
                                                     <td class="footable-visible">
-                                                        <input type="hidden" name="option[select][option_data][{{ $counter }}][]" value="{{$option->id}}">
+                                                    <input type="hidden" name="option[select][option_data][{{ $counter }}][]" value="{{$productOptionValue->option_id}}">
 
                                                         <select name="option[select][option_values][{{ $counter }}][]"
                                                             class="form-control">
@@ -174,17 +174,14 @@
 
                 var optionsId = $(this).val();
                 $.ajax({
-                    /* the route pointing to the post function */
                     url: url,
                     type: 'post',
-                    /* send the csrf-token and the input to the controller */
                     data: {
                         "_token": "{{ csrf_token() }}",
                         "counter": counter,
                         "optionId": optionsId
                     },
                     dataType: 'JSON',
-                    /* remind that 'data' is the response of the AjaxController */
                     success: function(data) {
                         $('.options-panel').append(data.html);
                         counter++;

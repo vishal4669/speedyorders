@@ -43,10 +43,10 @@ class ImportCategoryService
                     $categoryParentId = $data[2];
                     $categoryImageUrl = $data[3];
                     $categoryStatus = $data[4];
-                    $categoryDescription = htmlspecialchars_decode($data[5]);
+                   // $categoryDescription = htmlspecialchars_decode($data[5]);
 
                    
-                    $doc = new DOMDocument();
+                   /* $doc = new DOMDocument();
                     $doc->loadHTML($categoryDescription);
                     $elements = $doc->getElementsByTagName('img');
 
@@ -58,7 +58,7 @@ class ImportCategoryService
                                 $pathinfodesc = pathinfo($categoryDescImageUrl);
                                 $imagenamedesc = $pathinfodesc['filename'].'.'.$pathinfodesc['extension'];
                                 
-                                $desc_image_url = public_path("images/categories/".$imagenamedesc);
+                                $desc_image_url = public_path("images/category_description_images/".$imagenamedesc);
                                 
                                 @file_put_contents($desc_image_url, @file_get_contents($categoryDescImageUrl));
                             }
@@ -66,8 +66,11 @@ class ImportCategoryService
                         }
                     }
 
+                    //$categoryDescription = str_replace('');
+                    // https://speedyorders.com/image/catalog/2021-Alex/Birthday%20Theme/Favorite%20Pets.jpg
 
-
+                    print_r($categoryDescription);
+                        */
 
                    
                     $str_random = $this->generateRandomString(3);

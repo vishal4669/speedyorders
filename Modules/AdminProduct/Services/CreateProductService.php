@@ -69,7 +69,7 @@ class CreateProductService
                 count($validatedData['option']) > 0
             ) {
 
-                print_r($validatedData);die;
+      
                 foreach ($validatedData['option'] as $optionKey => $option) {
                     switch ($optionKey) {
                         case 'input':

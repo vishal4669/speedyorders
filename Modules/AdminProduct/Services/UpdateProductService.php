@@ -71,10 +71,13 @@ class UpdateProductService
 
             /**HANDLING OPTIONS */
             if (isset($validatedData['option']) && count($validatedData['option']) > 0) {
+
                 $ids = $product->options->pluck('id');
                 if(count($ids)>0){
-                    ProductOption::where('id',$ids)->delete();
+                    ProductOption::whereIn('id',$ids)->delete();
+                    ProductOptionValue::whereIn('product_option_id',$ids)->delete();
                 }
+
 
                 foreach ($validatedData['option'] as $optionKey => $option) {
                     switch ($optionKey) {
@@ -98,27 +101,27 @@ class UpdateProductService
                             break;
 
                         case 'select':
-                        
-
                             Log::info(array("option" => $option));
-
                             foreach ($option['option_values'] as $counter => $optionValue) {
-                                
+                               
                                 Log::info(array("Option Data" => $option['option_data']));
 
-                                $productOption = ProductOption::create([
+                                $productOptionData = [
                                     'product_id' => $product->id,
                                     'option_id' => $option['option_data'][$counter][0],
                                     'required' =>
                                         (bool) $validatedData[
                                             'option_required'
                                         ],
-                                ]);
+                                ];
+
+                                $productOption = ProductOption::create($productOptionData);
 
                                 Log::info(array("Option Values" => $optionValue));
 
                                 foreach ($optionValue as $vaueKey => $item) {
-                                    ProductOptionValue::create([
+
+                                    $productOptionValueData = [
                                         'product_option_id' =>
                                             $productOption->id,
                                         'option_id' => $option['option_data'][$counter][0],
@@ -136,7 +139,9 @@ class UpdateProductService
                                             $option['price'][$counter][
                                                 $vaueKey
                                             ],
-                                    ]);
+                                    ];
+
+                                    ProductOptionValue::create($productOptionValueData);
                                 }
                             }
                             break;
@@ -147,8 +152,6 @@ class UpdateProductService
                     
                 }
             }
-
-            
 
             if(count($validatedData['related_products'])>0){
                 if($product->related_products){

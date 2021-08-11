@@ -2,7 +2,7 @@
     <div class="panel-heading">
         <div class="row">
             <div class="col-md-3">
-                <h5><strong>{{$option->name}}</strong> </h5>
+                <h5><strong>{{$option_data['name']}}</strong> </h5>
             </div>
             <div class="col-md-4 pull-right text-right">
                 <button class="btn btn-danger delete-hpanel"><i class="pe-7s-close-circle"></i></button>
@@ -21,7 +21,7 @@
             <tbody>
                 <tr style="display: table-row;" class="footable-even">
                     <td class="footable-visible" colspan="5">
-                        <input type="text" class="form-control" name="option[input][{{$option->id}}]" placeholder="{{$option->name}}"
+                        <input type="text" class="form-control" name="option[input][{{$option_data['id']}}]" placeholder="{{$option_data['name']}}"
                             required>
                     </td>
                 </tr>
