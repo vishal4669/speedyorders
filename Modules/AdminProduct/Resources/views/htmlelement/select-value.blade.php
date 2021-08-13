@@ -1,4 +1,5 @@
                 <tr style="display: table-row;" class="footable-even">
+
                     <td class="footable-visible">
                       
                         <input type="hidden" name="option[select][option_data][{{ $counter }}][]" value="{{$option->id}}">
@@ -19,6 +20,7 @@
                             <option value="0">No</option>
                         </select>
                     </td>
+
                     <td class="footable-visible">
 
                         <select name="option[select][price_prefix][{{$counter}}][]" class="form-control" required>

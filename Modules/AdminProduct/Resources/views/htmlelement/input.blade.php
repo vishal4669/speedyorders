@@ -9,6 +9,10 @@
             </div>
         </div>
     </div>
+
+    <input type="hidden" name="option[input][{{$option_data['id']}}]" value="">
+
+    <?php /*
     <div class="panel-body">
         <table
             class="option-values-table footable table table-bordered toggle-arrow-tiny default breakpoint footable-loaded"
@@ -27,5 +31,5 @@
                 </tr>
             </tbody>
         </table>
-    </div>
+    </div>*/?>
 </div>

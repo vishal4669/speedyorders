@@ -1,11 +1,20 @@
 <div class="hpanel"> 
+    <div class="panel-heading">
+                <div class="row">
+                    <div class="col-md-3">
+                        <h5><strong>{{ $option_data->name }}</strong> </h5>
+                    </div>
+                    <div class="col-md-4 pull-right text-right">
+                        <a class="btn btn-danger delete-hpanel"><i class="pe-7s-close-circle"></i></a>
+                    </div>
+                </div>
+            </div>
     <div class="panel-body">
         <table
             class="option-values-table footable table table-bordered toggle-arrow-tiny default breakpoint footable-loaded"
             data-page-size="8" data-filter="#filter">
             <thead>
                 <tr>
-                    <th class="footable-visible">Attribute Name</span></th>
                     <th class="footable-visible">Value</span></th>
                     <th class="footable-visible footable-sortable">Quantity</span></th>
                     <th class="footable-visible footable-sortable">Subtract stock</span></th>
@@ -14,16 +23,14 @@
                     <th class="footable-sortable">Operation</span></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="tbody{{$option_data->id}}">
 
                 
                     <tr style="display: table-row;" class="footable-even">
 
                         <input type="hidden" name="option[select][option_data][{{ $counter }}][]" value="{{$option_data->id}}">
                         
-                        <td class="footable-visible">
-                            <h5><strong>{{$option_data->name}}</strong> </h5>
-                        </td>
+                       
                         <td class="footable-visible">
                             <select name="option[select][option_values][{{$counter}}][]" class="form-control">
                                 @foreach ($option_data->optionValues ?? [] as $item)
@@ -41,7 +48,6 @@
                                 <option value="0">No</option>
                             </select>
                         </td>
-                       
                         <td class="footable-visible">
 
                             <select name="option[select][price_prefix][{{$counter}}][]" class="form-control" required>

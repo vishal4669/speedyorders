@@ -53,15 +53,11 @@ class AdminProductAjaxController extends Controller
             return;
         }
         $option = Option::where('id',$request->optionId)->with('optionValues')->first();
-        $counter = $request->counter;
 
+        $counter = $request->counter;
 
         switch($option->type){
 
-            // case "input":
-            //     $returnHTML = view('adminproduct::htmlelement.input',compact('option','counter'))->render();
-            //     return response()->json(array('success' => true, 'html'=>$returnHTML));
-            //     break;
             case "select":
                 $returnHTML = view('adminproduct::htmlelement.select-value',compact('option','counter'))->render();
                 return response()->json(array('success' => true, 'html'=>$returnHTML));

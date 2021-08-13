@@ -107,7 +107,7 @@ $('.add-product').on('click', function (e)
     var checkInputs =$('input.'+productId+'[type=text]');
     var checkSelects =$('select.'+productId);
 
-    checkInputs.each(function() {
+    /*checkInputs.each(function() {
         if($(this).val() == "")
         {
             validate = true;
@@ -118,7 +118,7 @@ $('.add-product').on('click', function (e)
         {
             validate = true;
         }
-    });
+    });*/
     if(productId==="" || totalQuantity==="" || validate === true)
     {
         $('.validate-msg').show();
@@ -224,7 +224,7 @@ $(document).ready(function(){
         if($('input[name="same_as_customer_details_shipping"]:checked').val()==1){
             $("#shipping_first_name").val($("#first_name").val());
             $("#shipping_last_name").val($("#last_name").val());
-            $("#shipping_company").val($("#company").val());
+            $("#shipping_company").val($("#payment_company").val());
             $("#shipping_address_1").val($("#address_1").val());
             $("#shipping_address_2").val($("#address_2").val());
             $("#shipping_city").val($("#city").val());

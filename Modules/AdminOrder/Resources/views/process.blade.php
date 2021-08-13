@@ -157,7 +157,14 @@
                                        @if(count($orderedProduct->orderProductOptions)>0)
                                             <p><b>Variant</b></p>
                                             @foreach($orderedProduct->orderProductOptions ??[] as $orderProductOption)
-                                                    <p>[{{$orderProductOption->productOption->option->name }} : {{($orderProductOption->productOption->option->type == "select")?$orderProductOption->productOptionValue->optionValue->name:$orderProductOption->value}} ]</p>
+
+                                                @php
+                                                    //print_R($orderProductOption->productOption);
+                                                @endphp
+
+                                                @if(isset($orderProductOption->productOption))
+                                                    <p>[{{$orderProductOption->productOption->option->name }} : {{($orderProductOption->productOption->option->type == "select" && isset($orderProductOption->productOptionValue->optionValue->name)) ? $orderProductOption->productOptionValue->optionValue->name:$orderProductOption->value}} ]</p>
+                                                @endif
                                             @endforeach
                                        @endif
                                     </td>                                  

@@ -40,18 +40,21 @@
 
     {!! $errors->first('shipping_city', '<p class="help-block">:message</p>') !!}
 </div>
+
+<div class="form-group {{ $errors->has('shipping_country_name') ? 'has-error' : ''}}">
+    <label for="shipping_country_name" class="control-label">{{ 'Country *' }}</label>
+    <input class="form-control" type="text" name="shipping_country_name" id="shipping_country_name" value="{{ isset($order->shipping_country_name) ? $order->shipping_country_name : old('shipping_country_name')}}">
+
+    {!! $errors->first('shipping_country_name', '<p class="help-block">:message</p>') !!}
+</div>
+
 <div class="form-group {{ $errors->has('shipping_postcode') ? 'has-error' : ''}}">
     <label for="shipping_postcode" class="control-label">{{ 'Postalcode *' }}</label>
     <input class="form-control" type="text" name="shipping_postcode" id="shipping_postcode" value="{{ isset($order->shipping_postcode) ? $order->shipping_postcode : old('shipping_postcode')}}">
 
     {!! $errors->first('shipping_postcode', '<p class="help-block">:message</p>') !!}
 </div>
-<div class="form-group {{ $errors->has('shipping_country_name') ? 'has-error' : ''}}">
-    <label for="shipping_country_name" class="control-label">{{ 'Country Name *' }}</label>
-    <input class="form-control" type="text" name="shipping_country_name" id="shipping_country_name" value="{{ isset($order->shipping_country_name) ? $order->shipping_country_name : old('shipping_country_name')}}">
 
-    {!! $errors->first('shipping_country_name', '<p class="help-block">:message</p>') !!}
-</div>
 <div class="form-group {{ $errors->has('shipping_region') ? 'has-error' : ''}}">
     <label for="shipping_region" class="control-label">{{ 'Region *' }}</label>
     <input class="form-control" type="text" name="shipping_region" id="shipping_region" value="{{ isset($order->shipping_region) ? $order->shipping_region : old('shipping_region')}}">

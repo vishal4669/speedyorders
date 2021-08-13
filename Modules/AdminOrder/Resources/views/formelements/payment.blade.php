@@ -48,7 +48,7 @@
     {!! $errors->first('payment_postcode', '<p class="help-block">:message</p>') !!}
 </div>
 <div class="form-group {{ $errors->has('payment_country_name') ? 'has-error' : ''}} payment_fields">
-    <label for="payment_country_name" class="control-label">{{ ' Country Name ' }}</label>
+    <label for="payment_country_name" class="control-label">{{ ' Country ' }}</label>
     <input class="form-control" type="text" name="payment_country_name" id="payment_country_name" value="{{ isset($order->payment_country_name) ? $order->payment_country_name : old('payment_country_name')}}">
 
     {!! $errors->first('payment_country_name', '<p class="help-block">:message</p>') !!}

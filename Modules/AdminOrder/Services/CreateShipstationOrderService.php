@@ -58,7 +58,6 @@ class CreateShipstationOrderService
 
 
             // create orders for single products
-            // 
             $shipStation = new ShipStation(env('SHIPSTATION_API_KEY'),env('SHIPSTATION_API_SECRET'), env('SHIPSTATION_API_URL'));
             $address = new Address();
 
@@ -76,12 +75,12 @@ class CreateShipstationOrderService
 
                 $product = Product::find($productId);
 
-                $productItem = new OrderItem();
-                $productItem->lineItemKey = $product->uuid;
-                $productItem->sku = $product->sku;
-                $productItem->name = $product->name;
-                $productItem->quantity = $quantity;
-                $productItem->unitPrice  = $product->base_price;
+                $productItem2 = new OrderItem();
+                $productItem2->lineItemKey = $product->uuid;
+                $productItem2->sku = $product->sku;
+                $productItem2->name = $product->name;
+                $productItem2->quantity = $quantity;
+                $productItem2->unitPrice  = $product->base_price;
                 
                 $porder = new ProductOrder();
 
@@ -94,7 +93,7 @@ class CreateShipstationOrderService
                 $porder->shippingAmount = '0.00';
                 $porder->billTo = $address;
                 $porder->shipTo = $address;
-                $porder->items[] = $productItem;
+                $porder->items[] = $productItem2;
 
                 $response_single = $shipStation->orders->create($porder);
 
@@ -102,19 +101,19 @@ class CreateShipstationOrderService
                     $orderProductData = OrderProduct::where('order_id',$orderData["id"])->where('product_id', $product->id)->first();
                     $orderProductData->shipstation_order_id = $response_single->orderId;
                     $orderProductData->save();
-                }                
+                }            
             }
 
             $shipStation2 = new ShipStation(env('SHIPSTATION_API_KEY'),env('SHIPSTATION_API_SECRET'), env('SHIPSTATION_API_URL'));
-            $address = new Address();
+            $address2 = new Address();
 
-            $address->name = $orderData['shipping_first_name']." ".$orderData['shipping_last_name'];
-            $address->street1 = $orderData['shipping_address_1'];
-            $address->city = $orderData['shipping_city'];
-            $address->state = $orderData['address_1'];
-            $address->postalCode = $orderData['shipping_postcode'];
-            $address->country = "US";
-            $address->phone = $orderData['phone'];
+            $address2->name = $orderData['shipping_first_name']." ".$orderData['shipping_last_name'];
+            $address2->street1 = $orderData['shipping_address_1'];
+            $address2->city = $orderData['shipping_city'];
+            $address2->state = $orderData['address_1'];
+            $address2->postalCode = $orderData['shipping_postcode'];
+            $address2->country = "US";
+            $address2->phone = $orderData['phone'];
 
             // Combo product parameters
             $package_length = (isset($validatedData["package_length"])) ? $validatedData["package_length"] : 0;
@@ -148,15 +147,15 @@ class CreateShipstationOrderService
             $weight->units = 'oz';
 
             // create orders for combo products            
-            $porder = new ProductOrder(); 
-            $porder->orderNumber = $orderData['uuid'];
-            $porder->orderKey = $orderData['uuid'];
-            $porder->orderDate = $orderData['created_at'];
-            $porder->orderStatus = 'awaiting_shipment';
-            $porder->billTo = $address;
-            $porder->shipTo = $address;
-            $porder->dimensions = $dimensions;
-            $porder->weight = $weight;            
+            $porder2 = new ProductOrder(); 
+            $porder2->orderNumber = $orderData['uuid'];
+            $porder2->orderKey = $orderData['uuid'];
+            $porder2->orderDate = $orderData['created_at'];
+            $porder2->orderStatus = 'awaiting_shipment';
+            $porder2->billTo = $address2;
+            $porder2->shipTo = $address2;
+            $porder2->dimensions = $dimensions;
+            $porder2->weight = $weight;            
 
             foreach($comboProducts as $productId){
 
@@ -172,13 +171,14 @@ class CreateShipstationOrderService
                 $productItem->quantity = $quantity;
                 $productItem->unitPrice  = $product->base_price;
                 
-                $porder->amountPaid += $product->base_price;
-                $porder->taxAmount += '0.00';
-                $porder->shippingAmount += '0.00';
-                $porder->items[] = $productItem;                                
+                $porder2->amountPaid += $product->base_price;
+                $porder2->taxAmount += '0.00';
+                $porder2->shippingAmount += '0.00';
+                $porder2->items[] = $productItem;                                
             }
 
-            $response_combo = $shipStation2->orders->create($porder);
+
+            $response_combo = $shipStation2->orders->create($porder2);
 
             if(isset($response_combo->orderId) && $response_combo->orderId!=''){
 
@@ -190,6 +190,8 @@ class CreateShipstationOrderService
                 
             }
 
+            
+            
             $customerTransaction = CustomerTransaction::create([
                 'order_id' => $orderData["id"],
                 'customer_user_id' => $orderData['customer_user_id'],

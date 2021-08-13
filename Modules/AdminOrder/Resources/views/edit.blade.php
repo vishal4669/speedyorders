@@ -114,7 +114,7 @@ $('.add-product').on('click', function (e)
     var checkInputs =$('input.'+productId+'[type=text]');
     var checkSelects =$('select.'+productId);
 
-    checkInputs.each(function() {
+    /*checkInputs.each(function() {
         if($(this).val() == "")
         {
             validate = true;
@@ -125,7 +125,7 @@ $('.add-product').on('click', function (e)
         {
             validate = true;
         }
-    });
+    });*/
     if(productId==="" || totalQuantity==="" || validate === true)
     {
         $('.validate-msg').show();

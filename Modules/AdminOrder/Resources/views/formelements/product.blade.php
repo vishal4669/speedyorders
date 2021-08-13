@@ -123,9 +123,13 @@
                                 {
                                     $value = "";
                                     if(isset($orderProductOption->productOption) && !empty($orderProductOption->productOption) && isset($orderProductOption->productOption->option)){
-                                        $value =($orderProductOption->productOption->option->type == "select")?$orderProductOption->productOptionValue->id:$orderProductOption->value;
 
-                                        $rowId.='option['.$orderProduct->product_id.']['.$orderProductOption->productOption->option->type.']['.$orderProductOption->productOption->id.']['.$value.']' ;
+                                        if(isset($orderProductOption->productOption->id)){
+                                            $value =($orderProductOption->productOption->option->type == "select" && isset($orderProductOption->productOptionValue->id))?$orderProductOption->productOptionValue->id:$orderProductOption->value;
+
+                                        
+                                            $rowId.='option['.$orderProduct->product_id.']['.$orderProductOption->productOption->option->type.']['.$orderProductOption->productOption->id.']['.$value.']' ;
+                                        }
                                     }
                                 }
                         }
@@ -146,7 +150,7 @@
                                 @foreach($orderProduct->orderProductOptions ??[] as $orderProductOption)
 
                                     @if(isset($orderProductOption->productOption) && !empty($orderProductOption->productOption))
-                                        <p>{{$orderProductOption->productOption->option->name}} :{{($orderProductOption->productOption->option->type == "select")?$orderProductOption->productOptionValue->optionValue->name:$orderProductOption->value}}  </p>
+                                        <p>{{$orderProductOption->productOption->option->name}} :{{($orderProductOption->productOption->option->type == "select" && isset($orderProductOption->productOptionValue->optionValue->name))?$orderProductOption->productOptionValue->optionValue->name:$orderProductOption->value}}  </p>
                                     @endif    
                                
                                  @endforeach
@@ -157,8 +161,8 @@
                         </td>
                         <td class="hidden">
                             @foreach($orderProduct->orderProductOptions ??[] as $orderProductOption)
-                                @if(isset($orderProductOption->productOption) && !empty($orderProductOption->productOption))
-                                    <input type="text" data-id="[{{$orderProductOption->productOption->option->type}}][{{$orderProductOption->productOption->id}}]" class="hiddenInput"  name="option[{{ $key }}][{{$orderProductOption->productOption->option->type}}][{{$orderProductOption->productOption->id}}]" value="{{($orderProductOption->productOption->option->type == "select")?$orderProductOption->productOptionValue->id:$orderProductOption->value}}">
+                                @if(isset($orderProductOption->productOption) && !empty($orderProductOption->productOption) && isset($orderProductOption->productOption->id))
+                                    <input type="text" data-id="[{{$orderProductOption->productOption->option->type}}][{{$orderProductOption->productOption->id}}]" class="hiddenInput"  name="option[{{ $key }}][{{$orderProductOption->productOption->option->type}}][{{$orderProductOption->productOption->id}}]" value="{{($orderProductOption->productOption->option->type == "select" && isset($orderProductOption->productOptionValue->id)) ? $orderProductOption->productOptionValue->id:$orderProductOption->value}}">
                                 @endif    
                             @endforeach
                         </td>

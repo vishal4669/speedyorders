@@ -40,7 +40,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="panel-body">
+                                <input type="hidden" name="option[input][<?php echo e($productOption->option->id); ?>]" value="">
+                                <?php /*<div class="panel-body">
                                     <table class="option-values-table"
                                         class="footable table table-bordered toggle-arrow-tiny default breakpoint footable-loaded"
                                         data-page-size="8" data-filter="#filter">
@@ -53,13 +54,13 @@
                                             <tr style="display: table-row;" class="footable-even">
                                                 <td class="footable-visible" colspan="5">
                                                     <input type="text" class="form-control"
-                                                        name="option[input][<?php echo e($productOption->option->id); ?>]"
-                                                        value="<?php echo e($productOption->optionValues->first()->input_value); ?>" required>
+                                                        name="option[input][{{ $productOption->option->id }}]"
+                                                        value="{{ $productOption->optionValues->first()->input_value }}">
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
-                                </div>
+                                </div>*/?>
                             </div>
 
                             <?php break; ?>
@@ -91,7 +92,7 @@
                                                 <th class="footable-sortable">Operation</span></th>
                                             </tr>
                                         </thead>
-                                        <tbody id="tbody<?php echo e($option->id); ?>">
+                                        <tbody id="tbody<?php echo e($productOption->option->id); ?>">
                                             <?php $__currentLoopData = $productOption->optionValues; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $productOptionValue): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <tr style="display: table-row;" class="footable-even">
                                                     <td class="footable-visible">
@@ -146,10 +147,10 @@
                                         </tbody>
                                         <tfoot>
                                             <tr style="display: table-row;" class="footable-even">
-                                                <td class="footable-visible" colspan="5"></td>
+                                                <td class="footable-visible" colspan="6"></td>
                                                 <td class="footable-visible footable-last-column"><a
                                                         class="btn btn-primary add-option-value"
-                                                        data-option-id="<?php echo e($option->id); ?>"><i class="fa fa-plus"></i></a>
+                                                        data-option-id="<?php echo e($productOption->option->id); ?>"><i class="fa fa-plus"></i></a>
                                                 </td>
                                             </tr>
                                         </tfoot>
@@ -202,9 +203,6 @@
                 var optionUrl = '<?php echo e(route('admin.products.ajax.option.value')); ?>';
                 var optionId = $(this).data('option-id');
 
-                alert(optionId);
-
-
                 $.ajax({
                     /* the route pointing to the post function */
                     url: optionUrl,
@@ -222,6 +220,8 @@
                         $('#tbody'+optionId).append(data.html);
                     }
                 });
+
+                return false;
             });
         });
 

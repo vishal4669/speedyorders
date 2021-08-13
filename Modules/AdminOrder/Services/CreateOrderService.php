@@ -120,6 +120,7 @@ class CreateOrderService
                 if(count($product->options)>0){
                     if ($orderProduct && isset($validatedData['option'][$pkey])) {
                         foreach ($validatedData['option'][$pkey] as $type => $options) {
+
                             foreach ($options as $okey => $option) {
                                 OrderProductOption::create([
                                     'order_id' => $order->id,
@@ -134,22 +135,24 @@ class CreateOrderService
                                     $updatedPrice = $orderProduct->price;
 
                                     /**Updating price based on option value E.G => RED color sells +$24 */
-                                    if($productOptionValue->price_prefix){
+                                    if(isset($productOptionValue->price_prefix) && $productOptionValue->price_prefix!=''){
 
                                         $updatedPrice += $productOptionValue->price;
                                     }
                                     else
                                     {
-                                        $updatedPrice += $productOptionValue->price;
+                                        if(isset($productOptionValue->price)){
+                                            $updatedPrice += $productOptionValue->price;
+                                        }
                                     }
                                         
                                         $total_amt +=  $updatedPrice;
-                                    $orderProduct->update([
-                                        'price' => $updatedPrice,
-                                        'quantity'=> $validatedData['product_quantity'][$pkey]
-                                    ]);
+                                        $orderProduct->update([
+                                            'price' => $updatedPrice,
+                                            'quantity'=> $validatedData['product_quantity'][$pkey]
+                                        ]);
 
-                                    if($productOptionValue->subtract_from_stock){
+                                    if(isset($productOptionValue->subtract_from_stock)){
                                         $orderProduct->product->update([
                                             'quantity'=>$orderProduct->product->quantity - $validatedData['product_quantity'][$pkey]
                                         ]);

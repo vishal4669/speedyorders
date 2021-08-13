@@ -49,18 +49,34 @@
 
             {!! $errors->first('address_2', '<p class="help-block">:message</p>') !!}
         </div>
-        <div class="form-group {{ $errors->has('email') ? 'has-error' : ''}}">
-            <label for="email" class="control-label">{{ 'Email *' }}</label>
-            <input class="form-control" type="text" name="email" id="email" value="{{ isset($order->email) ? $order->email : old('email')}}">
+        <div class="form-group {{ $errors->has('city') ? 'has-error' : ''}} ">
+            <label for="city" class="control-label">{{ ' City ' }}</label>
+            <input class="form-control" type="text" name="city" id="city" value="{{ isset($order->city) ? $order->city : old('city')}}">
 
-            {!! $errors->first('email', '<p class="help-block">:message</p>') !!}
+            {!! $errors->first('city', '<p class="help-block">:message</p>') !!}
         </div>
+
+        <div class="form-group {{ $errors->has('country_name') ? 'has-error' : ''}}">
+            <label for="country_name" class="control-label">{{ ' Country ' }}</label>
+            <input class="form-control" type="text" name="country_name" id="country_name" value="{{ isset($order->country_name) ? $order->country_name : old('country_name')}}">
+
+            {!! $errors->first('country_name', '<p class="help-block">:message</p>') !!}
+        </div>
+
         <div class="form-group {{ $errors->has('postcode') ? 'has-error' : ''}}">
             <label for="postcode" class="control-label">{{ 'Post Code *' }}</label>
             <input class="form-control" type="text" name="postcode" id="postcode" value="{{ isset($order->postcode) ? $order->postcode : old('postcode')}}">
 
             {!! $errors->first('postcode', '<p class="help-block">:message</p>') !!}
         </div>
+
+        <div class="form-group {{ $errors->has('email') ? 'has-error' : ''}}">
+            <label for="email" class="control-label">{{ 'Email *' }}</label>
+            <input class="form-control" type="text" name="email" id="email" value="{{ isset($order->email) ? $order->email : old('email')}}">
+
+            {!! $errors->first('email', '<p class="help-block">:message</p>') !!}
+        </div>
+        
         <div class="form-group {{ $errors->has('phone') ? 'has-error' : ''}}">
             <label for="phone" class="control-label">{{ 'Phone *' }}</label>
             <input class="form-control" type="text" name="phone" id="phone" value="{{ isset($order->phone) ? $order->phone : old('phone')}}">

@@ -239,7 +239,7 @@
                                             <p><b>Variant</b></p>
                                            @foreach($orderedProduct->orderProductOptions ??[] as $orderProductOption)
 
-                                                <p>[{{$orderProductOption->productOption->option->name }} : {{($orderProductOption->productOption->option->type == "select")?$orderProductOption->productOptionValue->optionValue->name:$orderProductOption->value}} ]</p>
+                                                <p>[{{$orderProductOption->productOption->option->name }} : {{($orderProductOption->productOption->option->type == "select" && isset($orderProductOption->productOptionValue->optionValue->name))?$orderProductOption->productOptionValue->optionValue->name:$orderProductOption->value}} ]</p>
 
 
                                             @endforeach

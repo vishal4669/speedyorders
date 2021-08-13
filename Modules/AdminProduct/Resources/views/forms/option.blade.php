@@ -40,7 +40,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="panel-body">
+                                <input type="hidden" name="option[input][{{ $productOption->option->id }}]" value="">
+                                <?php /*<div class="panel-body">
                                     <table class="option-values-table"
                                         class="footable table table-bordered toggle-arrow-tiny default breakpoint footable-loaded"
                                         data-page-size="8" data-filter="#filter">
@@ -54,12 +55,12 @@
                                                 <td class="footable-visible" colspan="5">
                                                     <input type="text" class="form-control"
                                                         name="option[input][{{ $productOption->option->id }}]"
-                                                        value="{{ $productOption->optionValues->first()->input_value }}" required>
+                                                        value="{{ $productOption->optionValues->first()->input_value }}">
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
-                                </div>
+                                </div>*/?>
                             </div>
 
                             @break
@@ -91,7 +92,7 @@
                                                 <th class="footable-sortable">Operation</span></th>
                                             </tr>
                                         </thead>
-                                        <tbody id="tbody{{ $option->id }}">
+                                        <tbody id="tbody{{ $productOption->option->id }}">
                                             @foreach ($productOption->optionValues as $productOptionValue)
                                                 <tr style="display: table-row;" class="footable-even">
                                                     <td class="footable-visible">
@@ -146,10 +147,10 @@
                                         </tbody>
                                         <tfoot>
                                             <tr style="display: table-row;" class="footable-even">
-                                                <td class="footable-visible" colspan="5"></td>
+                                                <td class="footable-visible" colspan="6"></td>
                                                 <td class="footable-visible footable-last-column"><a
                                                         class="btn btn-primary add-option-value"
-                                                        data-option-id="{{ $option->id }}"><i class="fa fa-plus"></i></a>
+                                                        data-option-id="{{ $productOption->option->id }}"><i class="fa fa-plus"></i></a>
                                                 </td>
                                             </tr>
                                         </tfoot>
@@ -202,9 +203,6 @@
                 var optionUrl = '{{ route('admin.products.ajax.option.value') }}';
                 var optionId = $(this).data('option-id');
 
-                alert(optionId);
-
-
                 $.ajax({
                     /* the route pointing to the post function */
                     url: optionUrl,
@@ -222,6 +220,8 @@
                         $('#tbody'+optionId).append(data.html);
                     }
                 });
+
+                return false;
             });
         });
 

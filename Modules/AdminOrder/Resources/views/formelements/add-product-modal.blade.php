@@ -20,13 +20,14 @@
                     <label for="order_product_quantity" class="control-label">{{ 'Quantity *' }}</label>
                     <input class="form-control" type="text" name="order_product_quantity" id="order_product_quantity">
                 </div>
-
+                
+                <?php /*
                 <div class="modal-product-package-panel">
                     <label for="order_product_package" class="control-label">{{ 'Package *' }}</label>
                     <select class="form-control js-dropdown-select2"  name="order_product_package" id="order_product_package">
                         <option value="">Select Product Shipping Package</option>
                     </select>
-                </div>
+                </div>*/?>
 
                 <div class="validate-msg" style="display: none;">
                     <p class="text-danger" > Fill up the form first </p>
