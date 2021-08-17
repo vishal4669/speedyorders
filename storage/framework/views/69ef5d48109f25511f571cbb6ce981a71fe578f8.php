@@ -70,6 +70,15 @@
                 </div>
             </div>
 
+            <?php if($product->image && $product->image!=''): ?>
+            <div class="row">
+                <label class="col-md-2 control-label"></label>
+                <div class="col-md-8">
+                    <img src="<?php echo e(url('images/products/'.$product->image)); ?>" width="200px">
+                </div>
+            </div>
+            <?php endif; ?>
+
             <div class="hr-line-dashed"></div>
 
             <div class="row">

@@ -29,6 +29,8 @@ class CreateShipstationOrderService
     public function handle($validatedData)
     {   
 
+        $shipStation = new ShipStation(env('SHIPSTATION_API_KEY'),env('SHIPSTATION_API_SECRET'), env('SHIPSTATION_API_URL'));
+
         $productQuantities = json_decode($validatedData['productQuantities']);
         $productTotals = json_decode($validatedData['productTotals']);
     
@@ -58,7 +60,7 @@ class CreateShipstationOrderService
 
 
             // create orders for single products
-            $shipStation = new ShipStation(env('SHIPSTATION_API_KEY'),env('SHIPSTATION_API_SECRET'), env('SHIPSTATION_API_URL'));
+            //$shipStation = new ShipStation(env('SHIPSTATION_API_KEY'),env('SHIPSTATION_API_SECRET'), env('SHIPSTATION_API_URL'));
             $address = new Address();
 
             $address->name = $orderData['shipping_first_name']." ".$orderData['shipping_last_name'];
@@ -104,7 +106,7 @@ class CreateShipstationOrderService
                 }            
             }
 
-            $shipStation2 = new ShipStation(env('SHIPSTATION_API_KEY'),env('SHIPSTATION_API_SECRET'), env('SHIPSTATION_API_URL'));
+            //$shipStation2 = new ShipStation(env('SHIPSTATION_API_KEY'),env('SHIPSTATION_API_SECRET'), env('SHIPSTATION_API_URL'));
             $address2 = new Address();
 
             $address2->name = $orderData['shipping_first_name']." ".$orderData['shipping_last_name'];
@@ -178,7 +180,7 @@ class CreateShipstationOrderService
             }
 
 
-            $response_combo = $shipStation2->orders->create($porder2);
+            $response_combo = $shipStation->orders->create($porder2);
 
             if(isset($response_combo->orderId) && $response_combo->orderId!=''){
 
@@ -189,7 +191,6 @@ class CreateShipstationOrderService
                 }
                 
             }
-
             
             
             $customerTransaction = CustomerTransaction::create([
@@ -205,7 +206,6 @@ class CreateShipstationOrderService
             DB::commit();
             return true;
         } catch (\Exception $e) {
-
             Log::info("Exception Message : ".json_encode($e->getMessage()));
             dd($e);
             DB::rollback();

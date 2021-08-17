@@ -82,7 +82,16 @@
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('ext_js'); ?>
     <script>
+         $(document).ready(function() {
+                $('#productTable').DataTable({
+                    "pageLength" : 10
+                });
+            });
+         
         $(document).on('click', '.delete', function () {
+
+
+
             var actionUrl = $(this).attr('data-url');
 
             $('#delete-form').attr('action', actionUrl);

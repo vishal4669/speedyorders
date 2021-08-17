@@ -146,12 +146,10 @@ class UpdateProductService
                             }
                             break;
                     }
-
-
-                    
                     
                 }
             }
+
 
             if(count($validatedData['related_products'])>0){
                 if($product->related_products){
@@ -167,7 +165,6 @@ class UpdateProductService
                         'updated_at' => $time,
                     ];
                 }
-
                 ProductRelatedProduct::insert($insertRelatedProductData);
             }
 

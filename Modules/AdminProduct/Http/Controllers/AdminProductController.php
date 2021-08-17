@@ -100,7 +100,7 @@ class AdminProductController extends Controller
             'menu' => 'products',
         ];
         $options = Option::orderBy('sort_order')->get();
-        $product = Product::where('id',$id)->with('options','options.optionValues', 'groups')->first();
+        $product = Product::where('id',$id)->with('options','options.optionValues', 'groups', 'relatedProducts')->first();
         $products = Product::where('status',1)->select('id','name')->get();
         $categories = Category::where(['category_id'=>0])->orWhere(['category_id'=>null])->select('id','name')->get();
         $productCategories = ProductCategory::where('product_id',$id)->pluck('category_id')->toArray();
@@ -108,8 +108,10 @@ class AdminProductController extends Controller
         $optionsId = ProductOption::where('product_id',$id)->pluck('option_id');
         $productOptionValues = ProductOptionValue::whereIn('option_id',$optionsId)->get();
         $groups = ShippingZoneGroup::select('id','group_name')->get();
+        $relatedProductIds = array_column($product->relatedProducts->toArray(), 'related_product_id');
+
             
-        return view('adminproduct::edit',compact('product','categories','productCategories','options','products','productGalleries','productOptionValues', 'groups'),$data);
+        return view('adminproduct::edit',compact('product','categories','productCategories','options','products','productGalleries','productOptionValues', 'groups', 'relatedProductIds'),$data);
     }
 
 

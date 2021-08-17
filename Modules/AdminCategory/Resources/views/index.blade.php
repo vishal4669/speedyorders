@@ -8,7 +8,7 @@
                 <h4>Categories List</h4>
             </div>
             <div class="col-md-1 pull-right text-right">
-                 <a style="display: none;" href="{{ route('admin.categories.import') }}" class="btn btn-primary" data-toggle="tooltip" data-placement="top" data-original-title="Import">
+                 <a href="{{ route('admin.categories.import') }}" class="btn btn-primary" data-toggle="tooltip" data-placement="top" data-original-title="Import">
                     <i class="fa fa-download"></i>
                 </a>
                 

@@ -22,7 +22,7 @@ class ImportProductService
         try
         {
 
-            DB::beginTransaction();
+          //  DB::beginTransaction();
 
             $fileName = '';
             if (isset($validatedData['file_name'])) {
@@ -43,30 +43,48 @@ class ImportProductService
 
             $count_header = 0;
 
-            while ( ($data = fgetcsv($file, 2500, ",")) !==FALSE ) {
+            while ( ($data = fgetcsv($file, 10000, ",")) !==FALSE ) {
+                
+                if($count_header > 0 && count($data)==20){
 
-                if($count_header > 0){
 
-                    $product_name = $data[0];
-                    $product_description = (isset($data[1])) ? $data[1] : '';
-                    $meta_title = $data[2];
-                    $meta_description = $data[3];
-                    $meta_keywords = $data[4];
-                    $sku = $data[5];
-                    $product_height = $data[6];
-                    $product_width = $data[7];
-                    $product_length = $data[8];
-                    $base_price = $data[9];
-                    $sale_price = $data[10];
-                    $product_qty = $data[11];
-                    $public_status = $data[12];
-                    $is_featured = $data[13];
-                    $return_policy_days = $data[14];
+                    $productImageUrl = (isset($data[19])) ? $data[19] : '';
 
-                    $category_ids = explode(',', $data[15]);
 
-                    $related_products = explode(',', $data[16]);
-                    $options = explode(',', $data[17]);
+                    // to upload product image
+
+                    $random_string = $this->generateRandomString(10);
+
+                    $imagename = '';
+                    if(isset($productImageUrl) && $productImageUrl!=''){
+                        $pathinfo = pathinfo($productImageUrl);
+                        $imagename = "Product_".$random_string.'.'.$pathinfo['extension'];
+                        $image_url = public_path("images/products/".$imagename);
+                        @file_put_contents($image_url, @file_get_contents($productImageUrl));
+                    }
+
+
+                    $productId = $data[0];
+                    $product_name = $data[1];
+                    $product_description = (isset($data[2])) ? $data[2] : '';
+                    $meta_title = $data[3];
+                    $meta_description = $data[4];
+                    $meta_keywords = $data[5];
+                    $sku = (isset($data[6])) ? $data[6] : '';
+                    $product_height = (isset($data[7])) ? $data[7] : 0;
+                    $product_width = (isset($data[8])) ? $data[8] : 0;
+                    $product_length = (isset($data[9])) ? $data[9] : 0;
+                    $base_price = $data[10];
+                    $sale_price = $data[11];
+                    $product_qty = $data[12];
+                    $public_status = $data[13];
+                    $is_featured = $data[14];
+                    $return_policy_days = $data[15];
+
+                    $category_ids = explode(',', $data[16]);
+
+                    $related_products = explode(',', $data[17]);
+                    $options = explode(',', $data[18]);
 
                     // check if product already exists
                     $product_Data = Product::where('name', $product_name)->where('sku', $sku)->first();
@@ -74,6 +92,7 @@ class ImportProductService
                         $product_id = $product_Data["id"];
                     } else{
                         $product = new Product();
+                        $product->id = $productId;
                         $product->sku = $sku;
                         $product->name = $product_name;
                         $product->length = $product_length;
@@ -88,7 +107,8 @@ class ImportProductService
                         $product->meta_title = $meta_title;
                         $product->meta_description = $meta_description;
                         $product->meta_keywords = $meta_keywords;
-                        $product->return_policy_days = $return_policy_days;
+                        $product->image = $imagename;
+                        $product->return_policy_days = (isset($return_policy_days) && $return_policy_days!='') ? $return_policy_days : 0;
                         $product->created_at = now();
                         $product->save();
 
@@ -136,11 +156,12 @@ class ImportProductService
 
                                     // values for product option values 
                                     if($option_type =="select"){
+
                                         $name = trim($productOptionValues[0]);
-                                        $quantity = $productOptionValues[1];
-                                        $subtract_stock = $productOptionValues[2];
-                                        $price_prefix = $productOptionValues[3];
-                                        $price = $productOptionValues[4];
+                                        $quantity = (isset($productOptionValues[1])) ? $productOptionValues[1] : 0;
+                                        $subtract_stock = (isset($productOptionValues[2])) ? $productOptionValues[2] : '';
+                                        $price_prefix = (isset($productOptionValues[3])) ? $productOptionValues[3] : '';
+                                        $price = (isset($productOptionValues[4])) ? $productOptionValues[4] : 0;
                                     } else {
                                         $inputtext = trim($productOptionValues[0]);
                                     }
@@ -161,7 +182,7 @@ class ImportProductService
 
                                 // Now add new option or added option for the product
                                 $productOption_id = 0;
-                                if(isset($option_id) && isset($optionvalue_id)){
+                                if(isset($option_id) && $option_id!='' && isset($optionvalue_id)){
                                    $productoption_data = ProductOption::where('product_id', $product_id)->where('option_id', $option_id)->first(); 
                                    if(!empty($productoption_data)){
                                         $productOption_id = $productoption_data["id"];
@@ -186,7 +207,7 @@ class ImportProductService
                                         $productOptionValue->option_value_id = $optionvalue_id;
                                         $productOptionValue->option_id = $option_id;
                                         $productOptionValue->quantity = $quantity;
-                                        $productOptionValue->subtract_from_stock = $subtract_stock;
+                                        $productOptionValue->subtract_from_stock = (isset($subtract_stock) && $subtract_stock!='') ? $subtract_stock : 0;
                                         $productOptionValue->price = $price;
                                         $productOptionValue->price_prefix = $price_prefix;
                                         $productOptionValue->input_value = $inputtext;
@@ -228,11 +249,11 @@ class ImportProductService
                         }
                     }         
                 }
-
+                
                 $count_header++;                            
 
             }
-            DB::commit();
+          //  DB::commit();
 
             return true;
         }
@@ -240,9 +261,20 @@ class ImportProductService
         {
             Log::info('Error'.$e->getMessage());
             Log::info('Line Number'.$e->getLine());
-            DB::rollback();
+            //DB::rollback();
            return false;
         }
+    }
+
+
+    function generateRandomString($length = 3) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
 
 }
