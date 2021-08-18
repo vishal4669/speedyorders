@@ -103,6 +103,13 @@
                     </span>
                 </a>
             </li>
+            <li>
+                <a href="{{ route('admin.product.attributes.index') }}" class="{{ isset($menu) && $menu == 'attributes' ? 'side-bar-active' : '' }}">
+                    <span class="nav-label">
+                        <i class="fa fa-home" aria-hidden="true"></i> Attributes
+                    </span>
+                </a>
+            </li>
 
             <li class="{{ isset($menu) && ($menu == 'customerOrder' || $menu =='customerTransaction' || $menu  =='tax') ? 'active' : '' }}">
                 <a href="#"><span class="nav-label"> <i class="fa fa-home" aria-hidden="true"></i> Reports</span><span class="fa arrow"></span> </a>

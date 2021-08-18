@@ -15,6 +15,7 @@
     "Review": true,
     "CustomerLogin": true,
     "AdminProductOption": true,
+    "AdminProductAttribute": true,
     "AdminProduct": true,
     "AdminReview": true,
     "AdminProductQuestion": true,

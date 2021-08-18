@@ -91,6 +91,13 @@
                     </span>
                 </a>
             </li>
+            <li>
+                <a href="<?php echo e(route('admin.product.attributes.index')); ?>" class="<?php echo e(isset($menu) && $menu == 'attributes' ? 'side-bar-active' : ''); ?>">
+                    <span class="nav-label">
+                        <i class="fa fa-home" aria-hidden="true"></i> Attributes
+                    </span>
+                </a>
+            </li>
 
             <li class="<?php echo e(isset($menu) && ($menu == 'customerOrder' || $menu =='customerTransaction' || $menu  =='tax') ? 'active' : ''); ?>">
                 <a href="#"><span class="nav-label"> <i class="fa fa-home" aria-hidden="true"></i> Reports</span><span class="fa arrow"></span> </a>
