@@ -7,7 +7,7 @@
                 <h4>Orders List</h4>
             </div>
             <div class="col-md-1 pull-right text-right">
-                <a href="<?php echo e(route('admin.orders.create')); ?>" class="btn btn-primary-fade" data-toggle="tooltip" data-placement="top" data-original-title="Create Product">
+                <a href="<?php echo e(route('admin.orders.create')); ?>" class="btn btn-primary-fade" data-toggle="tooltip" data-placement="top" data-original-title="Create New Order">
                     <i class="fa fa-plus"></i>
                 </a>
             </div>
@@ -56,23 +56,21 @@
                                 <a href="<?php echo e(route('admin.orders.update.status',$item->id)); ?>" class="text-danger"><strong>Change</strong></a>
                             </td>
                             <td>
-                                <a class="btn btn-info btn-sm" title="process" href="<?php echo e(route('admin.orders.process', $item->id  )); ?>">
+                                <a class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" data-original-title="Process Order" href="<?php echo e(route('admin.orders.process', $item->id  )); ?>">
                                     <i class="fa fa-tasks"></i>
                                 </a>
 
-                                <a class="btn btn-primary btn-sm" title="view" href="<?php echo e(route('admin.orders.show', $item->id  )); ?>">
+                                <a class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" data-original-title="View Order Details" href="<?php echo e(route('admin.orders.show', $item->id  )); ?>">
                                     <i class="fa fa-eye"></i>
                                 </a>
 
-                                <a class="btn btn-success btn-sm"  title="report" href="<?php echo e(route('admin.orders.invoices.show', $item->id  )); ?>">
+                                <a class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" data-original-title="Show  Order Report" href="<?php echo e(route('admin.orders.invoices.show', $item->id  )); ?>">
                                     <i class="fa fa-file"></i>
                                 </a>
-                                <a class="btn btn-primary btn-sm" title="edit" href="<?php echo e(route('admin.orders.edit', $item->id  )); ?>">
+                                <a class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" data-original-title="Edit  Order" href="<?php echo e(route('admin.orders.edit', $item->id  )); ?>">
                                     <i class="fa fa-pencil"></i>
                                 </a>
-                                <button data-toggle="modal"  title="delete" data-target="#delete-modal"
-                                    data-url="<?php echo e(route('admin.orders.delete',$item->id)); ?>"
-                                    class="btn btn-danger delete">
+                                <button data-toggle="modal" title="Delete Order" data-target="#delete-modal" data-url="<?php echo e(route('admin.orders.delete',$item->id)); ?>" class="btn btn-danger  delete">
                                     <i class="fa fa-trash"></i>
                                 </button>
                             </td>
@@ -112,6 +110,10 @@
                 $(this).html('<i class="fa fa-spinner fa-spin" style=""></i> Please Wait...');
                 $('#delete-form').submit();
             })
+        });
+
+        $(function () {
+          $('[data-toggle="tooltip"]').tooltip()
         });
 
     </script>

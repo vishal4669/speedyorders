@@ -53,9 +53,10 @@ class AdminProductController extends Controller
         $options = Option::orderBy('sort_order')->get();
 
         $groups = ShippingZoneGroup::select('id','group_name')->get();
+        $relatedProductIds = array();
 
         $productCategories = [];
-        return view('adminproduct::create',compact('categories','productCategories','options','products', 'groups'),$data);
+        return view('adminproduct::create',compact('categories','relatedProductIds','productCategories','options','products', 'groups'),$data);
     }
 
     /**
@@ -108,7 +109,11 @@ class AdminProductController extends Controller
         $optionsId = ProductOption::where('product_id',$id)->pluck('option_id');
         $productOptionValues = ProductOptionValue::whereIn('option_id',$optionsId)->get();
         $groups = ShippingZoneGroup::select('id','group_name')->get();
-        $relatedProductIds = array_column($product->relatedProducts->toArray(), 'related_product_id');
+
+        $relatedProductIds = array();
+        if(isset($product->relatedProducts) && !empty($product->relatedProducts)){
+            $relatedProductIds = array_column($product->relatedProducts->toArray(), 'related_product_id');
+        }
 
             
         return view('adminproduct::edit',compact('product','categories','productCategories','options','products','productGalleries','productOptionValues', 'groups', 'relatedProductIds'),$data);

@@ -25,6 +25,7 @@ Route::group(['prefix' => 'admin/orders', 'middleware' => 'auth:admin','as'=>'ad
 
     Route::post('/option/value', 'AdminOrderController@optionValue')->name('product.options')->middleware('can:edit-product');
     Route::post('/package/value', 'AdminOrderController@packageValue')->name('product.packages')->middleware('can:edit-product');
+    Route::post('/package/deliverytime', 'AdminOrderController@packageDeliveryTimes')->name('product.deliverytime')->middleware('can:edit-product');
 
     Route::get('/invoices/{id}', 'AdminOrderController@showOrderInvoices')->name('invoices.show')->middleware('can:edit-product');
     Route::get('/shipping/invoices/{id}', 'AdminOrderController@showOrderShippingInvoices')->name('shipping.invoices.show')->middleware('can:edit-product');

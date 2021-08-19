@@ -15,15 +15,16 @@
                     <i class="fa fa-plus"></i>
                 </a>
             </div>
+            <?php /*
             <div class="col-md-4 pull-right text-right">
-                <form method="GET" action="<?php echo e(route('admin.products.index')); ?>" accept-charset="UTF-8" role="search">
+                <form method="GET" action="{{ route('admin.products.index') }}" accept-charset="UTF-8" role="search">
                     <div class="input-group"><input type="text" class="form-control" placeholder="Search">
                         <span class="input-group-btn">
                                 <button type="button" class="btn btn-primary-fade"><i class="fa fa-search"></i></button>
                         </span>
                     </div>
                 </form>
-            </div>
+            </div>*/?>
 
         </div>
             <div class="table-responsive">

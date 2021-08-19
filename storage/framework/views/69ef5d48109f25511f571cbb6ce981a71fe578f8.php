@@ -3,7 +3,7 @@
             <input type="hidden" name="galleryId" value="<?php echo e(old('galleryId')); ?>" id="galleryId">
 
             <div class="row">
-                <label class=" col-md-2 control-label">SKU</label>
+                <label class=" col-md-2 control-label">SKU<span class="error">*</span></label>
                 <div class="col-md-8">
                     <input type="text" name="sku" value="<?php echo e(old('sku', isset($product) ? $product->sku : null)); ?>"
                         class="form-control">
@@ -13,7 +13,7 @@
             <div class="hr-line-dashed"></div>
 
             <div class="row">
-                <label class="col-md-2 control-label">Product Name</label>
+                <label class="col-md-2 control-label">Product Name<span class="error">*</span></label>
                 <div class="col-md-8">
                     <input type="text" name="name" value="<?php echo e(old('name', isset($product) ? $product->name : null)); ?>"
                         class="form-control">
@@ -63,20 +63,20 @@
             <div class="hr-line-dashed"></div>
 
             <div class="row">
-                <label class="col-md-2 control-label">Product Main Image</label>
+                <label class="col-md-2 control-label">Product Main Image<span class="error">*</span></label>
                 <div class="col-md-8">
                     <input type="file" name="image" class="form-control"
                         value="old('image',isset($product)?$product->image:null)">
                 </div>
             </div>
 
-            <?php if($product->image && $product->image!=''): ?>
-            <div class="row">
-                <label class="col-md-2 control-label"></label>
-                <div class="col-md-8">
-                    <img src="<?php echo e(url('images/products/'.$product->image)); ?>" width="200px">
+            <?php if(isset($product->image) && $product->image!=''): ?>
+                <div class="row">
+                    <label class="col-md-2 control-label"></label>
+                    <div class="col-md-8">
+                        <img src="<?php echo e(url('images/products/'.$product->image)); ?>" width="200px">
+                    </div>
                 </div>
-            </div>
             <?php endif; ?>
 
             <div class="hr-line-dashed"></div>
@@ -92,7 +92,7 @@
             <div class="hr-line-dashed"></div>
 
             <div class="row">
-                <label class="col-md-2 control-label">Product Description</label>
+                <label class="col-md-2 control-label">Product Description<span class="error">*</span></label>
                 <div class="col-md-8">
                     <textarea name="description" id="product-description" cols="85"
                         rows="3"> <?php echo e(old('description', isset($product) ? $product->description : null)); ?> </textarea>
@@ -102,7 +102,7 @@
             <div class="hr-line-dashed"></div>
 
             <div class="row">
-                <label class="col-md-2 control-label">Base Price</label>
+                <label class="col-md-2 control-label">Base Price<span class="error">*</span></label>
                 <div class="col-md-8">
                     <input type="text" name="base_price"
                         value="<?php echo e(old('base_price', isset($product) ? $product->base_price : null)); ?>" class="form-control">
@@ -112,7 +112,7 @@
             <div class="hr-line-dashed"></div>
 
             <div class="row">
-                <label class="col-md-2 control-label">Sale Price</label>
+                <label class="col-md-2 control-label">Sale Price<span class="error">*</span></label>
                 <div class="col-md-8">
                     <input type="text" name="sale_price"
                         value="<?php echo e(old('sale_price', isset($product) ? $product->sale_price : null)); ?>" class="form-control">
@@ -122,7 +122,7 @@
             <div class="hr-line-dashed"></div>
 
             <div class="row">
-                <label class="col-md-2 control-label">Product Quantity</label>
+                <label class="col-md-2 control-label">Product Quantity<span class="error">*</span></label>
                 <div class="col-md-8">
                     <input type="text" name="quantity"
                         value="<?php echo e(old('quantity', isset($product) ? $product->quantity : null)); ?>"
@@ -133,7 +133,7 @@
             <div class="hr-line-dashed"></div>
 
             <div class="row">
-                <label class="col-md-2 control-label">Product Minimum Quantity</label>
+                <label class="col-md-2 control-label">Product Minimum Quantity<span class="error">*</span></label>
                 <div class="col-md-8">
                     <input type="text" name="min_quantity"
                         value="<?php echo e(old('min_quantity', isset($product) ? $product->min_quantity : null)); ?>"
@@ -144,7 +144,7 @@
             <div class="hr-line-dashed"></div>
 
             <div class="row">
-                <label class="col-md-2 control-label">Sort Order</label>
+                <label class="col-md-2 control-label">Sort Order<span class="error">*</span></label>
                 <div class="col-md-8">
                     <input type="number" name="sort_order"
                         value="<?php echo e(old('sort_order', isset($product) ? $product->sort_order : null)); ?>"

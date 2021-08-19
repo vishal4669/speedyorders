@@ -10,7 +10,7 @@
     {!! $errors->first('category_id', '<p class="help-block">:message</p>') !!}
 </div>
 <div class="form-group {{ $errors->has('name') ? 'has-error' : ''}}">
-    <label for="name" class="control-label">{{ 'Name' }}</label>
+    <label for="name" class="control-label">{{ 'Name' }}<span class="error">*</span></label>
     <input class="form-control" type="text" name="name" id="name" value="{{ old('name', isset($category->name) ? $category->name : null) }}" > </input>
 
     {!! $errors->first('name', '<p class="help-block">:message</p>') !!}
@@ -26,7 +26,7 @@
     <input type="file" name="image" class="form-control">
     {!! $errors->first('image', '<p class="help-block">:message</p>') !!}
 
-    @if($category->image && $category->image!='')
+    @if(isset($category->image)  && $category->image!='')
         <br>
         <span id="categoryImage">
             <img width="250" src="{{url('images/categories/'.$category->image)}}">    
@@ -36,12 +36,12 @@
 
 
 <div class="form-group {{ $errors->has('description') ? 'has-error' : ''}}">
-    <label for="description" class="control-label">{{ 'Description' }}</label>
+    <label for="description" class="control-label">{{ 'Description' }}<span class="error">*</span></label>
     <textarea class="form-control" rows="5" name="description" type="textarea" id="description" >{{ old('description', isset($category->description) ? $category->description : null) }}</textarea>
     {!! $errors->first('description', '<p class="help-block">:message</p>') !!}
 </div>
 <div class="form-group {{ $errors->has('return_policy') ? 'has-error' : ''}}">
-    <label for="return_policy" class="control-label">{{ 'Return Policy' }}</label>
+    <label for="return_policy" class="control-label">{{ 'Return Policy' }}<span class="error">*</span></label>
     <textarea class="form-control" rows="5" name="return_policy" type="textarea" id="return_policy" >{{ old('return_policy', isset($category->return_policy) ? $category->return_policy : null) }}</textarea>
     {!! $errors->first('return_policy', '<p class="help-block">:message</p>') !!}
 </div>

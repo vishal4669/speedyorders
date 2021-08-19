@@ -132,7 +132,7 @@ class CreateProductService
                 }
             }
 
-            if(count($validatedData['related_products'])>0){
+            if(isset($validatedData['related_products']) && count($validatedData['related_products'])>0){
                 $insertRelatedProductData = [];
                 $time = now();
                 foreach($validatedData['related_products'] as $rp){

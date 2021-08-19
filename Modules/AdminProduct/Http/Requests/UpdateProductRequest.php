@@ -35,7 +35,6 @@ class UpdateProductRequest extends FormRequest
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
             'video' => 'nullable|string|max:255',
             'categories.*'=>'required',
-            'categories'=>'required',
             'file.*'=>'nullable|numeric',
             'galleryId'=>'sometimes',
             'related_products.*'=>'nullable|exists:products,id',

@@ -49,7 +49,7 @@ class UpdateProductService
                 }
             }
 
-            if($validatedData['categories']){
+            if(isset($validatedData['categories']) && $validatedData['categories']){
                 $product->categories()->delete();
 
                 /**SAVING PRODUCT CATEGORIES RELATIONSHIP */
@@ -150,9 +150,8 @@ class UpdateProductService
                 }
             }
 
-
-            if(count($validatedData['related_products'])>0){
-                if($product->related_products){
+            if(isset($validatedData['related_products']) && count($validatedData['related_products'])>0){
+                if(isset($product->related_products) && !empty($product->related_products)){
                     $product->related_products->delete();
                 }
                 $insertRelatedProductData = [];
@@ -165,13 +164,14 @@ class UpdateProductService
                         'updated_at' => $time,
                     ];
                 }
+
                 ProductRelatedProduct::insert($insertRelatedProductData);
             }
 
-            if(count($validatedData['groups'])>0){
+            if(isset($validatedData['groups']) && count($validatedData['groups'])>0){
                 if($product->groups){
                     ProductGroup::where('product_id', $product->id)->delete();
-;                }
+                }
                 $insertGroupData = [];
                 $time = now();
                 foreach($validatedData['groups'] as $group){

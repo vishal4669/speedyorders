@@ -17,6 +17,7 @@
                     <i class="fa fa-plus"></i>
                 </a>
             </div>
+            <?php /*
             <div class="col-md-4 pull-right text-right">
                 <form method="GET" action="{{ route('admin.categories.index') }}" accept-charset="UTF-8" role="search">
                     <div class="input-group"><input type="text" class="form-control" placeholder="Search">
@@ -25,7 +26,7 @@
                         </span>
                     </div>
                 </form>
-            </div>
+            </div>*/?>
         </div>
         <div class="table-responsive">
             <table id="productTable" class="table table-bordered table-striped speedy-table">

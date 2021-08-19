@@ -26,4 +26,9 @@ class OrderProduct extends Model
     {
         return $this->hasMany('App\Models\OrderProductOption');
     }
+
+    public function orderProductGroups()
+    {
+        return $this->hasMany('App\Models\ProductGroup','product_id');
+    }
 }

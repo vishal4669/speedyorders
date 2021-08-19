@@ -12,8 +12,18 @@
                     <form action="{{ route('admin.settings.update.stripe') }}" method="post" enctype="multipart/form-data">
                         @csrf
 
+                        <div class="form-group">
+                            <label for="">Stripe Mode</label>
+                            <div class="checkbox">
+                                <input id="stripe_status" class="i-checks" type="radio" name="stripe_payment_mode" value="LIVE" @if(old('stripe_payment_mode',Option::get('stripe_payment_mode'))=='LIVE') checked @endif>
+                                <label for="stripe_status" style="color:#000000;">Live</label>
+                                <input id="status-2" class="i-checks" type="radio" name="stripe_payment_mode" value="SANDBOX" @if(old('stripe_payment_mode',Option::get('stripe_payment_mode'))=='SANDBOX') checked @endif>
+                                <label for="status-2" style="color:#000000;">Sandbox</label>
+                            </div>
+                        </div>
+
                         <div class="form-group{{ $errors->has('stripe_key') ? ' has-error' :'' }}">
-                            <label for="">Client Id</label>
+                            <label for="">Test Client Id</label>
                             <input type="text" name="stripe_key" id="" class="form-control" value="{{ old('stripe_key',Option::get('stripe_key')) }}">
                             @if($errors->has('stripe_key'))
                                 <span class="help-block">{{ $errors->first('stripe_key') }}</span>
@@ -21,10 +31,26 @@
                         </div>
 
                         <div class="form-group{{ $errors->has('stripe_secret') ? ' has-error' :'' }}">
-                            <label for="">Secret key</label>
+                            <label for="">Test Secret key</label>
                             <input type="text" name="stripe_secret" id="" class="form-control" value="{{ old('stripe_secret',Option::get('stripe_secret')) }}">
                             @if($errors->has('stripe_secret'))
                                 <span class="help-block">{{ $errors->first('stripe_secret') }}</span>
+                            @endif
+                        </div>
+
+                        <div class="form-group{{ $errors->has('live_stripe_key') ? ' has-error' :'' }}">
+                            <label for="">Live Client Id</label>
+                            <input type="text" name="live_stripe_key" id="" class="form-control" value="{{ old('live_stripe_key',Option::get('live_stripe_key')) }}">
+                            @if($errors->has('live_stripe_key'))
+                                <span class="help-block">{{ $errors->first('live_stripe_key') }}</span>
+                            @endif
+                        </div>
+
+                        <div class="form-group{{ $errors->has('live_stripe_secret') ? ' has-error' :'' }}">
+                            <label for="">Live Secret key</label>
+                            <input type="text" name="live_stripe_secret" id="" class="form-control" value="{{ old('live_stripe_secret',Option::get('live_stripe_secret')) }}">
+                            @if($errors->has('live_stripe_secret'))
+                                <span class="help-block">{{ $errors->first('live_stripe_secret') }}</span>
                             @endif
                         </div>
 

@@ -30,7 +30,7 @@
     <?php echo $errors->first('image', '<p class="help-block">:message</p>'); ?>
 
 
-    <?php if($category->image && $category->image!=''): ?>
+    <?php if(isset($category->image) && $category->image!=''): ?>
         <br>
         <span id="categoryImage">
             <img width="250" src="<?php echo e(url('images/categories/'.$category->image)); ?>">    

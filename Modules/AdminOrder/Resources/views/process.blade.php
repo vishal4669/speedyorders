@@ -112,9 +112,10 @@
                                     <td style="width:10%;" class="text-right"><b>Unit Price</b></td>
                                     <td style="width:10%;" class="text-right"><b>Quantity</b></td>
                                     <td style="width:10%;" class="text-right"><b>Total</b></td>
-                                    <td style="width:10%;"><b>Single</b></td>
-                                    <td style="width:10%;"><b>Combo</b></td>
-                                    <td style="width:30%;"><b>Select Package</b></td>
+                                    <?php /*<td style="width:10%;"><b>Single</b></td>
+                                     <td style="width:10%;"><b>Combo</b></td> */?>
+                                     <td style="width:30%;"><b>Select Package</b></td>
+                                    <td style="width:20%;"><b>Delivery Time</b></td>
                                  </tr>
                               </thead>
                               <tbody>
@@ -148,6 +149,30 @@
                                        $productQuantities[] = $orderedProduct->quantity;
                                        $productTotals[] = $individualTotal;
 
+                                       $groups_array = array();
+                                       $groups = App\Models\ProductGroup::where('product_id',$orderedProduct->product->id)->where('group_id','!=', null)->get();
+
+                                       $shipping_postcode = (isset($order->shipping_postcode)) ? $order->shipping_postcode : '';
+                                       $packages = array();
+                                       if(!empty($groups)){
+                                            $groups_array = array_column($groups->toArray(), 'group_id');
+                                           
+                                            if($shipping_postcode && $shipping_postcode!=''){
+                                                $packages = App\Models\ShippingZonePrice::leftjoin('shipping_packages','shipping_packages.id','=','shipping_zone_prices.shipping_packages_id')->leftjoin('shipping_delivery_times','shipping_delivery_times.id','=','shipping_zone_prices.shipping_delivery_times_id');
+
+                                                        if($groups_array && !empty($groups_array) && $groups_array[0]!=null){        
+                                                            $packages = $packages->whereIn('shipping_zone_groups_id',$groups_array)
+                                                                        ->groupby('shipping_packages_id');
+                                                        }   
+                                                        
+                                                        if($shipping_postcode && $shipping_postcode !='' && empty($groups_array)){        
+                                                                $packages = $packages->where('zip_code', $shipping_postcode)
+                                                                        ->groupby('shipping_packages_id');
+                                                        }   
+                                                        $packages = $packages->get(['shipping_packages_id as id','shipping_packages.package_name','shipping_delivery_times.name']);
+                                            }
+                                       }
+
                                    ?>
                                  <tr>
                                     <td>{{ $orderedProduct->product->id }}</td>
@@ -171,13 +196,40 @@
                                     <td class="text-right">{{ $orderedProduct->quantity }}</td>
                                     <td class="text-right">{{ $orderedProduct->price }}</td>
                                     <td class="text-right">{{ $individualTotal }}</td>
-                                    <td><input type="checkbox" onclick="getProductPackages('{{$orderedProduct->product->id}}', '{{$order->shipping_postcode}}')" name="order_product_single[]" id="order_product_single_{{$orderedProduct->product->id}}"></td>
-                                    <td><input type="checkbox" onclick="resetPackages('{{$orderedProduct->product->id}}')"  name="order_product_combo[]" id="order_product_combo_{{$orderedProduct->product->id}}"></td>
-                                    <td><div id="packages_{{$orderedProduct->product->id}}">
-                                        <b>Package</b> <select class="form-control" name="single_product_package[]">
-                                            
-                                        </select>
-                                    </div></td>
+
+                                    <?php /*
+                                    <td>
+                                        <input type="checkbox" onclick="getProductPackages('{{$orderedProduct->product->id}}', '{{$order->shipping_postcode}}')" name="order_product_single[]" id="order_product_single_{{$orderedProduct->product->id}}"></td>
+
+                                    <td>
+                                        <input type="checkbox" onclick="resetPackages('{{$orderedProduct->product->id}}')"  name="order_product_combo[]" id="order_product_combo_{{$orderedProduct->product->id}}">
+                                    </td>
+                                     */?>
+                                    <td>
+
+                                        <input type="hidden" name="groups_{{$orderedProduct->product->id}}" value="<?php echo json_encode($groups_array);?>">
+
+                                        <div id="packages_{{$orderedProduct->product->id}}">
+                                           
+                                            <select onchange="getPackageDeliveryTimes(this.value,'{{$orderedProduct->product->id}}', '{{$order->shipping_postcode}}')" class="form-control" name="single_product_package[]" required>
+                                                @if(!empty($packages))
+                                                    <option value="">Select package</option>
+                                                    @foreach($packages as $package_data)
+                                                        <option value="{{$package_data->id}}">{{$package_data->package_name}}</option>
+                                                    @endforeach
+                                                @endif
+                                                
+                                            </select>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div id="delivery_time_{{$orderedProduct->product->id}}">
+                                            <select class="form-control" name="product_delivery_time_{{$orderedProduct->product->id}}[]">
+                                            </select>
+                                        </div>
+                                    </td>
+
                                  </tr>
                                  @empty
                                  <tr>
@@ -334,6 +386,29 @@ function processOrderDetails(){
 }
         
 
+function getPackageDeliveryTimes(packageId, productId,shipping_postcode){
+        var url = '{{ route('admin.orders.product.deliverytime') }}';
+        var groups = $('#groups_'+productId).val();
+        $.ajax({
+            url: url,
+            type: 'post',
+            data: {
+                "_token": "{{ csrf_token() }}",
+                "productId": productId,
+                "packageId": packageId,
+                "groups" : groups,
+                "shipping_postcode" : shipping_postcode
+            },
+            dataType: 'JSON',
+            success: function(data) {
+               $("#delivery_time_"+productId).html(data.html);
+            }
+        });
+    
+
+    
+}
+
 function getProductPackages(productId, shipping_postcode){
     var checkoboxId = "order_product_single_"+productId;
     var checkoboxIdCombo = "order_product_combo_"+productId;
@@ -363,6 +438,7 @@ function getProductPackages(productId, shipping_postcode){
 
     
 }
+
 
 function resetPackages(product_id){
     var checkoboxIdSingle = "order_product_single_"+product_id;

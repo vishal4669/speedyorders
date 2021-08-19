@@ -15,6 +15,8 @@ use Illuminate\Http\Request;
 use App\Models\CouponHistory;
 use App\Models\ProductOption;
 use App\Models\ProductGroup;
+use App\Models\ShippingZonePrice;
+
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Modules\AdminOrder\Services\CreateOrderService;
@@ -23,12 +25,11 @@ use Modules\AdminOrder\Http\Requests\CreateOrderRequest;
 use Modules\AdminOrder\Http\Requests\UpdateOrderRequest;
 use Modules\AdminOrder\Services\CreateOrderHistoryService;
 use Modules\AdminOrder\Http\Requests\CreateOrderHistoryRequest;
-    
 use Modules\AdminOrder\Services\CreateShipstationOrderService;
-
 use LaravelShipStation\ShipStation;
 use Log;
 use DB;
+
 
 class AdminOrderController extends Controller
 {
@@ -457,5 +458,53 @@ class AdminOrderController extends Controller
 
         return response()->json(array('success' => true, 'message'=>$message));
 
+    }
+
+    /**
+     * All below delivery times will show based on the postal code used in the order and selected package at order package
+     * @param  Request productId 
+     * @return json  return all available packages
+     */
+    public function packageDeliveryTimes(Request $request){
+
+        if(!$request->productId || !$request->packageId){
+            return;
+        }
+
+        $productId = $request->productId;
+        $packageId = $request->packageId;
+        $groups = $request->groups;
+
+        $deliveryTimes = ShippingZonePrice::where('shipping_packages_id',$packageId)
+                            ->leftjoin('shipping_delivery_times','shipping_delivery_times.id','=','shipping_zone_prices.shipping_delivery_times_id')
+                            ->select(['shipping_zone_prices.id', 'shipping_packages_id as package_id','shipping_delivery_times.name', 'price']);
+
+
+
+        if(isset($request->shipping_postcode) && $request->shipping_postcode!=''){                    
+            $deliveryTimes = $deliveryTimes->where('shipping_zone_prices.zip_code', $request->shipping_postcode);                          
+        } 
+        
+        if(isset($request->groups) && $request->groups!=''){  
+            $groups_array = json_decode($groups);                  
+            $deliveryTimes = $deliveryTimes->where('shipping_zone_prices.zip_code', $groups_array);                          
+        } 
+
+        $deliveryTimes = $deliveryTimes->get();
+
+        $responseHtml = '';
+
+        $selectname = 'product_delivery_time_'.$productId.'[]';
+
+        $returnHTML = view('adminorder::htmlelement.deliverytime',[
+            'option'=> 'Package',
+            'deliveryTimes'=>$deliveryTimes,
+            'productId'=>$request->productId,
+            'selectname' => $selectname
+            ])->render();
+        
+        $responseHtml .= $returnHTML;   
+        
+        return response()->json(array('success' => true, 'html'=>$responseHtml));
     }
 }
