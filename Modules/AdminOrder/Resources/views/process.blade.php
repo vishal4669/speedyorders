@@ -197,6 +197,9 @@
                                     <td class="text-right">{{ $orderedProduct->price }}</td>
                                     <td class="text-right">{{ $individualTotal }}</td>
 
+
+
+
                                     <?php /*
                                     <td>
                                         <input type="checkbox" onclick="getProductPackages('{{$orderedProduct->product->id}}', '{{$order->shipping_postcode}}')" name="order_product_single[]" id="order_product_single_{{$orderedProduct->product->id}}"></td>
@@ -206,6 +209,9 @@
                                     </td>
                                      */?>
                                     <td>
+
+                                         <input type="hidden" name="order_product_single[]" id="order_product_single_{{$orderedProduct->product->id}}">
+
 
                                         <input type="hidden" name="groups_{{$orderedProduct->product->id}}" value="<?php echo json_encode($groups_array);?>">
 
@@ -289,20 +295,20 @@ const orderId = '<?php echo $order_id?>';
 function showSelectedDetails(){
 
     var listSingle = $("input[name='order_product_single[]']").map(function () {
-        if(this.checked){
+        //if(this.checked){
+        //    return 0;
+        //} else{
             return 1;
-        } else{
-            return 0;
-        }
+        //}
     }).get();
     
-    var listCombo = $("input[name='order_product_combo[]']").map(function () {
+   /* var listCombo = $("input[name='order_product_combo[]']").map(function () {
         if(this.checked){
-            return 1;
-        } else{
             return 0;
+        } else{
+            return 1;
         }
-    }).get();
+    }).get();*/
 
     var listPackages = $("select[name='single_product_package[]']").map(function () {
         return this.value;
@@ -321,7 +327,7 @@ function showSelectedDetails(){
             "productQuantities" : productQuantities,
             "productTotals" : productTotals,
             "listSingle" : listSingle,
-            "listCombo" : listCombo,
+            //"listCombo" : listCombo,
             "listPackages" : listPackages
         },
         dataType: 'JSON',
@@ -335,20 +341,20 @@ function showSelectedDetails(){
 function processOrderDetails(){
 
     var listSingle = $("input[name='order_product_single[]']").map(function () {
-        if(this.checked){
+        //if(this.checked){
+       ///     return 1;
+       // } else{
             return 1;
-        } else{
-            return 0;
-        }
+       // }
     }).get();
     
-    var listCombo = $("input[name='order_product_combo[]']").map(function () {
+    /*var listCombo = $("input[name='order_product_combo[]']").map(function () {
         if(this.checked){
             return 1;
         } else{
             return 0;
         }
-    }).get();
+    }).get();*/
 
     var listPackages = $("select[name='single_product_package[]']").map(function () {
         return this.value;
@@ -368,14 +374,14 @@ function processOrderDetails(){
             "productQuantities" : productQuantities,
             "productTotals" : productTotals,
             "listSingle" : listSingle,
-            "listCombo" : listCombo,
+           // "listCombo" : listCombo,
             "listPackages" : listPackages,
-            "package_length" : $("#package_length").val(),
-            "package_width" : $("#package_width").val(),
-            "package_height" : $("#package_height").val(),
-            "package_weight" : $("#package_weight").val(),
-            "package_size_unit" : $("#package_size_unit").val(),
-            "package_weight_unit" : $("#package_weight_unit").val(),
+           // "package_length" : $("#package_length").val(),
+           // "package_width" : $("#package_width").val(),
+           // "package_height" : $("#package_height").val(),
+           // "package_weight" : $("#package_weight").val(),
+          //  "package_size_unit" : $("#package_size_unit").val(),
+           // "package_weight_unit" : $("#package_weight_unit").val(),
         },
         dataType: 'JSON',
         success: function(data) {

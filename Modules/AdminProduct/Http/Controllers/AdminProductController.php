@@ -55,8 +55,10 @@ class AdminProductController extends Controller
         $groups = ShippingZoneGroup::select('id','group_name')->get();
         $relatedProductIds = array();
 
+        $zonePackages = ShippingZonePrice::all();
+
         $productCategories = [];
-        return view('adminproduct::create',compact('categories','relatedProductIds','productCategories','options','products', 'groups'),$data);
+        return view('adminproduct::create',compact('categories','relatedProductIds','productCategories','options','products', 'groups', 'zonePackages'),$data);
     }
 
     /**

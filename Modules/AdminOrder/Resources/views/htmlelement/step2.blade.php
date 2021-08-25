@@ -1,4 +1,4 @@
-<h5>Single</h5>
+<?php /*<h5>Single</h5>*/?>
 <table class="table table-bordered">
   <thead>
      <tr>
@@ -18,12 +18,14 @@
         @endforeach
     @else
         <tr>
-            <td colspan="7" class="text-center">No Single Product Selected</td>
+            <td colspan="7" class="text-center">No Product Selected</td>
         </tr>
     @endif    
      
   </tbody>
 </table>
+
+<?php /*
 
 <h5>Combo</h5>
 
@@ -50,7 +52,8 @@
      
   </tbody>
 </table>
-
+*/?>
+<?php /*
 <h5>Size for Combo</h5>
 
 <div class="form-group">
@@ -91,4 +94,4 @@
     </div>
 
 </div>
-
+*/?>

@@ -51,14 +51,73 @@
                             <td><?php echo e($item->invoice_prefix); ?></td>
                             <td><?php echo e($item->first_name); ?></td>
                             <td>
-                                <?php echo e($item->status=='1' ? 'Active':'Inactive'); ?>
+                                <?php
+                                    $status = "Pending";
+                                    switch($item->status){
+                                        case 2:
+                                            $status = "Processing";
+                                        break;
+                                        case 3:
+                                            $status = "Processed";
+                                        break;
 
-                                <a href="<?php echo e(route('admin.orders.update.status',$item->id)); ?>" class="text-danger"><strong>Change</strong></a>
+                                        case 4:
+                                            $status = "Complete";
+                                        break;
+                                        case 5:
+                                            $status = "Delivered";
+                                        break;
+                                        case 6:
+                                            $status = "Canceled";
+                                        break;
+                                        case 7:
+                                            $status = "Canceled Reversal";
+                                        break;
+                                        case 8:
+                                            $status = "Chargeback";
+                                        break;
+                                        case 9:
+                                            $status = "Denied";
+                                        break;
+                                        case 10:
+                                            $status = "Expired";
+                                        break;
+                                        case 11:
+                                            $status = "Failed";
+                                        break;
+                                        case 12:
+                                            $status = "Refunded";
+                                        break;
+                                        case 13:
+                                            $status = "Reversed";
+                                        break;
+                                        case 14:
+                                            $status = "Shipped";
+                                        break;
+                                        case 15:
+                                            $status = "Voided";
+                                        break;
+
+                                    }
+                                   
+
+                                ?>  
+                                <?php echo e($status); ?>
+
+
+                                <?php /*<a href="{{ route('admin.orders.update.status',$item->id) }}" class="text-danger"><strong>Change</strong></a> */?>
+                                
                             </td>
                             <td>
-                                <a class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" data-original-title="Process Order" href="<?php echo e(route('admin.orders.process', $item->id  )); ?>">
-                                    <i class="fa fa-tasks"></i>
-                                </a>
+                                <?php if($item->status < 2): ?>
+                                    <a class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" data-original-title="Process Order" href="<?php echo e(route('admin.orders.process', $item->id  )); ?>">
+                                        <i class="fa fa-tasks"></i>
+                                    </a>
+                                <?php elseif($item->status == 2): ?>
+                                    <a class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" data-original-title="Process Payment" href="<?php echo e(route('admin.orders.stripe', $item->id  )); ?>">
+                                        <i class="fa fa-tasks"></i>
+                                    </a>
+                                <?php endif; ?>
 
                                 <a class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" data-original-title="View Order Details" href="<?php echo e(route('admin.orders.show', $item->id  )); ?>">
                                     <i class="fa fa-eye"></i>

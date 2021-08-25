@@ -29,6 +29,7 @@
         <li class=""><a data-toggle="tab" href="#tab-3" aria-expanded="false">Options</a></li>
         <li class=""><a data-toggle="tab" href="#tab-4" aria-expanded="false">Related Product</a></li>
         <li class=""><a data-toggle="tab" href="#tab-5" aria-expanded="false">Shipping Zone</a></li>
+        <li class=""><a data-toggle="tab" href="#tab-6" aria-expanded="false">Delivery Times</a></li>
     </ul>
     <br>
 
@@ -52,6 +53,10 @@
 
         <div id="tab-5" class="tab-pane">
             <?php echo $__env->make('adminproduct::forms.shipping_zone', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+        </div>
+
+        <div id="tab-6" class="tab-pane">
+            <?php echo $__env->make('adminproduct::forms.delivery_times', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
         </div>
 
 </div>

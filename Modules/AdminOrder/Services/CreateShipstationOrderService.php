@@ -31,6 +31,9 @@ class CreateShipstationOrderService
 
         $shipStation = new ShipStation(env('SHIPSTATION_API_KEY'),env('SHIPSTATION_API_SECRET'), env('SHIPSTATION_API_URL'));
 
+        #echo "<pre>";
+        #print_r($validatedData->all());die;
+
         $productQuantities = json_decode($validatedData['productQuantities']);
         $productTotals = json_decode($validatedData['productTotals']);
     
@@ -51,11 +54,11 @@ class CreateShipstationOrderService
             $singlesindexes = $validatedData['listSingle'];
 
             foreach ($products as $key => $productId) {
-                if(isset($singlesindexes[$key]) && $singlesindexes[$key]==1){
+                //if(isset($singlesindexes[$key]) && $singlesindexes[$key]==1){
                     $singleProducts[] = $productId;
-                } else {
-                    $comboProducts[] = $productId;
-                }
+                //} else {
+                  //  $comboProducts[] = $productId;
+                //}
             }
 
 
@@ -71,7 +74,12 @@ class CreateShipstationOrderService
             $address->country = "US";
             $address->phone = $orderData['phone'];
 
+
+            $indexv = 1;
             foreach($singleProducts as $productId){
+
+                Log::info("indexv : ".$indexv);
+
                 //get product quantities
                 $quantity = OrderProduct::where('order_id', $orderId)->where('product_id', $productId)->pluck('quantity')->first();
 
@@ -97,17 +105,24 @@ class CreateShipstationOrderService
                 $porder->shipTo = $address;
                 $porder->items[] = $productItem2;
 
+                $total_amt += $product->base_price;
+
+                Log::info('Order Data : '.json_encode($porder));
+
                 $response_single = $shipStation->orders->create($porder);
 
                 if(isset($response_single->orderId) && $response_single->orderId!=''){
                     $orderProductData = OrderProduct::where('order_id',$orderData["id"])->where('product_id', $product->id)->first();
                     $orderProductData->shipstation_order_id = $response_single->orderId;
                     $orderProductData->save();
-                }            
+                }  
+
+
+                $indexv++;     
             }
 
             //$shipStation2 = new ShipStation(env('SHIPSTATION_API_KEY'),env('SHIPSTATION_API_SECRET'), env('SHIPSTATION_API_URL'));
-            $address2 = new Address();
+           /* $address2 = new Address();
 
             $address2->name = $orderData['shipping_first_name']." ".$orderData['shipping_last_name'];
             $address2->street1 = $orderData['shipping_address_1'];
@@ -190,18 +205,18 @@ class CreateShipstationOrderService
                     $orderProductData->save();
                 }
                 
-            }
+            }*/
             
             
-            $customerTransaction = CustomerTransaction::create([
-                'order_id' => $orderData["id"],
-                'customer_user_id' => $orderData['customer_user_id'],
-                'type' => 'debit',
-                'amount' => $total_amt,
-                'currency' => $orderData['currency_code'],
-                'status' => 'initialize',
-                'remarks' =>  $orderData['comment']
-            ]);
+                $customerTransaction = CustomerTransaction::create([
+                    'order_id' => $orderData["id"],
+                    'customer_user_id' => $orderData['customer_user_id'],
+                    'type' => 'debit',
+                    'amount' => $total_amt,
+                    'currency' => $orderData['currency_code'],
+                    'status' => 'initialize',
+                    'remarks' =>  $orderData['comment']
+                ]);
 
             DB::commit();
             return true;
@@ -213,4 +228,68 @@ class CreateShipstationOrderService
         }
     }
 
+
+    public function saveProductProcessData(){
+
+        $productQuantities = json_decode($validatedData['productQuantities']);
+        $productTotals = json_decode($validatedData['productTotals']);
+    
+        $orderId = $validatedData->orderId;
+        $orderData = Order::find($orderId)->toArray();
+
+        try {
+            DB::beginTransaction();
+
+            $orderuuid = $orderData['uuid'];
+
+            $total_amt = 0; 
+            $products = json_decode($validatedData["productsIds"]);
+
+            // separate the sinngle and combo products 
+            $singleProducts = array();
+            $comboProducts = array();
+            $singlesindexes = $validatedData['listSingle'];
+
+            foreach ($products as $key => $productId) {
+                //if(isset($singlesindexes[$key]) && $singlesindexes[$key]==1){
+                    $singleProducts[] = $productId;
+                //} else {
+                  //  $comboProducts[] = $productId;
+                //}
+            }
+
+            $indexv = 1;
+            foreach($singleProducts as $productId){
+
+                Log::info("indexv : ".$indexv);
+
+                //get product quantities
+                $quantity = OrderProduct::where('order_id', $orderId)->where('product_id', $productId)->pluck('quantity')->first();
+
+                $total_amt += $product->base_price;
+
+                Log::info('Order Data : '.json_encode($porder));
+
+                $response_single = $shipStation->orders->create($porder);
+
+                if(isset($response_single->orderId) && $response_single->orderId!=''){
+                    $orderProductData = OrderProduct::where('order_id',$orderData["id"])->where('product_id', $product->id)->first();
+                    $orderProductData->shipstation_order_id = $response_single->orderId;
+                    $orderProductData->save();
+                }  
+
+                $indexv++;     
+            }
+
+
+            DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            Log::info("Exception Message : ".json_encode($e->getMessage()));
+            dd($e);
+            DB::rollback();
+            return false;
+        }
+    
+    }
 }

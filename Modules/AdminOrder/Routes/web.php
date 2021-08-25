@@ -37,6 +37,11 @@ Route::group(['prefix' => 'admin/orders', 'middleware' => 'auth:admin','as'=>'ad
 
     Route::post('/step/html', 'AdminOrderController@getStep2Html')->name('steptwo.html')->middleware('can:edit-product');
     Route::post('/step2/process', 'AdminOrderController@processOrder')->name('steptwo.process')->middleware('can:edit-product');
+
+
+    Route::get('stripe', 'StripePaymentController@stripe')->name('stripe');
+    Route::post('stripe', 'StripePaymentController@stripePost')->name('stripe.post');
+
     
 
 
