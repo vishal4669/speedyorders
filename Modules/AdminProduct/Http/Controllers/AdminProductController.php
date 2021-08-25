@@ -20,6 +20,7 @@ use Modules\AdminProduct\Http\Requests\CreateProductRequest;
 use Modules\AdminProduct\Http\Requests\UpdateProductRequest;
 use Modules\AdminProduct\Http\Requests\ImportProductRequest;
 use App\Models\ShippingZoneGroup;
+use App\Models\ShippingPackage;
 use App\Models\ShippingZonePrice;
 
 class AdminProductController extends Controller
@@ -53,12 +54,11 @@ class AdminProductController extends Controller
         $options = Option::orderBy('sort_order')->get();
 
         $groups = ShippingZoneGroup::select('id','group_name')->get();
+        $packages = ShippingPackage::select('id','package_name')->get();
         $relatedProductIds = array();
 
-        $zonePackages = ShippingZonePrice::all();
-
         $productCategories = [];
-        return view('adminproduct::create',compact('categories','relatedProductIds','productCategories','options','products', 'groups', 'zonePackages'),$data);
+        return view('adminproduct::create',compact('categories','relatedProductIds','productCategories','options','products', 'groups', 'packages'),$data);
     }
 
     /**
@@ -103,7 +103,7 @@ class AdminProductController extends Controller
             'menu' => 'products',
         ];
         $options = Option::orderBy('sort_order')->get();
-        $product = Product::where('id',$id)->with('options','options.optionValues', 'groups', 'relatedProducts')->first();
+        $product = Product::where('id',$id)->with('options','options.optionValues', 'groups', 'relatedProducts', 'delivery_time')->first();
         $products = Product::where('status',1)->select('id','name')->get();
         $categories = Category::where(['category_id'=>0])->orWhere(['category_id'=>null])->select('id','name')->get();
         $productCategories = ProductCategory::where('product_id',$id)->pluck('category_id')->toArray();
@@ -112,13 +112,27 @@ class AdminProductController extends Controller
         $productOptionValues = ProductOptionValue::whereIn('option_id',$optionsId)->get();
         $groups = ShippingZoneGroup::select('id','group_name')->get();
 
+
+        $packages = ShippingPackage::select('id','package_name')->get();
+
         $relatedProductIds = array();
         if(isset($product->relatedProducts) && !empty($product->relatedProducts)){
             $relatedProductIds = array_column($product->relatedProducts->toArray(), 'related_product_id');
         }
 
+        $productDeliveryTimeGroup = $productDeliveryTimePackage = '';
+        $deliveryTimes = [];
+        if(isset($product->delivery_time) && !empty($product->delivery_time)){
+            foreach($product->delivery_time as $timeData){
+                $productDeliveryTimePackage = $timeData->shipping_packages_id;
+                $productDeliveryTimeGroup = $timeData->shipping_zone_groups_id;
+
+                array_push($deliveryTimes, $timeData->shipping_delivery_times_id);
+            }
+        }
+                                                            
             
-        return view('adminproduct::edit',compact('product','categories','productCategories','options','products','productGalleries','productOptionValues', 'groups', 'relatedProductIds'),$data);
+        return view('adminproduct::edit',compact('product','categories','productCategories','options','products','productGalleries','productOptionValues', 'groups', 'relatedProductIds','packages', 'deliveryTimes','productDeliveryTimeGroup','productDeliveryTimePackage'),$data);
     }
 
 

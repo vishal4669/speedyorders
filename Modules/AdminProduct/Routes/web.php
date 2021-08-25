@@ -39,4 +39,6 @@ Route::group(['prefix' => 'admin/products', 'middleware' => 'auth:admin','as'=>'
 
     Route::get('/get-group-details/{group_id}', 'AdminProductController@getProductGroupData')->name('get.group')->middleware('can:store-product');
 
+    Route::post('/package/deliverytime', 'AdminProductAjaxController@packageDeliveryTime')->name('ajax.package.deliverytime')->middleware('can:edit-product');
+
 });

@@ -11,6 +11,8 @@ use App\Models\ProductOptionValue;
 use App\Models\ProductRelatedProduct;
 use App\Models\ProductGroup;
 use Log;
+use App\Models\ProductDeliveryTime;
+
 
 class UpdateProductService
 {
@@ -150,6 +152,34 @@ class UpdateProductService
                 }
             }
 
+            if(isset($validatedData['delivery_time']) && count($validatedData['delivery_time'])>0){
+
+              #  print_R($product->delivery_time);die;
+
+                if(isset($product->delivery_time) && !empty($product->delivery_time)){
+
+                    foreach($product->delivery_time as $deliveryData){
+                        $dt_time = ProductDeliveryTime::find($deliveryData->id);
+                        $dt_time->delete();
+                    }
+                }
+
+                $insertDeliveryTimeData = [];
+                $time = now();
+                foreach($validatedData['delivery_time'] as $rp){
+                    $insertDeliveryTimeData[] =[
+                        'products_id'=>$product->id,
+                        'shipping_delivery_times_id'=>$rp,
+                        'shipping_zone_groups_id'=>$validatedData['shipping_zone_groups_id'],
+                        'shipping_packages_id'=>$validatedData['shipping_packages_id'],
+                        'created_at' => $time,
+                        'updated_at' => $time,
+                    ];
+                }
+
+                ProductDeliveryTime::insert($insertDeliveryTimeData);
+            }
+
             if(isset($validatedData['related_products']) && count($validatedData['related_products'])>0){
                 if(isset($product->related_products) && !empty($product->related_products)){
                     $product->related_products->delete();
@@ -167,6 +197,7 @@ class UpdateProductService
 
                 ProductRelatedProduct::insert($insertRelatedProductData);
             }
+
 
             if(isset($validatedData['groups']) && count($validatedData['groups'])>0){
                 if($product->groups){

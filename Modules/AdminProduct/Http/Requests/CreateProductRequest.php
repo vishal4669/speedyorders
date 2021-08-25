@@ -43,6 +43,9 @@ class CreateProductRequest extends FormRequest
             'option_id'=>'nullable',
             'is_featured'=>'required|in:0,1',
             'groups.*'=>'nullable',
+            'delivery_time.*'=>'nullable',
+            'shipping_zone_groups_id' => 'nullable|numeric',
+            'shipping_packages_id' => 'nullable|numeric',
         ];
     }
 

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\ProductGallery;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Str;
+use App\Models\ProductDeliveryTime;
 
 class Product extends Model
 {
@@ -55,6 +56,10 @@ class Product extends Model
     public function excludedCoupons()
     {
         return $this->belongsToMany(Coupon::class,'product_coupon_excludes')->withPivot(['status']);
+    }
+
+    public function delivery_time(){
+        return $this->hasMany(ProductDeliveryTime::class,'products_id');
     }
 
     public function relatedProducts(){

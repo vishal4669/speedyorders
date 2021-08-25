@@ -10,6 +10,7 @@ use App\Models\ProductOptionValue;
 use App\Models\ProductRelatedProduct;
 use App\Models\ProductGroup;
 use Illuminate\Support\Facades\DB;
+use App\Models\ProductDeliveryTime;
 
 class CreateProductService
 {
@@ -17,6 +18,7 @@ class CreateProductService
     {
         try {
             DB::beginTransaction();
+
 
             if (isset($validatedData['image'])) {
                 $image = $validatedData['image'];
@@ -130,6 +132,23 @@ class CreateProductService
                             break;
                     }
                 }
+            }
+
+            if(isset($validatedData['delivery_time']) && count($validatedData['delivery_time'])>0){
+                $insertDeliveryTimeData = [];
+                $time = now();
+                foreach($validatedData['delivery_time'] as $rp){
+                    $insertDeliveryTimeData[] =[
+                        'products_id'=>$product->id,
+                        'shipping_delivery_times_id'=>$rp,
+                        'shipping_zone_groups_id'=>$validatedData['shipping_zone_groups_id'],
+                        'shipping_packages_id'=>$validatedData['shipping_packages_id'],
+                        'created_at' => $time,
+                        'updated_at' => $time,
+                    ];
+                }
+
+                ProductDeliveryTime::insert($insertDeliveryTimeData);
             }
 
             if(isset($validatedData['related_products']) && count($validatedData['related_products'])>0){

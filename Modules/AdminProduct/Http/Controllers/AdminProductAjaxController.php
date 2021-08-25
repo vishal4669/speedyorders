@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use App\Models\ShippingZonePrice;
+use App\Models\ProductDeliveryTime;
 
 class AdminProductAjaxController extends Controller
 {
@@ -63,5 +64,27 @@ class AdminProductAjaxController extends Controller
                 return response()->json(array('success' => true, 'html'=>$returnHTML));
                 break;
         }
+    }
+
+    public function packageDeliveryTime(Request $request){
+
+        if(!$request->zone_id || !$request->package_id){
+            return;
+        }
+
+
+        $deliverArr = (isset($request->deliveryTimes) && $request->deliveryTimes!='') ? json_decode($request->deliveryTimes) : '';
+
+        $zone_prices = ShippingZonePrice::leftjoin("shipping_delivery_times","shipping_delivery_times.id","=","shipping_zone_prices.shipping_delivery_times_id")
+                            ->where('shipping_zone_groups_id',$request->zone_id)
+                            ->where('shipping_packages_id',$request->package_id)
+                            ->select(["shipping_delivery_times.id",'shipping_delivery_times.name', 'shipping_zone_prices.price'])
+                            ->get();
+
+                            
+        $returnHTML = view('adminproduct::htmlelement.deliverytime',compact('zone_prices', 'deliverArr'))->render();
+        
+        return response()->json(array('success' => true, 'html'=>$returnHTML));
+         
     }
 }

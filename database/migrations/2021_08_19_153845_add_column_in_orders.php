@@ -14,8 +14,12 @@ class AddColumnInOrders extends Migration
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->string('payment_region')->default(null)->nullable()->after('payment_city');
-            $table->string('shipping_region')->default(null)->nullable()->after('shipping_city');
+            if (!Schema::hasColumn('orders','payment_region')) {
+                $table->string('payment_region')->default(null)->nullable()->after('payment_city');
+            }
+            if (!Schema::hasColumn('orders','shipping_region')) {
+                $table->string('shipping_region')->default(null)->nullable()->after('shipping_city');
+            }
         });
     }
 
