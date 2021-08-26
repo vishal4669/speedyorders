@@ -13,9 +13,9 @@ class Customer extends Model
 
    
 
-    public function ipAddresses()
+    public function addresses()
     {
-        return $this->hasMany('App\Models\CustomerIpAddress');
+        return $this->hasMany('App\Models\CustomerAddress');
     }
 
     public function customers()

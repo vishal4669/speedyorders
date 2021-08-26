@@ -396,12 +396,12 @@
                   <tr>
                      <td>
                         <address>
-                           {{ $order->payment_address_1 }}<br />{{ $order->payment_address_2 }}<br />{{ $order->payment_city }}<br />{{ $order->payment_state }}<br /> {{ $order->payment_postcode }} <br/> {{ $order->paymentCountry->name }} <br/>
+                           {{ $order->payment_address_1 }}<br />{{ $order->payment_address_2 }}<br />{{ $order->payment_city }}<br />{{ $order->payment_state }}<br /> {{ $order->payment_postcode }} <br/> {{ (isset($order->paymentCountry->name)) ? $order->paymentCountry->name : '' }} <br/>
                         </address>
                      </td>
                      <td>
                         <address>
-                           {{ $order->shipping_first_name.' '.$order->shipping_last_name }}<br />{{ $order->shipping_company }}<br />{{ $order->shipping_address_1 }} <br/> {{ $order->shipping_address_2 }} <br /> {{ $order->shipping_postcode }} <br /> {{ $order->shipping_state }} <br/> {{ $order->shippingCountry->name }}
+                           {{ $order->shipping_first_name.' '.$order->shipping_last_name }}<br />{{ $order->shipping_company }}<br />{{ $order->shipping_address_1 }} <br/> {{ $order->shipping_address_2 }} <br /> {{ $order->shipping_postcode }} <br /> {{ $order->shipping_state }} <br/> {{ (isset($order->shippingCountry->name)) ? $order->shippingCountry->name : '' }}
                         </address>
                      </td>
                   </tr>

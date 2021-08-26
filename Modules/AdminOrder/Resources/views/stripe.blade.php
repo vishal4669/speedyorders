@@ -26,17 +26,15 @@
   
 <div class="container">
   
-    <h1>Order Payment</h1>
-  
+    <h2 class="text-center">Order Payment</h2>
+    
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
             <div class="panel panel-default credit-card-box">
-                <div class="panel-heading display-table" >
-                    <div class="row display-tr" >
-                        <h3 class="panel-title display-td" >Payment Details</h3>
-                        <div class="display-td" >                            
-                            <img class="img-responsive pull-right" src="http://i76.imgup.net/accepted_c22e0.png">
-                        </div>
+                <div class="panel-heading" >
+                    <div class="row" >
+                        <h4 class="text-center"><b>Payment Details</b></h4>
+                        
                     </div>                    
                 </div>
                 <div class="panel-body">
@@ -48,7 +46,10 @@
                         </div>
                     @endif
   
-                    <form role="form" action="{{ route('stripe.post') }}" method="post" class="require-validation" data-cc-on-file="false" data-stripe-publishable-key="{{ env('STRIPE_KEY') }}" id="payment-form">
+                    <form role="form" action="{{ route('admin.orders.stripe-payment') }}" method="post" class="validation"
+                                                     data-cc-on-file="false"
+                                                    data-stripe-publishable-key="{{ env('STRIPE_KEY') }}"
+                                                    id="payment-form">
                         @csrf
   
                         <div class='form-row row'>
@@ -134,7 +135,7 @@ $(function() {
   
     if (!$form.data('cc-on-file')) {
       e.preventDefault();
-      Stripe.setPublishableKey($form.data('stripe-publishable-key'));
+      Stripe.setPublishableKey($form.data('{{ env("STRIPE_KEY") }}'));
       Stripe.createToken({
         number: $('.card-number').val(),
         cvc: $('.card-cvc').val(),

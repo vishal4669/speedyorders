@@ -13,6 +13,9 @@ use App\Models\CustomerTransaction;
 use App\Models\CustomerUser;
 use App\Models\OrderProductOption;
 use App\Models\ProductOptionValue;
+use App\Models\ProductDeliveryTime;
+use App\Models\ShippingZonePrice;
+use App\Models\ShippingPackage;
 use LaravelShipStation\ShipStation;
 use LaravelShipStation\Models\Address;
 use LaravelShipStation\Models\OrderItem;
@@ -46,12 +49,14 @@ class CreateShipstationOrderService
             $orderuuid = $orderData['uuid'];
 
             $total_amt = 0; 
+            $shippingPrice = 0;
             $products = json_decode($validatedData["productsIds"]);
 
             // separate the sinngle and combo products 
             $singleProducts = array();
             $comboProducts = array();
             $singlesindexes = $validatedData['listSingle'];
+            $singleDeliveryTimes = $validatedData['listDeliveryTimes'];
 
             foreach ($products as $key => $productId) {
                 //if(isset($singlesindexes[$key]) && $singlesindexes[$key]==1){
@@ -75,13 +80,66 @@ class CreateShipstationOrderService
             $address->phone = $orderData['phone'];
 
 
-            $indexv = 1;
+            $indexv = 0;
             foreach($singleProducts as $productId){
 
                 Log::info("indexv : ".$indexv);
 
-                //get product quantities
+                //Get product quantities
                 $quantity = OrderProduct::where('order_id', $orderId)->where('product_id', $productId)->pluck('quantity')->first();
+
+                //Package details
+                $shipping_data = DB::table('product_deliverytime')->where('products_id', $productId)->select('shipping_zone_groups_id', 'shipping_packages_id')->first();
+
+                $shipping_packages_id = $shipping_data->shipping_packages_id;
+                $shipping_zone_groups_id = $shipping_data->shipping_zone_groups_id;
+
+                $shippingPrice = ShippingZonePrice::where('shipping_delivery_times_id', $singleDeliveryTimes[$indexv])
+                                    ->where('shipping_packages_id', $shipping_packages_id)
+                                    ->where('shipping_zone_groups_id', $shipping_zone_groups_id)
+                                    ->pluck('price')
+                                    ->first();
+
+               
+                $package_length = $package_width = $package_height = $package_weight = 0;
+                $package_size_unit = '';
+                $package_weight_unit = 'oz';
+
+                if($shipping_packages_id && $shipping_packages_id!=''){
+                    $packgae_data = ShippingPackage::find($shipping_packages_id);
+                    
+                    $package_length = $packgae_data->package_length;
+                    $package_width = $packgae_data->package_width;
+                    $package_height = $packgae_data->package_height;
+
+                    $package_size_unit = $packgae_data->package_size_unit;
+
+                    $package_weight = $packgae_data->package_weight;
+                    $package_weight_unit = $packgae_data->package_weight_unit;
+                       
+                }
+
+                if($package_size_unit=="cm"){
+                    $package_length = $package_length * env('CM_TO_INCH');
+                    $package_width = $package_width * env('CM_TO_INCH');
+                    $package_height = $package_height * env('CM_TO_INCH');
+                }
+
+                $dimensions = new Dimensions();
+                $dimensions->length = $package_length;
+                $dimensions->width = $package_width;
+                $dimensions->height = $package_height;
+                $dimensions->units = 'inchs';
+
+                if($package_weight_unit=="kg"){
+                    $package_weight = $package_weight * env('KG_TO_OZ');
+                } else if($package_weight_unit=="lb"){
+                    $package_weight = $package_weight * env('LB_TO_OZ');
+                } 
+
+                $weight = new Weight();
+                $weight->value = $package_weight;
+                $weight->units = 'oz';
 
                 $product = Product::find($productId);
 
@@ -98,12 +156,15 @@ class CreateShipstationOrderService
                 $porder->orderKey = $orderData['uuid'];
                 $porder->orderDate = $orderData['created_at'];
                 $porder->orderStatus = 'awaiting_shipment';
-                $porder->amountPaid += $product->base_price;
+                $porder->amountPaid += (($product->base_price * $quantity) + $shippingPrice);
                 $porder->taxAmount = '0.00';
-                $porder->shippingAmount = '0.00';
+                $porder->shippingAmount = $shippingPrice;
                 $porder->billTo = $address;
                 $porder->shipTo = $address;
+                $porder->dimensions = $dimensions;
+                $porder->weight = $weight;          
                 $porder->items[] = $productItem2;
+
 
                 $total_amt += $product->base_price;
 
@@ -114,6 +175,8 @@ class CreateShipstationOrderService
                 if(isset($response_single->orderId) && $response_single->orderId!=''){
                     $orderProductData = OrderProduct::where('order_id',$orderData["id"])->where('product_id', $product->id)->first();
                     $orderProductData->shipstation_order_id = $response_single->orderId;
+                    $orderProductData->shipping_price = $shippingPrice;
+                    $orderProductData->shipping_delivery_times_id = $singleDeliveryTimes[$indexv];
                     $orderProductData->save();
                 }  
 
@@ -206,7 +269,10 @@ class CreateShipstationOrderService
                 }
                 
             }*/
-            
+                
+                $orderData = Order::find($orderId);
+                $orderData->status = 3;
+                $orderData->save();
             
                 $customerTransaction = CustomerTransaction::create([
                     'order_id' => $orderData["id"],

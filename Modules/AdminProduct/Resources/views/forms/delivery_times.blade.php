@@ -36,7 +36,7 @@
     </div>
 </div>
 
-<input type="hidden" name="deliveryTimes" id="deliveryTimes" value="<?php echo ($deliveryTimes && !empty($deliveryTimes)) ? json_encode($deliveryTimes) : '';?>">
+<input type="hidden" name="deliveryTimes" id="deliveryTimes" value="<?php echo (isset($deliveryTimes) && !empty($deliveryTimes)) ? json_encode($deliveryTimes) : '';?>">
 
 <style type="text/css">
     label.rows {

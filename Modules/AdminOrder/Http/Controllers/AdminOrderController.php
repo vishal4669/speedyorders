@@ -16,6 +16,7 @@ use App\Models\CouponHistory;
 use App\Models\ProductOption;
 use App\Models\ProductGroup;
 use App\Models\ShippingZonePrice;
+use App\Models\ShippingPackage;
 
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
@@ -172,7 +173,22 @@ class AdminOrderController extends Controller
 
         $order = Order::with('orderedProducts','orderedProducts.orderProductOptions')->findOrFail($id);
 
-        return view('adminorder::process', compact('order'),$data);
+        $packages = ShippingPackage::select('id','package_name')->get();
+
+        $productDeliveryTimeGroup = $productDeliveryTimePackage = '';
+       /* $deliveryTimes = [];
+        if(isset($product->delivery_time) && !empty($product->delivery_time)){
+            foreach($product->delivery_time as $timeData){
+                $productDeliveryTimePackage = $timeData->shipping_packages_id;
+                $productDeliveryTimeGroup = $timeData->shipping_zone_groups_id;
+
+                array_push($deliveryTimes, $timeData->shipping_delivery_times_id);
+            }
+        }*/
+
+#        print_r($packages);die;
+
+        return view('adminorder::process', compact('order', 'packages'),$data);
     }
 
     /**
@@ -396,10 +412,11 @@ class AdminOrderController extends Controller
     }
 
     public function getStep2Html(Request $request){
-
+        $orderId = $request->orderId;
         $productsIds = json_decode($request->productsIds);
         $productNames = json_decode($request->productNames);
         $listPackages = $request->listPackages;
+        $listDeliveryTimes = $request->listDeliveryTimes;
 
         $singles = $request->listSingle;
 
@@ -410,7 +427,10 @@ class AdminOrderController extends Controller
             if($value==1){
                 $singalarr[$indexsingle]["id"] = $productsIds[$key];
                 $singalarr[$indexsingle]["name"] = $productNames[$key];
-                $singalarr[$indexsingle]["package"] = $this->getPackageName($listPackages[$key]);
+                $singalarr[$indexsingle]["product_price"] = $this->getProductPrice($orderId, $productsIds[$key]);
+                $singalarr[$indexsingle]["package"] = $this->getPackageName($listPackages[$key]);                
+                $singalarr[$indexsingle]["deliverytime"] = $this->getDeliveryData($listDeliveryTimes[$key]);
+                $singalarr[$indexsingle]["deliverytimeprice"] = $this->getDeliveryData($listDeliveryTimes[$key],$productsIds[$key], $listPackages[$key]);
                 $indexsingle++;
             }
             
@@ -438,7 +458,38 @@ class AdminOrderController extends Controller
     public function getPackageName($packageId){
         $package = DB::table('shipping_packages')->select('package_name')->where('id', $packageId)->first();
 
-        return (isset($package->package_name)) ? $package->package_name : 'NA';
+        return (isset($package->package_name)) ? ucfirst($package->package_name) : 'NA';
+    }
+
+    public function getProductPrice($orderId, $productId){
+        $price_data = DB::table('order_products')
+                        ->where('order_id', $orderId)
+                        ->where('product_id', $productId)
+                        ->select(['price','quantity'])
+                        ->first();
+
+        return ($price_data->price * $price_data->quantity) ? ($price_data->price * $price_data->quantity) : 0;
+    }
+
+    public function getDeliveryData($deliveryTimeId, $productId = '', $packageId=''){
+        $price = '';
+        if($productId && $productId!=''){
+            $shipping_zone_groups_id = DB::table('product_deliverytime')->where('products_id', $productId)->pluck('shipping_zone_groups_id')->first();
+            if(isset($shipping_zone_groups_id) && $shipping_zone_groups_id!=''){
+                $price = DB::table('shipping_zone_prices')
+                    ->where('shipping_zone_groups_id', $shipping_zone_groups_id)
+                    ->where('shipping_delivery_times_id', $deliveryTimeId)
+                    ->where('shipping_packages_id', $packageId)
+                    ->pluck('price')
+                    ->first();
+            }
+
+            return $price;
+        } else {
+            $time = DB::table('shipping_delivery_times')->select('name')->where('id', $deliveryTimeId)->first();
+            return (isset($time->name)) ? ucfirst($time->name) : 'NA';
+        }
+        
     }
 
     /**

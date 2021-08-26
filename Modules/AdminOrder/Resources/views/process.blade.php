@@ -114,7 +114,7 @@
                                     <td style="width:10%;" class="text-right"><b>Total</b></td>
                                     <?php /*<td style="width:10%;"><b>Single</b></td>
                                      <td style="width:10%;"><b>Combo</b></td> */?>
-                                     <td style="width:30%;"><b>Select Package</b></td>
+                                     <td style="width:30%;"><b>Package</b></td>
                                     <td style="width:20%;"><b>Delivery Time</b></td>
                                  </tr>
                               </thead>
@@ -138,6 +138,23 @@
                                   @forelse($order->orderedProducts as $orderedProduct)
                                   <?php
 
+                                        $productDeliveryTimePackage = '';
+                                        $deliveryTimes = [];
+
+                                        $productDeliveryTimedata = App\Models\ProductDeliveryTime::where('products_id',$orderedProduct->product->id)->get();
+
+                                        if(!empty($productDeliveryTimedata)){
+                                            foreach($productDeliveryTimedata as $timeData){
+                                                $productDeliveryTimePackage = $timeData->shipping_packages_id;
+                                                $productDeliveryTimeGroup = $timeData->shipping_zone_groups_id;
+
+                                                array_push($deliveryTimes, $timeData->shipping_delivery_times_id);
+                                            }
+                                        }
+
+
+                                      
+
                                        $individualTotal = $orderedProduct->quantity*$orderedProduct->price;
                                        $subTotal += $individualTotal;
                                        $totalTax += $orderedProduct->tax;
@@ -149,11 +166,11 @@
                                        $productQuantities[] = $orderedProduct->quantity;
                                        $productTotals[] = $individualTotal;
 
-                                       $groups_array = array();
-                                       $groups = App\Models\ProductGroup::where('product_id',$orderedProduct->product->id)->where('group_id','!=', null)->get();
+                                       //$groups_array = array();
+                                       //$groups = App\Models\ProductGroup::where('product_id',$orderedProduct->product->id)->where('group_id','!=', null)->get();
 
-                                       $shipping_postcode = (isset($order->shipping_postcode)) ? $order->shipping_postcode : '';
-                                       $packages = array();
+                                       //$shipping_postcode = (isset($order->shipping_postcode)) ? $order->shipping_postcode : '';
+                                       /*$packages = array();
                                        if(!empty($groups)){
                                             $groups_array = array_column($groups->toArray(), 'group_id');
                                            
@@ -171,7 +188,7 @@
                                                         }   
                                                         $packages = $packages->get(['shipping_packages_id as id','shipping_packages.package_name','shipping_delivery_times.name']);
                                             }
-                                       }
+                                       }*/
 
                                    ?>
                                  <tr>
@@ -194,8 +211,8 @@
                                        @endif
                                     </td>                                  
                                     <td class="text-right">{{ $orderedProduct->quantity }}</td>
-                                    <td class="text-right">{{ $orderedProduct->price }}</td>
-                                    <td class="text-right">{{ $individualTotal }}</td>
+                                    <td class="text-right">${{ $orderedProduct->price }}</td>
+                                    <td class="text-right">${{ $individualTotal }}</td>
 
 
 
@@ -213,15 +230,15 @@
                                          <input type="hidden" name="order_product_single[]" id="order_product_single_{{$orderedProduct->product->id}}">
 
 
-                                        <input type="hidden" name="groups_{{$orderedProduct->product->id}}" value="<?php echo json_encode($groups_array);?>">
+                                        <!--<input type="hidden" name="groups_{{$orderedProduct->product->id}}" value="<?php //echo json_encode($groups_array);?>"> -->
 
                                         <div id="packages_{{$orderedProduct->product->id}}">
                                            
-                                            <select onchange="getPackageDeliveryTimes(this.value,'{{$orderedProduct->product->id}}', '{{$order->shipping_postcode}}')" class="form-control" name="single_product_package[]" required>
+                                            <select disabled="true" onchange="getPackageDeliveryTimes(this.value,'{{$orderedProduct->product->id}}', '{{$order->shipping_postcode}}')" class="form-control" name="single_product_package[]" required>
                                                 @if(!empty($packages))
-                                                    <option value="">Select package</option>
+                                                    <option value="">Select Package</option>
                                                     @foreach($packages as $package_data)
-                                                        <option value="{{$package_data->id}}">{{$package_data->package_name}}</option>
+                                                        <option {{(isset($productDeliveryTimePackage) && $productDeliveryTimePackage==$package_data->id) ? 'selected' : ''}} value="{{$package_data->id}}">{{$package_data->package_name}}</option>
                                                     @endforeach
                                                 @endif
                                                 
@@ -231,7 +248,13 @@
 
                                     <td>
                                         <div id="delivery_time_{{$orderedProduct->product->id}}">
-                                            <select class="form-control" name="product_delivery_time_{{$orderedProduct->product->id}}[]">
+                                             <select class="form-control" name="single_product_deliverytime[]">
+                                                @if(!empty($orderedProduct->product->delivery_time))
+                                                    <option value="">Select Delivery Time</option>
+                                                    @foreach($orderedProduct->product->delivery_time as $timedetails)
+                                                        <option {{(isset($orderedProduct) && $orderedProduct->shipping_delivery_times_id == $timedetails->shipping_delivery_times_id) ? 'selected' : ''}} value="{{$timedetails->shipping_delivery_times_id}}">{{ucfirst($timedetails->delivery_time_name->name)}}</option>
+                                                    @endforeach
+                                                @endif
                                             </select>
                                         </div>
                                     </td>
@@ -268,8 +291,23 @@
                         </div>
 
                          <div class="row">
-                               <div class="col-md-12">  
-                                <button type="button" id="" onclick="processOrderDetails()" class="btn btn-primary pull-right">Mark As Fullfill</button>
+                            <div class="col-md-8">
+                            </div>
+                                <?php /*
+                                <div class="payment_options col-md-3">
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <input class="i-checks" type="radio"  name="payment_option" value="stripe">
+                                            <label for="payment_option" style="color:#000000;">Stripe</label>
+                                             <input class="i-checks" type="radio" name="payment_option" value="paypal">
+                                            <label for="payment_option" style="color:#000000;">Paypal</label>
+                                             <input class="i-checks" checked type="radio" name="payment_option" value="offline">
+                                            <label for="payment_option" style="color:#000000;">Offline</label>
+                                        </div>
+                                    </div>
+                                </div>*/?>
+                               <div class="col-md-4">  
+                                <button type="button" id="" onclick="processOrderDetails()" class="btn btn-primary pull-right">Mark as Fulfill</button>
                                </div>
                            </div>
                     </div>
@@ -314,6 +352,10 @@ function showSelectedDetails(){
         return this.value;
     }).get();
 
+    var listDeliveryTimes = $("select[name='single_product_deliverytime[]']").map(function () {
+        return this.value;
+    }).get();
+
     var url = "{{ route('admin.orders.steptwo.html') }}";
 
     $.ajax({
@@ -321,6 +363,7 @@ function showSelectedDetails(){
         type: 'post',
         data: {
             "_token": "{{ csrf_token() }}",
+            "orderId" : orderId,
             "productsIds": productsIds,
             "productNames" : productNames,
             "productUnitPrices" : productUnitPrices,
@@ -328,7 +371,8 @@ function showSelectedDetails(){
             "productTotals" : productTotals,
             "listSingle" : listSingle,
             //"listCombo" : listCombo,
-            "listPackages" : listPackages
+            "listPackages" : listPackages,
+            "listDeliveryTimes" : listDeliveryTimes
         },
         dataType: 'JSON',
         success: function(data) {
@@ -360,6 +404,10 @@ function processOrderDetails(){
         return this.value;
     }).get();
 
+    var listDeliveryTimes = $("select[name='single_product_deliverytime[]']").map(function () {
+        return this.value;
+    }).get();
+
     var url = "{{ route('admin.orders.steptwo.process') }}";
 
     $.ajax({
@@ -376,6 +424,7 @@ function processOrderDetails(){
             "listSingle" : listSingle,
            // "listCombo" : listCombo,
             "listPackages" : listPackages,
+            "listDeliveryTimes" : listDeliveryTimes
            // "package_length" : $("#package_length").val(),
            // "package_width" : $("#package_width").val(),
            // "package_height" : $("#package_height").val(),
@@ -389,6 +438,49 @@ function processOrderDetails(){
            window.location = "{{ route('admin.orders.index') }}";
         }
     });
+}
+
+function makePayment(){
+
+    return false;
+    //window.location = "{{ route('admin.orders.stripe') }}";
+
+
+    /*var listSingle = $("input[name='order_product_single[]']").map(function () {
+            return 1;
+    }).get();
+    
+    var listPackages = $("select[name='single_product_package[]']").map(function () {
+        return this.value;
+    }).get();
+
+    var listDeliveryTimes = $("select[name='single_product_deliverytime[]']").map(function () {
+        return this.value;
+    }).get();
+
+    var url = "{{ route('admin.orders.steptwo.process') }}";
+
+    $.ajax({
+        url: url,
+        type: 'post',
+        data: {
+            "_token": "{{ csrf_token() }}",
+            "orderId" : orderId,
+            "productsIds": productsIds,
+            "productNames" : productNames,
+            "productUnitPrices" : productUnitPrices,
+            "productQuantities" : productQuantities,
+            "productTotals" : productTotals,
+            "listSingle" : listSingle,
+            "listPackages" : listPackages,
+            "listDeliveryTimes" : listDeliveryTimes
+        },
+        dataType: 'JSON',
+        success: function(data) {
+            alert('Order successfull processed at shipstation');
+           window.location = "{{ route('admin.orders.index') }}";
+        }
+    });*/
 }
         
 

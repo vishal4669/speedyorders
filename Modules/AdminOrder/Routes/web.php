@@ -40,7 +40,7 @@ Route::group(['prefix' => 'admin/orders', 'middleware' => 'auth:admin','as'=>'ad
 
 
     Route::get('stripe', 'StripePaymentController@stripe')->name('stripe');
-    Route::post('stripe', 'StripePaymentController@stripePost')->name('stripe.post');
+    Route::post('stripe-payment', 'StripePaymentController@stripePost')->name('stripe-payment');
 
     
 

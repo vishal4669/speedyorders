@@ -3,19 +3,41 @@
   <thead>
      <tr>
         <td style="width:10%"><b>Product ID</b></td>
-        <td style="width:30%"><b>Product</b></td>
-        <td style="width:50%"><b>Package</b></td>
+        <td style="width:20%"><b>Product</b></td>
+        <td style="width:10%"><b>Product Price Total</b></td>
+        <td style="width:25%"><b>Package</b></td>
+        <td style="width:25%"><b>Delivery Time</b></td>
+        <td style="width:25%"><b>Shipping Price</b></td>
      </tr>
   </thead>
   <tbody>    
     @if(!empty($singalarr))
+        <?php $total_product_price = 0?>
+        <?php $total_shipping_price = 0?>
+
         @foreach($singalarr as $singleproduct)     
              <tr>
                 <td>{{ $singleproduct["id"] }}</td>
-                <td>{{ $singleproduct["name"] }}</td>                                  
-                <td>{{ $singleproduct["package"] }}</td>
+                <td>{{ $singleproduct["name"] }}</td> 
+                <td>${{ $singleproduct["product_price"] }} <?php $total_product_price += $singleproduct["product_price"] ?></td>                                  
+                <td>{{ $singleproduct["package"] }}</td>                               
+                <td>{{ $singleproduct["deliverytime"] }}</td>                          
+                <td>${{ $singleproduct["deliverytimeprice"] }} <?php $total_shipping_price += $singleproduct["deliverytimeprice"]?></td>
              </tr>
         @endforeach
+
+        <tr>
+            <th colspan="2">Product Price Total</th>
+            <th>${{$total_product_price}}</th>                                  
+            <th colspan="2">Shipping Price Total</th>                               
+            <th>${{$total_shipping_price}}</th>
+         </tr>
+
+         <tr>
+            <th colspan="5">Grand Total</th>
+            <th>${{$total_product_price + $total_shipping_price}}</th>
+         </tr>
+
     @else
         <tr>
             <td colspan="7" class="text-center">No Product Selected</td>
