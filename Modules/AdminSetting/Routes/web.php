@@ -71,4 +71,12 @@ Route::group(['prefix' => '/admin/settings', 'middleware' => 'auth:admin'], func
         Route::post('/social/media', 'AdminSettingController@updateSocialMediaSetting')
         ->name('admin.settings.update.socialmedia')
         ->middleware('can:general-setting');
+
+        Route::get('/cod', 'AdminSettingController@codIndex')
+        ->name('admin.settings.cod')
+        ->middleware('can:general-setting');
+
+        Route::post('/cod', 'AdminSettingController@updateCODSetting')
+        ->name('admin.settings.update.cod')
+        ->middleware('can:general-setting');
 });

@@ -129,18 +129,24 @@ class UpdateProductService
                                         'option_id' => $option['option_data'][$counter][0],
                                         'option_value_id' => $item,
                                         'quantity' =>
-                                            $option['quantity'][$counter][
+                                            (isset($option['quantity'][$counter][
                                                 $vaueKey
-                                            ],
+                                            ])) ? $option['quantity'][$counter][
+                                                $vaueKey
+                                            ] : 0,
                                         'subtract_from_stock' =>
-                                            $option['subtract_from_stock'][
+                                            (isset($option['subtract_from_stock'][
                                                 $counter
-                                            ][$vaueKey],
+                                            ][$vaueKey])) ? $option['subtract_from_stock'][
+                                                $counter
+                                            ][$vaueKey] : 0,
                                         'price_prefix' => (isset($option['price_prefix'][$counter][$vaueKey]) && $option['price_prefix'][$counter][$vaueKey] == '+') ? 1: 0,
                                         'price' =>
-                                            $option['price'][$counter][
+                                            (isset($option['price'][$counter][
                                                 $vaueKey
-                                            ],
+                                            ])) ? $option['price'][$counter][
+                                                $vaueKey
+                                            ] :0,
                                     ];
 
                                     ProductOptionValue::create($productOptionValueData);
@@ -199,7 +205,7 @@ class UpdateProductService
             }
 
 
-            if(isset($validatedData['groups']) && count($validatedData['groups'])>0){
+            /*if(isset($validatedData['groups']) && count($validatedData['groups'])>0){
                 if($product->groups){
                     ProductGroup::where('product_id', $product->id)->delete();
                 }
@@ -213,7 +219,7 @@ class UpdateProductService
                 }
 
                 ProductGroup::insert($insertGroupData);
-            }
+            }*/
 
             \DB::commit();
             return true;

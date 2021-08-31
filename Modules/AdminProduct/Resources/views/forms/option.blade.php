@@ -12,7 +12,7 @@
             </div>
             <div class="col-md-6">
                 <label for="option">Options</label>
-                <select class="form-control " list="options" id="options">
+                <select class="form-control js-dropdown-select2" list="options" id="options">
                     <option value="">select options</option>
                     @foreach ($options as $option)
                         <option value="{{ $option->id }}">{{ $option->name }}</option>

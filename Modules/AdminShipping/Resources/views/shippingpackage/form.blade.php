@@ -71,7 +71,7 @@
             </div>
 
             <div class="hr-line-dashed"></div>
-
+            <?php /*
             <div class="form-group">
                 <label class="col-md-2 control-label">Set as default Package</label>
                 <div class="col-md-4">
@@ -81,6 +81,7 @@
                     </select>
                 </div>
             </div>
+            */?>
 
 @section('ext_js')
     <script type="text/javascript">

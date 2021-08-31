@@ -13,9 +13,9 @@ class UpdatePackageService
         {
             DB::beginTransaction();
                 // update all packages as not default when current project set as active
-                if(isset($validatedData['is_default']) && $validatedData['is_default']==1){
+                /*if(isset($validatedData['is_default']) && $validatedData['is_default']==1){
                     $affectedRows = ShippingPackage::where('id', '>', 0)->update(array('is_default' => 0));
-                }
+                }*/
 
                 ShippingPackage::where('id',$id)->first()->update($validatedData);
                 $package = ShippingPackage::where('id',$id)->first();

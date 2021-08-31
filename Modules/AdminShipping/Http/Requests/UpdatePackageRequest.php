@@ -20,7 +20,7 @@ class UpdatePackageRequest extends FormRequest
             'package_length' => "required|numeric",
             'package_height' => "required|numeric",
             'package_width' => "required|numeric",
-            'is_default' => "required|in:0,1",
+            //'is_default' => "required|in:0,1",
         ];
     }
 

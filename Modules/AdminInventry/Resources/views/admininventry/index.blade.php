@@ -6,6 +6,9 @@
         border-radius: 3px;
         border: 1px solid dimgray;
     }
+    .pagination{
+        float: right;
+    }
 </style>
 @section('content')
 <div class="hpanel">
@@ -54,6 +57,10 @@
                 @endforelse
             </tbody>
             </table>
+
+
+            {{ $inventries->links() }}
+
             </div>
         </div>
     </div>
@@ -68,7 +75,8 @@
     <script>
         $(document).ready(function() {
             $('#inventryTable').DataTable({
-                "pageLength" : 10
+                "pageLength" : 10,
+                "bPaginate" : false
             });
         });
 

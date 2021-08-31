@@ -28,7 +28,7 @@
         <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">Category</a></li>
         <li class=""><a data-toggle="tab" href="#tab-3" aria-expanded="false">Options</a></li>
         <li class=""><a data-toggle="tab" href="#tab-4" aria-expanded="false">Related Product</a></li>
-        <li class=""><a data-toggle="tab" href="#tab-5" aria-expanded="false">Shipping Zone</a></li>
+        <?php /*<li class=""><a data-toggle="tab" href="#tab-5" aria-expanded="false">Shipping Zone</a></li> */?>
         <li class=""><a data-toggle="tab" href="#tab-6" aria-expanded="false">Delivery Times</a></li>
     </ul>
     <br>
@@ -50,11 +50,11 @@
         <div id="tab-4" class="tab-pane">
             @include('adminproduct::forms.related_product')
         </div>
-
+        <?php /*
         <div id="tab-5" class="tab-pane">
             @include('adminproduct::forms.shipping_zone')
         </div>
-
+        */?>
         <div id="tab-6" class="tab-pane">
             @include('adminproduct::forms.delivery_times')
         </div>

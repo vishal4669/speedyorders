@@ -166,7 +166,7 @@ class CreateProductService
                 ProductRelatedProduct::insert($insertRelatedProductData);
             }
 
-            if(count($validatedData['groups'])>0){
+            /*if(count($validatedData['groups'])>0){
                 $insertGroupData = [];
                 $time = now();
                 foreach($validatedData['groups'] as $group){
@@ -177,7 +177,7 @@ class CreateProductService
                 }
 
                 ProductGroup::insert($insertGroupData);
-            }
+            }*/
 
             DB::commit();
             return true;

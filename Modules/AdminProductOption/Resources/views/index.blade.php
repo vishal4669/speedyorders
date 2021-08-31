@@ -42,7 +42,7 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $item->name }}</td>
-                            <td>{{ $item->type }}</td>
+                            <td>{{ ($item->type=='input') ? 'Textbox' : $item->type }}</td>
                             <td>{!!$item->optionValues->sortBy('sort_order')->pluck('name')->implode(",<br>")!!}</td>
                             <td>{{ $item->sort_order }}</td>
                             <td>

@@ -21,7 +21,7 @@ class AdminInventryController extends Controller
         ];
         $inventries = Product::leftjoin('inventry', 'inventry.products_id', '=', 'products.id')
                                 ->select(['products.id', 'products.image', 'products.sku', 'inventry.available', 'products.name', 'inventry.alert_qty'])
-                                ->orderByDesc('products.id')->get();
+                                ->orderByDesc('products.id')->paginate(10);
         
         return view('admininventry::admininventry.index',compact('inventries'),$data);
     }

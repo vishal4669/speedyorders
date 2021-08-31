@@ -29,13 +29,11 @@ use DB;
 
 class CreateShipstationOrderService
 {
-    public function handle($validatedData)
+     public function handle($validatedData)
     {   
 
-        $shipStation = new ShipStation(env('SHIPSTATION_API_KEY'),env('SHIPSTATION_API_SECRET'), env('SHIPSTATION_API_URL'));
-
         #echo "<pre>";
-        #print_r($validatedData->all());die;
+       # print_r($validatedData->all());die;
 
         $productQuantities = json_decode($validatedData['productQuantities']);
         $productTotals = json_decode($validatedData['productTotals']);
@@ -53,22 +51,73 @@ class CreateShipstationOrderService
             $products = json_decode($validatedData["productsIds"]);
 
             // separate the sinngle and combo products 
-            $singleProducts = array();
-            $comboProducts = array();
+            $singleProducts = $productPackageArr = $comboProducts = $deliveryTimesArr = array();             
             $singlesindexes = $validatedData['listSingle'];
             $singleDeliveryTimes = $validatedData['listDeliveryTimes'];
+            $listPackages = $validatedData['listPackages'];
 
             foreach ($products as $key => $productId) {
-                //if(isset($singlesindexes[$key]) && $singlesindexes[$key]==1){
+                if(isset($singlesindexes[$key]) && $singlesindexes[$key]==1){
                     $singleProducts[] = $productId;
-                //} else {
-                  //  $comboProducts[] = $productId;
-                //}
+                } else {
+                    $comboProducts[] = $productId;
+                }
+
+                $productPackageArr[$productId] = $listPackages[$key];
+                $deliveryTimesArr[$productId] = $singleDeliveryTimes[$key];
+
             }
 
+            #echo "<pre>";
+            #print_r($productPackageArr);
+            #print_r($comboProducts);
 
+            #die;
+
+            #dd($singleProducts);
+            #dd($comboProducts);
+
+            if(!empty($singleProducts)){
+                $this->handle_single($orderData, $orderId, $productPackageArr, $deliveryTimesArr, $singleProducts, $singleDeliveryTimes);
+            }
+            
+            if(!empty($comboProducts)){
+                $this->handle_combo($validatedData, $orderData, $orderId, $productPackageArr, $deliveryTimesArr, $comboProducts, $singleDeliveryTimes);
+            }
+                
+            $orderData = Order::find($orderId);
+            $orderData->status = 3;
+            $orderData->save();
+        
+            $customerTransaction = CustomerTransaction::create([
+                'order_id' => $orderData["id"],
+                'customer_user_id' => $orderData['customer_user_id'],
+                'type' => 'debit',
+                'amount' => $total_amt,
+                'currency' => $orderData['currency_code'],
+                'status' => 'initialize',
+                'remarks' =>  $orderData['comment']
+            ]);
+
+            DB::commit();
+
+            return true;
+        } catch (\Exception $e) {
+            Log::info("Exception Message : ".json_encode($e->getMessage()));
+            dd($e);
+            DB::rollback();
+            return false;
+        }
+    }
+
+
+    public function handle_single($orderData, $orderId, $productPackageArr, $deliveryTimesArr, $singleProducts, $singleDeliveryTimes){
+
+        $orderuuid = (string) Str::uuid();
+
+        //dd("single");
             // create orders for single products
-            //$shipStation = new ShipStation(env('SHIPSTATION_API_KEY'),env('SHIPSTATION_API_SECRET'), env('SHIPSTATION_API_URL'));
+            $shipStation = new ShipStation(env('SHIPSTATION_API_KEY'),env('SHIPSTATION_API_SECRET'), env('SHIPSTATION_API_URL'));
             $address = new Address();
 
             $address->name = $orderData['shipping_first_name']." ".$orderData['shipping_last_name'];
@@ -79,7 +128,6 @@ class CreateShipstationOrderService
             $address->country = "US";
             $address->phone = $orderData['phone'];
 
-
             $indexv = 0;
             foreach($singleProducts as $productId){
 
@@ -89,18 +137,17 @@ class CreateShipstationOrderService
                 $quantity = OrderProduct::where('order_id', $orderId)->where('product_id', $productId)->pluck('quantity')->first();
 
                 //Package details
-                $shipping_data = DB::table('product_deliverytime')->where('products_id', $productId)->select('shipping_zone_groups_id', 'shipping_packages_id')->first();
+                $shipping_packages_id = $productPackageArr[$productId];
+                $shipping_delivery_times_id = $deliveryTimesArr[$productId];
+                
+                #echo $shipping_delivery_times_id."->".$shipping_packages_id;die;
 
-                $shipping_packages_id = $shipping_data->shipping_packages_id;
-                $shipping_zone_groups_id = $shipping_data->shipping_zone_groups_id;
-
-                $shippingPrice = ShippingZonePrice::where('shipping_delivery_times_id', $singleDeliveryTimes[$indexv])
+                $shippingPrice = ShippingZonePrice::where('shipping_delivery_times_id', $shipping_delivery_times_id)
                                     ->where('shipping_packages_id', $shipping_packages_id)
-                                    ->where('shipping_zone_groups_id', $shipping_zone_groups_id)
                                     ->pluck('price')
                                     ->first();
 
-               
+          
                 $package_length = $package_width = $package_height = $package_weight = 0;
                 $package_size_unit = '';
                 $package_weight_unit = 'oz';
@@ -143,20 +190,25 @@ class CreateShipstationOrderService
 
                 $product = Product::find($productId);
 
+                $orderPriceQtydataSingle = OrderProduct::where('order_id', $orderId)->where('product_id', $productId)->select('quantity', 'price')->first();
+
                 $productItem2 = new OrderItem();
                 $productItem2->lineItemKey = $product->uuid;
                 $productItem2->sku = $product->sku;
                 $productItem2->name = $product->name;
-                $productItem2->quantity = $quantity;
-                $productItem2->unitPrice  = $product->base_price;
+                $productItem2->quantity = $orderPriceQtydataSingle->quantity;
+                $productItem2->unitPrice  = $orderPriceQtydataSingle->price;
                 
                 $porder = new ProductOrder();
 
-                $porder->orderNumber = $product->uuid;
-                $porder->orderKey = $orderData['uuid'];
+                $pdatawithqty = floatval($orderPriceQtydataSingle->price) * intval($orderPriceQtydataSingle->quantity);
+                $amount_paid = $pdatawithqty + $shippingPrice;
+
+                $porder->orderNumber = $orderuuid;
+                $porder->orderKey = $orderuuid;
                 $porder->orderDate = $orderData['created_at'];
                 $porder->orderStatus = 'awaiting_shipment';
-                $porder->amountPaid += (($product->base_price * $quantity) + $shippingPrice);
+                $porder->amountPaid = $amount_paid;
                 $porder->taxAmount = '0.00';
                 $porder->shippingAmount = $shippingPrice;
                 $porder->billTo = $address;
@@ -165,27 +217,45 @@ class CreateShipstationOrderService
                 $porder->weight = $weight;          
                 $porder->items[] = $productItem2;
 
+                #echo "<pre>";
 
-                $total_amt += $product->base_price;
+                #echo $total_amt;
+               #dd($porder);
 
                 Log::info('Order Data : '.json_encode($porder));
 
+               
+
                 $response_single = $shipStation->orders->create($porder);
+
+                 #dd($response_single);
 
                 if(isset($response_single->orderId) && $response_single->orderId!=''){
                     $orderProductData = OrderProduct::where('order_id',$orderData["id"])->where('product_id', $product->id)->first();
                     $orderProductData->shipstation_order_id = $response_single->orderId;
                     $orderProductData->shipping_price = $shippingPrice;
                     $orderProductData->shipping_delivery_times_id = $singleDeliveryTimes[$indexv];
+                    $orderProductData->orderuuid = $orderuuid;
                     $orderProductData->save();
                 }  
-
 
                 $indexv++;     
             }
 
-            //$shipStation2 = new ShipStation(env('SHIPSTATION_API_KEY'),env('SHIPSTATION_API_SECRET'), env('SHIPSTATION_API_URL'));
-           /* $address2 = new Address();
+
+           
+    }
+
+
+    public function handle_combo($validatedData, $orderData, $orderId, $productPackageArr, $deliveryTimesArr, $comboProducts, $singleDeliveryTimes){
+
+    #dd("combo");
+
+        $orderuuid = (string) Str::uuid();
+
+            $shipStation2 = new ShipStation(env('SHIPSTATION_API_KEY'),env('SHIPSTATION_API_SECRET'), env('SHIPSTATION_API_URL'));
+
+            $address2 = new Address();
 
             $address2->name = $orderData['shipping_first_name']." ".$orderData['shipping_last_name'];
             $address2->street1 = $orderData['shipping_address_1'];
@@ -228,19 +298,22 @@ class CreateShipstationOrderService
 
             // create orders for combo products            
             $porder2 = new ProductOrder(); 
-            $porder2->orderNumber = $orderData['uuid'];
-            $porder2->orderKey = $orderData['uuid'];
+            $porder2->orderNumber = $orderuuid;
+            $porder2->orderKey = $orderuuid;
             $porder2->orderDate = $orderData['created_at'];
             $porder2->orderStatus = 'awaiting_shipment';
             $porder2->billTo = $address2;
             $porder2->shipTo = $address2;
             $porder2->dimensions = $dimensions;
-            $porder2->weight = $weight;            
+            $porder2->weight = $weight;  
+
+            $total_amt_combo = 0;          
 
             foreach($comboProducts as $productId){
 
                 //get product quantities
-                $quantity = OrderProduct::where('order_id', $orderId)->where('product_id', $productId)->pluck('quantity')->first();
+                $orderPriceQtydata = OrderProduct::where('order_id', $orderId)->where('product_id', $productId)->select('quantity', 'price')->first();
+
 
                 $product = Product::find($productId);
 
@@ -248,52 +321,35 @@ class CreateShipstationOrderService
                 $productItem->lineItemKey = $product->uuid;
                 $productItem->sku = $product->sku;
                 $productItem->name = $product->name;
-                $productItem->quantity = $quantity;
-                $productItem->unitPrice  = $product->base_price;
+                $productItem->quantity = $orderPriceQtydata->quantity;
+                $productItem->unitPrice  = $orderPriceQtydata->price;
                 
-                $porder2->amountPaid += $product->base_price;
+                $total_amt_combo += $orderPriceQtydata->price * $orderPriceQtydata->quantity;
+                
                 $porder2->taxAmount += '0.00';
                 $porder2->shippingAmount += '0.00';
-                $porder2->items[] = $productItem;                                
+                $porder2->items[] = $productItem; 
+
+
             }
 
+            $porder2->amountPaid = $total_amt_combo;
 
-            $response_combo = $shipStation->orders->create($porder2);
+
+            $response_combo = $shipStation2->orders->create($porder2);
 
             if(isset($response_combo->orderId) && $response_combo->orderId!=''){
 
                 foreach($comboProducts as $productId){
                     $orderProductData = OrderProduct::where('order_id',$orderData["id"])->where('product_id', $productId)->first();
                     $orderProductData->shipstation_order_id = $response_combo->orderId;
+                    $orderProductData->orderuuid = $orderuuid;
                     $orderProductData->save();
                 }
                 
-            }*/
-                
-                $orderData = Order::find($orderId);
-                $orderData->status = 3;
-                $orderData->save();
-            
-                $customerTransaction = CustomerTransaction::create([
-                    'order_id' => $orderData["id"],
-                    'customer_user_id' => $orderData['customer_user_id'],
-                    'type' => 'debit',
-                    'amount' => $total_amt,
-                    'currency' => $orderData['currency_code'],
-                    'status' => 'initialize',
-                    'remarks' =>  $orderData['comment']
-                ]);
+            }
 
-            DB::commit();
-            return true;
-        } catch (\Exception $e) {
-            Log::info("Exception Message : ".json_encode($e->getMessage()));
-            dd($e);
-            DB::rollback();
-            return false;
-        }
     }
-
 
     public function saveProductProcessData(){
 

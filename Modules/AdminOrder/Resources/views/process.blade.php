@@ -107,14 +107,14 @@
                            <table class="table table-bordered">
                               <thead>
                                  <tr>
-                                    <td style="width:10%;"><b>Product ID</b></td>
-                                    <td style="width:10%;"><b>Product</b></td>
-                                    <td style="width:10%;" class="text-right"><b>Unit Price</b></td>
-                                    <td style="width:10%;" class="text-right"><b>Quantity</b></td>
+                                    <td style="width:5%;"><b>Product ID</b></td>
+                                    <td style="width:10%;"><b>Product</b></td>                                    
+                                    <td style="width:7%;" class="text-right"><b>Quantity</b></td>
+                                    <td style="width:7%;" class="text-right"><b>Unit Price</b></td>
                                     <td style="width:10%;" class="text-right"><b>Total</b></td>
-                                    <?php /*<td style="width:10%;"><b>Single</b></td>
-                                     <td style="width:10%;"><b>Combo</b></td> */?>
-                                     <td style="width:30%;"><b>Package</b></td>
+                                    <td style="width:5%;"><b>Single</b></td>
+                                     <td style="width:5%;"><b>Combo</b></td> 
+                                     <td style="width:20%;"><b>Package</b></td>
                                     <td style="width:20%;"><b>Delivery Time</b></td>
                                  </tr>
                               </thead>
@@ -166,29 +166,8 @@
                                        $productQuantities[] = $orderedProduct->quantity;
                                        $productTotals[] = $individualTotal;
 
-                                       //$groups_array = array();
-                                       //$groups = App\Models\ProductGroup::where('product_id',$orderedProduct->product->id)->where('group_id','!=', null)->get();
-
-                                       //$shipping_postcode = (isset($order->shipping_postcode)) ? $order->shipping_postcode : '';
-                                       /*$packages = array();
-                                       if(!empty($groups)){
-                                            $groups_array = array_column($groups->toArray(), 'group_id');
-                                           
-                                            if($shipping_postcode && $shipping_postcode!=''){
-                                                $packages = App\Models\ShippingZonePrice::leftjoin('shipping_packages','shipping_packages.id','=','shipping_zone_prices.shipping_packages_id')->leftjoin('shipping_delivery_times','shipping_delivery_times.id','=','shipping_zone_prices.shipping_delivery_times_id');
-
-                                                        if($groups_array && !empty($groups_array) && $groups_array[0]!=null){        
-                                                            $packages = $packages->whereIn('shipping_zone_groups_id',$groups_array)
-                                                                        ->groupby('shipping_packages_id');
-                                                        }   
-                                                        
-                                                        if($shipping_postcode && $shipping_postcode !='' && empty($groups_array)){        
-                                                                $packages = $packages->where('zip_code', $shipping_postcode)
-                                                                        ->groupby('shipping_packages_id');
-                                                        }   
-                                                        $packages = $packages->get(['shipping_packages_id as id','shipping_packages.package_name','shipping_delivery_times.name']);
-                                            }
-                                       }*/
+                                       
+                                       
 
                                    ?>
                                  <tr>
@@ -213,33 +192,64 @@
                                     <td class="text-right">{{ $orderedProduct->quantity }}</td>
                                     <td class="text-right">${{ $orderedProduct->price }}</td>
                                     <td class="text-right">${{ $individualTotal }}</td>
-
-
-
-
-                                    <?php /*
                                     <td>
                                         <input type="checkbox" onclick="getProductPackages('{{$orderedProduct->product->id}}', '{{$order->shipping_postcode}}')" name="order_product_single[]" id="order_product_single_{{$orderedProduct->product->id}}"></td>
 
                                     <td>
                                         <input type="checkbox" onclick="resetPackages('{{$orderedProduct->product->id}}')"  name="order_product_combo[]" id="order_product_combo_{{$orderedProduct->product->id}}">
                                     </td>
-                                     */?>
+                                    
                                     <td>
+                                       
+                                    <?php 
 
-                                         <input type="hidden" name="order_product_single[]" id="order_product_single_{{$orderedProduct->product->id}}">
+                                    $groups_array = $product_packages_array = array();
+                                    $groups = App\Models\ProductDeliveryTime::where('products_id',$orderedProduct->product->id)->get();
 
+                                    
+                                    //echo "<pre>";
+                                    //print_r($groups->toArray());
+                                    //echo "</pre>";
+                                    $shipping_postcode = (isset($order->shipping_postcode)) ? $order->shipping_postcode : '';
 
-                                        <!--<input type="hidden" name="groups_{{$orderedProduct->product->id}}" value="<?php //echo json_encode($groups_array);?>"> -->
+                                    $packages = array();
+                                       if(!empty($groups)){
+                                            $group_final_array  = $groups->toArray();
+
+                                            $groups_array = array_unique(array_column($group_final_array, 'shipping_zone_groups_id'));
+
+                                            $product_packages_array = array_unique(array_column($group_final_array, 'shipping_packages_id'));
+
+                                            if($shipping_postcode && $shipping_postcode!=''){
+                                                $packages = App\Models\ShippingZonePrice::leftjoin('shipping_packages','shipping_packages.id','=','shipping_zone_prices.shipping_packages_id')
+                                                        ->leftjoin('shipping_delivery_times','shipping_delivery_times.id','=','shipping_zone_prices.shipping_delivery_times_id');
+
+                                                        if($groups_array && !empty($groups_array) && $groups_array[0]!=null){        
+                                                            $packages = $packages->whereIn('shipping_zone_groups_id',$groups_array);
+                                                        }   
+                                                        
+                                                        if($shipping_postcode && $shipping_postcode !='' && empty($groups_array)){        
+                                                                $packages = $packages->where('zip_code', $shipping_postcode);
+                                                        }
+
+                                                        $packages = $packages->get(['shipping_packages_id as id','shipping_packages.package_name','shipping_delivery_times.name']);
+                                            }
+                                       } 
+                                   ?>
+
+                                   <input type="hidden" name="product_zones_{{$orderedProduct->product->id}}" value="{{json_encode($groups_array)}}">
+
 
                                         <div id="packages_{{$orderedProduct->product->id}}">
                                            
-                                            <select disabled="true" onchange="getPackageDeliveryTimes(this.value,'{{$orderedProduct->product->id}}', '{{$order->shipping_postcode}}')" class="form-control" name="single_product_package[]" required>
+                                            <select onchange="getPackageDeliveryTimes(this.value,'{{$orderedProduct->product->id}}', '{{$order->shipping_postcode}}')" class="form-control" name="single_product_package[]" required>
                                                 @if(!empty($packages))
                                                     <option value="">Select Package</option>
-                                                    @foreach($packages as $package_data)
-                                                        <option {{(isset($productDeliveryTimePackage) && $productDeliveryTimePackage==$package_data->id) ? 'selected' : ''}} value="{{$package_data->id}}">{{$package_data->package_name}}</option>
-                                                    @endforeach
+                                                        @foreach($packages as $package_data)
+                                                            @if(in_array($package_data->id, $product_packages_array))
+                                                                <option {{(isset($productDeliveryTimePackage) && $productDeliveryTimePackage==$package_data->id) ? 'selected' : ''}} value="{{$package_data->id}}">{{$package_data->package_name}}</option>
+                                                            @endif
+                                                        @endforeach
                                                 @endif
                                                 
                                             </select>
@@ -333,20 +343,20 @@ const orderId = '<?php echo $order_id?>';
 function showSelectedDetails(){
 
     var listSingle = $("input[name='order_product_single[]']").map(function () {
-        //if(this.checked){
-        //    return 0;
-        //} else{
+        if(this.checked){
             return 1;
-        //}
+        } else{
+            return 0;
+        }
     }).get();
     
-   /* var listCombo = $("input[name='order_product_combo[]']").map(function () {
+    var listCombo = $("input[name='order_product_combo[]']").map(function () {
         if(this.checked){
-            return 0;
-        } else{
             return 1;
+        } else{
+            return 0;
         }
-    }).get();*/
+    }).get();
 
     var listPackages = $("select[name='single_product_package[]']").map(function () {
         return this.value;
@@ -370,7 +380,7 @@ function showSelectedDetails(){
             "productQuantities" : productQuantities,
             "productTotals" : productTotals,
             "listSingle" : listSingle,
-            //"listCombo" : listCombo,
+            "listCombo" : listCombo,
             "listPackages" : listPackages,
             "listDeliveryTimes" : listDeliveryTimes
         },
@@ -385,20 +395,20 @@ function showSelectedDetails(){
 function processOrderDetails(){
 
     var listSingle = $("input[name='order_product_single[]']").map(function () {
-        //if(this.checked){
-       ///     return 1;
-       // } else{
-            return 1;
-       // }
-    }).get();
-    
-    /*var listCombo = $("input[name='order_product_combo[]']").map(function () {
         if(this.checked){
             return 1;
         } else{
             return 0;
         }
-    }).get();*/
+    }).get();
+    
+    var listCombo = $("input[name='order_product_combo[]']").map(function () {
+        if(this.checked){
+            return 1;
+        } else{
+            return 0;
+        }
+    }).get();
 
     var listPackages = $("select[name='single_product_package[]']").map(function () {
         return this.value;
@@ -422,20 +432,20 @@ function processOrderDetails(){
             "productQuantities" : productQuantities,
             "productTotals" : productTotals,
             "listSingle" : listSingle,
-           // "listCombo" : listCombo,
+            "listCombo" : listCombo,
             "listPackages" : listPackages,
-            "listDeliveryTimes" : listDeliveryTimes
-           // "package_length" : $("#package_length").val(),
-           // "package_width" : $("#package_width").val(),
-           // "package_height" : $("#package_height").val(),
-           // "package_weight" : $("#package_weight").val(),
-          //  "package_size_unit" : $("#package_size_unit").val(),
-           // "package_weight_unit" : $("#package_weight_unit").val(),
+            "listDeliveryTimes" : listDeliveryTimes,
+            "package_length" : $("#package_length").val(),
+            "package_width" : $("#package_width").val(),
+            "package_height" : $("#package_height").val(),
+            "package_weight" : $("#package_weight").val(),
+            "package_size_unit" : $("#package_size_unit").val(),
+            "package_weight_unit" : $("#package_weight_unit").val(),
         },
         dataType: 'JSON',
         success: function(data) {
             alert('Order successfull processed at shipstation');
-           window.location = "{{ route('admin.orders.index') }}";
+           //window.location = "{{ route('admin.orders.index') }}";
         }
     });
 }
@@ -510,6 +520,7 @@ function getPackageDeliveryTimes(packageId, productId,shipping_postcode){
 function getProductPackages(productId, shipping_postcode){
     var checkoboxId = "order_product_single_"+productId;
     var checkoboxIdCombo = "order_product_combo_"+productId;
+    var productZones = "product_zones_"+productId;
 
 
     if($("#"+checkoboxId).prop("checked")){
@@ -523,11 +534,15 @@ function getProductPackages(productId, shipping_postcode){
                 "_token": "{{ csrf_token() }}",
                 "productId": productId,
                 "shipping_postcode" : shipping_postcode,
-                "selectname" : "single_product_package_"+productId
+                "selectname" : "single_product_package_"+productId,
+                "productZones" : productZones
             },
             dataType: 'JSON',
             success: function(data) {
                $("#packages_"+productId).html(data.html);
+                $("#delivery_time_"+productId).html(data.deliveryHtml);
+
+               
             }
         });
     } else {
@@ -542,6 +557,7 @@ function resetPackages(product_id){
     var checkoboxIdSingle = "order_product_single_"+product_id;
 
     $("#packages_"+product_id).html('<select style="visibility:hidden" name="single_product_package[]"></select>');
+    $("#delivery_time_"+product_id).html('<select style="visibility:hidden" name="single_product_deliverytime[]"></select>');
     $("#"+checkoboxIdSingle).attr("checked", false);
 }
         

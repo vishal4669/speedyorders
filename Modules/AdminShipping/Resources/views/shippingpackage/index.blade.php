@@ -21,7 +21,7 @@
                     <th>Type</th>
                     <th>Size & Weight</th>
                     <th>Weight</th>
-                    <th>Is Default</th>
+                    <?php /*<th>Is Default</th>*/?>
                     <th>Action</th>
                 </tr>
                 </thead>
@@ -32,9 +32,9 @@
                     <td>{{ ($package->package_type && $package->package_type=="1") ? 'Box' : 'Soft Package / satchel' }}</td>
                     <td>{{ $package->package_length }} X {{ $package->package_width }} X {{ $package->package_height }} {{ $package->package_size_unit }}</td>
                     <td>{{ $package->package_weight }} {{ $package->package_weight_unit }}</td>
-                    <td>
+                   <?php /* <td>
                         {{ $package->is_default=='1' ? 'Yes':'No'}}
-                    </td>
+                    </td>*/?>
                     <td>
                         <a class="btn btn-primary btn-sm" href="{{ route('admin.package.edit', $package->id ) }}">
                             <i class="fa fa-edit"></i>

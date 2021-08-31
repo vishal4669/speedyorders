@@ -21,6 +21,7 @@ class UpdatePaypalSettingRequest extends FormRequest
             'paypal_sandbox_secret_key'=>'nullable|string|max:255',
             'paypal_sandbox_currency'=>'nullable|string|max:255',
             'paypal_api_mode'=>'nullable|string',
+            'paypal_enable_status'=>'nullable|string',
         ];
     }
 

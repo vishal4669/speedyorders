@@ -8,11 +8,11 @@
 <div class="form-group {{ $errors->has('type') ? 'has-error' : '' }}">
     <label for="type" class="control-label">{{ 'Type' }}</label>
 
-    <select class="form-control js-dropdown-select2" required name="type">
+    <select class="form-control js-dropdown-select2" id="option_selection" required name="type">
         <option value="">Select Option Type</option>
         <option value="select" {{ isset($option) && $option->type == 'select' ? 'selected' : '' }}>Select
         </option>
-        <option value="input" {{ isset($option) && $option->type == 'input' ? 'selected' : '' }}>Input
+        <option value="input" {{ isset($option) && $option->type == 'input' ? 'selected' : '' }}>Textbox
         </option>
         <option value="checkbox" {{ isset($option) && $option->type == 'checkbox' ? 'selected' : '' }}>
             Checkbox</option>
@@ -32,7 +32,7 @@
     {!! $errors->first('sort_order', '<p class="help-block">:message</p>') !!}
 </div>
 
-<div class="form-group">
+<div class="form-group" id="option_values_div" style="display:{{ (isset($option) && ($option->type == 'input' || $option->type == 'date' || $option->type == 'date_time')) ? 'none' : 'block'}}" >
     <h4>Option Values</h4>
     <table id="option-values-table"
         class="footable table table-stripped table-bordered toggle-arrow-tiny default breakpoint footable-loaded"

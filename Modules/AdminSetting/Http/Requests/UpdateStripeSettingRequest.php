@@ -19,6 +19,7 @@ class UpdateStripeSettingRequest extends FormRequest
             'live_stripe_key'=>'required|string|max:255',
             'live_stripe_secret'=>'required|string|max:255',
             'stripe_payment_mode'=>'nullable|string',
+            'stripe_enable_status'=>'nullable|string',
         ];
     }
 

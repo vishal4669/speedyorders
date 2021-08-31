@@ -13,7 +13,9 @@ use Modules\AdminSetting\Services\UpdateStripeSettingService;
 use Modules\AdminSetting\Services\UpdateShippingSettingService;
 use Modules\AdminSetting\Http\Requests\UpdatePaypalSettingRequest;
 use Modules\AdminSetting\Http\Requests\UpdateStripeSettingRequest;
+use Modules\AdminSetting\Http\Requests\UpdateCODSettingRequest;
 use Modules\AdminSetting\Services\UpdateSocialMediaSettingService;
+use Modules\AdminSetting\Services\UpdateCODSettingService;
 use Modules\AdminSetting\Http\Requests\UpdateShippingSettingRequest;
 use Modules\AdminSetting\Services\UpdateGoogleAnalyticsSettingService;
 use Modules\AdminSetting\Http\Requests\UpdateSocialMediaSettingRequest;
@@ -93,6 +95,31 @@ class AdminSettingController extends Controller
             session()->flash('error_message', 'Stripe setting could not be updated.');
         }
         return redirect()->route('admin.settings.stripe');
+    }
+
+    public function codIndex()
+    {
+        $data = [
+            'menu' => 'settings',
+            'sub_menu' => 'cod'
+        ];
+
+        return view('adminsetting::cod',$data);
+    }
+
+    public function updateCODSetting(UpdateCODSettingRequest $request,UpdateCODSettingService $service)
+    {
+
+        $validatedData = $request->validated();
+
+        if ($service->handle($validatedData))
+        {
+            session()->flash('success_message', 'Cash On Delivery setting updated successfully.');
+        }
+        else {
+            session()->flash('error_message', 'Cash On Delivery setting could not be updated.');
+        }
+        return redirect()->route('admin.settings.cod');
     }
 
     public function shippingIndex()

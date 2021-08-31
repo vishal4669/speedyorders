@@ -6,6 +6,9 @@
                     <a href="{{ route('admin.settings') }}" class="{{ isset($sub_menu) && $sub_menu == 'general' ? 'text-bold' : ''}}">General Setting</a>
                 </li>
                 <li class="list-group-item">
+                    <a href="{{ route('admin.settings.cod') }}" class="{{ isset($sub_menu) && $sub_menu == 'cod' ? 'text-bold' : ''}}">Cash On Delivery Setting</a>
+                </li>
+                <li class="list-group-item">
                     <a href="{{ route('admin.settings.paypal') }}" class="{{ isset($sub_menu) && $sub_menu == 'paypal' ? 'text-bold' : ''}}">Paypal Setting</a>
                 </li>
                 <li class="list-group-item">

@@ -29,7 +29,7 @@ class CreateOrderService
     public function handle(array $validatedData)
     {   
 
-        $shipStation = new ShipStation(env('SHIPSTATION_API_KEY'),env('SHIPSTATION_API_SECRET'), env('SHIPSTATION_API_URL'));
+        /*$shipStation = new ShipStation(env('SHIPSTATION_API_KEY'),env('SHIPSTATION_API_SECRET'), env('SHIPSTATION_API_URL'));
 
         $address = new Address();
 
@@ -39,7 +39,7 @@ class CreateOrderService
         $address->state = $validatedData['address_1'];
         $address->postalCode = $validatedData['shipping_postcode'];
         $address->country = "US";
-        $address->phone = $validatedData['phone'];
+        $address->phone = $validatedData['phone'];*/
     
         try {
             DB::beginTransaction();
@@ -88,7 +88,7 @@ class CreateOrderService
 
                 // code to add the shipment at shipstation
 
-                $productItem = new OrderItem();
+               /* $productItem = new OrderItem();
                 $productItem->lineItemKey = $product->id;
                 $productItem->sku = $product->sku;
                 $productItem->name = $product->name;
@@ -115,7 +115,7 @@ class CreateOrderService
                     $orderProductData = OrderProduct::find($orderProduct->id);
                     $orderProductData->shipstation_order_id = $response->orderId;
                     $orderProductData->save();
-                }
+                }*/
              
                 if(count($product->options)>0){
                     if ($orderProduct && isset($validatedData['option'][$pkey])) {

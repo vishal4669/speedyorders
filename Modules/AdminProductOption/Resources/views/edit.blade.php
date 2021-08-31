@@ -56,5 +56,17 @@
         $('#option-values-table').on('click', '.delete-option-value', function() {
             $(this).parents('tr').remove();
         });
+
+        $("#option_selection").change(function(){
+            var val_option = $(this).val();
+           
+            if(val_option=="input" || val_option=="date" || val_option=="date_time" ){
+                $("#option_values_div").hide();    
+            } else {
+                $("#option_values_div").show();
+            }
+            
+
+        });
 </script>
 @endsection

@@ -30,6 +30,7 @@ use Modules\AdminOrder\Services\CreateShipstationOrderService;
 use LaravelShipStation\ShipStation;
 use Log;
 use DB;
+use App\Models\ProductDeliveryTime;
 
 
 class AdminOrderController extends Controller
@@ -173,9 +174,9 @@ class AdminOrderController extends Controller
 
         $order = Order::with('orderedProducts','orderedProducts.orderProductOptions')->findOrFail($id);
 
-        $packages = ShippingPackage::select('id','package_name')->get();
+        //$packages = ShippingPackage::select('id','package_name')->get();
 
-        $productDeliveryTimeGroup = $productDeliveryTimePackage = '';
+        //$productDeliveryTimeGroup = $productDeliveryTimePackage = '';
        /* $deliveryTimes = [];
         if(isset($product->delivery_time) && !empty($product->delivery_time)){
             foreach($product->delivery_time as $timeData){
@@ -188,7 +189,7 @@ class AdminOrderController extends Controller
 
 #        print_r($packages);die;
 
-        return view('adminorder::process', compact('order', 'packages'),$data);
+        return view('adminorder::process', compact('order'),$data);
     }
 
     /**
@@ -331,39 +332,67 @@ class AdminOrderController extends Controller
      */
     public function packageValue(Request $request){
 
-        if(!$request->productId){
-            return;
-        }
+       if(!$request->productId){
+           return;
+       }
 
-        $productId = $request->productId;
-        $productPackages = ProductGroup::where('product_id',$productId)
-                            ->join('shipping_zone_prices', 'shipping_zone_prices.shipping_zone_groups_id', '=', 'product_groups.group_id')
-                            ->join('shipping_packages', 'shipping_packages.id', '=', 'shipping_zone_prices.shipping_packages_id')
-                            ->select(['group_id', 'shipping_packages.id','shipping_packages.package_name']);
+       $shipping_postcode = (isset($request->shipping_postcode)) ? $request->shipping_postcode : '';
+       $productId = $request->productId;
 
-        if(isset($request->shipping_postcode) && $request->shipping_postcode!=''){                    
-            $productPackages = $productPackages->where('shipping_zone_prices.zip_code', $request->shipping_postcode)
-                            ->groupBy('shipping_packages.id')
-                            ->get();                          
-        } else{
-            $productPackages = $productPackages->groupBy('product_groups.group_id')
-                            ->get();
-        }
+       $groups = ProductDeliveryTime::where('products_id',$productId)->get();
+     
+       $packages = $product_packages_array = array();
+       if(!empty($groups)){
+            $group_final_array  = $groups->toArray();
+
+            $groups_array = array_unique(array_column($group_final_array, 'shipping_zone_groups_id'));
+
+            $product_packages_array = array_unique(array_column($group_final_array, 'shipping_packages_id'));
+
+            if($shipping_postcode && $shipping_postcode!=''){
+                $packages = ShippingZonePrice::leftjoin('shipping_packages','shipping_packages.id','=','shipping_zone_prices.shipping_packages_id')
+                        ->leftjoin('shipping_delivery_times','shipping_delivery_times.id','=','shipping_zone_prices.shipping_delivery_times_id');
+
+                        if($groups_array && !empty($groups_array) && $groups_array[0]!=null){        
+                            $packages = $packages->whereIn('shipping_zone_groups_id',$groups_array)->groupby('shipping_packages_id');
+                        }   
+                        
+                        if($shipping_postcode && $shipping_postcode !='' && empty($groups_array)){        
+                                $packages = $packages->where('zip_code', $shipping_postcode)
+                                        ->groupby('shipping_packages_id');
+                        }
+
+                        $packages = $packages->get(['shipping_packages_id as id','shipping_packages.package_name','shipping_delivery_times.name']);
+            }
+       }
+
                             
-        $responseHtml = '';
+       $responseHtml = '';
+       $responseHtmlDeliveryTime = '';
 
        $selectname = 'single_product_package[]';
 
         $returnHTML = view('adminorder::htmlelement.package',[
             'option'=> 'Package',
-            'productPackage'=>$productPackages,
-            'productId'=>$request->productId,
-            'selectname' => $selectname
+            'productPackage'=>$packages,
+            'productId'=>$productId,
+            'selectname' => $selectname,
+            'product_packages_array' => $product_packages_array
             ])->render();
+
+        $selectnamedeliverytime = 'single_product_deliverytime[]';
+
+        $orderedProduct = OrderProduct::where('product_id',$productId)->first();
+        $deliveryData = $orderedProduct->product->delivery_time;
+       
+        $responseHtmlDeliveryTime = view('adminorder::htmlelement.orderdeliverytime',[
+            'option'=> 'DeliveryTime',
+            'productDeliveryTimes'=>$deliveryData,
+            'productId'=>$productId,
+            'selectnamedeliverytime' => $selectnamedeliverytime
+        ])->render();  
         
-        $responseHtml .= $returnHTML;   
-        
-        return response()->json(array('success' => true, 'html'=>$responseHtml));
+        return response()->json(array('success' => true, 'html'=>$returnHTML, 'deliveryHtml' => $responseHtmlDeliveryTime));
     }
 
     public function showOrderInvoices($id)
@@ -437,6 +466,7 @@ class AdminOrderController extends Controller
             if($value==0){
                 $comboarr[$indexcombo]["id"] = $productsIds[$key];
                 $comboarr[$indexcombo]["name"] = $productNames[$key];
+                $comboarr[$indexcombo]["product_price"] = $this->getProductPrice($orderId, $productsIds[$key]);
                 $indexcombo++;
             }
         }

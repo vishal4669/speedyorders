@@ -1,4 +1,6 @@
-<?php /*<h5>Single</h5>*/?>
+<h5>Single</h5>
+<br>
+
 <table class="table table-bordered">
   <thead>
      <tr>
@@ -22,7 +24,8 @@
                 <td>${{ $singleproduct["product_price"] }} <?php $total_product_price += $singleproduct["product_price"] ?></td>                                  
                 <td>{{ $singleproduct["package"] }}</td>                               
                 <td>{{ $singleproduct["deliverytime"] }}</td>                          
-                <td>${{ $singleproduct["deliverytimeprice"] }} <?php $total_shipping_price += $singleproduct["deliverytimeprice"]?></td>
+                <td>${{ $singleproduct["deliverytimeprice"] }} <?php $total_shipping_price += $singleproduct["deliverytimeprice"]?>
+                </td>
              </tr>
         @endforeach
 
@@ -47,25 +50,34 @@
   </tbody>
 </table>
 
-<?php /*
+
 
 <h5>Combo</h5>
-
+    <br>
 <table class="table table-bordered">
   <thead>
      <tr>
-        <td style="width:30%"><b>Product ID</b></td>
-        <td style="width:70%"><b>Product</b></td>
+        <th style="width:30%">Product ID</th>
+        <th style="width:40%">Product</th>
+        <th style="width:30%">Product Price</th>
      </tr>
   </thead>
   <tbody>    
+
+    <?php $total_product_price_combo = 0?>
     @if(!empty($comboarr))
         @foreach($comboarr as $comboproduct)     
              <tr>
                 <td>{{ $comboproduct["id"] }}</td>
-                <td>{{ $comboproduct["name"] }}</td>                   
+                <td>{{ $comboproduct["name"] }}</td>  
+                <td>${{ $comboproduct["product_price"] }}<?php $total_product_price_combo += $comboproduct["product_price"] ?></td>                   
              </tr>
         @endforeach
+
+         <tr>
+            <th colspan="2">Grand Total</th>
+            <th>${{$total_product_price_combo}}</th>
+         </tr>
     @else
         <tr>
             <td colspan="7" class="text-center">No Combo Product Selected</td>
@@ -74,8 +86,8 @@
      
   </tbody>
 </table>
-*/?>
-<?php /*
+
+
 <h5>Size for Combo</h5>
 
 <div class="form-group">
@@ -96,8 +108,8 @@
 
     <div class="col-md-1">
        <select class="form-control m-b js-dropdown-select2" id="package_size_unit" name="package_size_unit" required>
-            <option value="cm" selected>CM</option>
-            <option value="inch">INCH</option>
+            <option value="cm" >CM</option>
+            <option value="inch" selected>INCH</option>
         </select>
     </div>
 
@@ -110,10 +122,10 @@
 
     <div class="col-md-1">
        <select class="form-control m-b js-dropdown-select2" id="package_weight_unit" name="package_weight_unit">
-            <option value="kg" selected>KG</option>
-            <option value="lb">LB</option>
+            <option value="kg" >KG</option>
+            <option value="lb" selected>LB</option>
         </select>
     </div>
 
 </div>
-*/?>
+
