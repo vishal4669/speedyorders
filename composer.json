@@ -12,6 +12,7 @@
         "barryvdh/laravel-cors": "^1.0",
         "barryvdh/laravel-dompdf": "^0.9.0",
         "campo/laravel-shipstation": "^5.0",
+        "cartalyst/stripe-laravel": "^11.0",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "^6.2",
         "laravel/sanctum": "^2.9",
@@ -21,7 +22,8 @@
         "nwidart/laravel-modules": "^6.2",
         "phpoffice/phpspreadsheet": "^1.18",
         "predis/predis": "^1.1",
-        "stripe/stripe-php": "^7.78",
+        "srmklive/paypal": "~1.0",
+        "stripe/stripe-php": "^7.95",
         "tymon/jwt-auth": "1.0.*"
     },
     "require-dev": {

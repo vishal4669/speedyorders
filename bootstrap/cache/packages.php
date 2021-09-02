@@ -35,6 +35,17 @@
       'PDF' => 'Barryvdh\\DomPDF\\Facade',
     ),
   ),
+  'cartalyst/stripe-laravel' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Cartalyst\\Stripe\\Laravel\\StripeServiceProvider',
+    ),
+    'aliases' => 
+    array (
+      'Stripe' => 'Cartalyst\\Stripe\\Laravel\\Facades\\Stripe',
+    ),
+  ),
   'facade/ignition' => 
   array (
     'providers' => 
@@ -113,6 +124,17 @@
     'aliases' => 
     array (
       'Module' => 'Nwidart\\Modules\\Facades\\Module',
+    ),
+  ),
+  'srmklive/paypal' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Srmklive\\PayPal\\Providers\\PayPalServiceProvider',
+    ),
+    'aliases' => 
+    array (
+      'PayPal' => 'Srmklive\\PayPal\\Facades\\PayPal',
     ),
   ),
   'tymon/jwt-auth' => 
