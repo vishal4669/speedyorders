@@ -806,7 +806,7 @@
     padding-top: 20px;
 }
 .product-images {
-    min-width: 50%;
+    
     padding-right: 50px;
 }
 .product-info h1 {
@@ -845,8 +845,8 @@
     text-decoration: line-through;
 }
 .product-info {
-    padding-left: 50px;
-    /*width: 50%;*/
+    padding-left: 5px;
+    width: 60%;
 }
 .quick-desc {
     color: #999;

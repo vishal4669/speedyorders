@@ -6,8 +6,12 @@ use Illuminate\Http\Request;
 use Session;
 use Stripe;
 use App\Models\TempCustomerDetail;
+use App\Models\TempCustomerTransaction;
 use DB;
 use Log;
+use App\Models\CustomerUser;
+use App\Models\Customer;
+use Hash;
    
 class MoneySetupController extends Controller
 {
@@ -107,6 +111,9 @@ class MoneySetupController extends Controller
 
         $tempcustomer = TempCustomerDetail::where('php_session_id', $php_session_id)->first();
 
+        // Now need to create user if not exists
+        $customer_user_id = CustomerUser::where('email', $tempcustomer->email)->pluck('id')->first();
+
 
         $total_price = DB::select('SELECT sum(quantity * unit_price) as total FROM `temp_cart` where php_session_id = "'.$php_session_id.'" GROUP BY `php_session_id` ASC');
 
@@ -114,22 +121,71 @@ class MoneySetupController extends Controller
 
         \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
 
-
         $chargeArry = [
                 "amount" => $final_price * 100,
                 "currency" => "usd",
                 "source" => $request->stripeToken,
-                "description" => "Speedy Order Payment for the user "
+                "description" => "Speedy Order Payment for the user ",
+                "receipt_email" => $tempcustomer->email
+
         ];
 
         $response = \Stripe\Charge::create($chargeArry);
 
-        Log::info('Stripe Response : '.json_encode($response));
-  
-        Session::flash('success', 'Payment Successful!');
+        $paymentStatus = (isset($response->status)) ? $response->status : '';
+        
+        if($paymentStatus && $paymentStatus=="succeeded"){
+
+            $temptransaction = new TempCustomerTransaction();
+            $temptransaction->description = '';
+            $temptransaction->php_session_id = $php_session_id;
+            $temptransaction->status = $paymentStatus;
+            $temptransaction->amount = $final_price;
+            $temptransaction->created_at = now();
+            $temptransaction->save();
+
+            if(!$customer_user_id){
+                $password = Hash::make(rand());
+                $customeruser = new CustomerUser();
+                $customeruser->email = $tempcustomer->email;
+                $customeruser->password = $password;
+                $customeruser->status = 1;
+                $customeruser->created_at = now();
+                $customeruser->save();
+
+                $customer_user_id = $customeruser->id;
+
+                // create new customer
+               
+                $customer = new Customer();
+                $customer->first_name = $tempcustomer->first_name;
+                $customer->last_name = $tempcustomer->first_name;
+                $customer->email = $tempcustomer->first_name;
+                $customer->telephone = $tempcustomer->first_name;
+                $customer->status = 1;
+                $customer->customer_user_id = $customer_user_id;
+                $customer->phone = $tempcustomer->first_name;
+                $customer->save();
+            }
+
+            Log::info('Stripe Response : '.json_encode($response));  
+            Session::flash('success', 'Payment Successful!');
+        } else {
+
+            $temptransaction = new TempCustomerTransaction();
+            $temptransaction->description = '';
+            $temptransaction->php_session_id = $php_session_id;
+            $temptransaction->status = $paymentStatus;
+            $temptransaction->amount = $final_price;
+            $temptransaction->created_at = now();
+            $temptransaction->save();
+
+            Log::info('Stripe Response : '.json_encode($response));  
+            Session::flash('error', 'Something went wrong, please try again');
+        }
           
         return redirect('/stripeform');
-
+   
 
     }
 }

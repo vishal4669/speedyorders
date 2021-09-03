@@ -91,14 +91,49 @@
                                                         </div>
                                                     </div>
 
+
+                                                    <?php 
+
+                                                    // Code to get options data
+                                                    $option_detail_array = [];
+                                                    $options = $product->options;
+                                                    if(!empty($options)){
+                                                        $options_data = $options->toArray();
+                                                        $index = 0;
+                                                        foreach ($options_data as $option_data) {
+                                                            $option_details = App\Models\Option::where('id',$option_data["option_id"])->get()->first();
+
+                                                            if(!empty($option_details) && isset($option_details->type) && $option_details->type=='input'){
+                                                                $option_detail_array[$index]["id"] =  $option_details->id;
+                                                                $option_detail_array[$index]["name"] =  $option_details->name;
+
+                                                                $index++;
+                                                            }
+
+                                                           
+                                                        }
+                                                    }
+
+                                                    ?>
+
                                                      <!-- Modal -->
                                                     <div class="modal fade" id="productModal_{{$product->id}}" tabindex="-1" role="dialog">
                                                         <div class="modal-dialog modal__container" role="document">
                                                             <div class="modal-content">
+
+
+
                                                                 <div class="modal-header">
                                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                 </div>
                                                                 <div class="modal-body">
+
+                                                                    <form name="product_{{$product->id}}" id="product_{{$product->id}}" action="#">
+
+                                                                        @csrf
+
+
+
                                                                     <div class="modal-product">
                                                                         <!-- Start product images -->
                                                                         <div class="product-images">
@@ -120,34 +155,56 @@
                                                                             <div class="quick-desc">
                                                                                 <label>Quantity</label>
                                                                                 <select class="themes-select-all-2" name="quantity_{{$product->id}}" id="quantity_{{$product->id}}">
-                                                                                        <option value="1">1</option>
-                                                                                        <option value="2">2</option>
-                                                                                        <option value="3">3</option>
-                                                                                        <option value="4">4</option>
-                                                                                        <option value="5">5</option>
-                                                                                        <option value="6">6</option>
-                                                                                        <option value="7">7</option>
-                                                                                        <option value="8">8</option>
-                                                                                        <option value="9">9</option>
-                                                                                        <option value="10">10</option>
-                                                                                        
+                                                                                    <?php for($i=1;$i<=15;$i++){?>
+                                                                                        <option value="<?php echo $i?>"><?php echo $i?></option>
+                                                                                    <?php }?>
                                                                                 </select>
                                                                             </div>
+
+                                                                            <?php 
+                                                                                $options_js_array = [];
+                                                                                if(!empty($option_detail_array)){
+                                                                                    foreach ($option_detail_array as $option_detail_data) {
+                                                                                        ?>
+                                                                                            <div class="quick-desc">
+                                                                                                <label><?php echo $option_detail_data["name"]?></label>
+                                                                                               <input id="option_value_<?php echo $option_detail_data["id"]?>_{{$product->id}}" type="text" name="option_<?php echo $option_detail_data["id"]?>_{{$product->id}}">
+                                                                                            </div>
+
+
+
+                                                                                        <?php 
+
+                                                                                        $options_js_array[] = $option_detail_data["id"];
+                                                                                    }
+                                                                                }
+                                                                            ?>
 
                                                                             <div style="display: none;" class="alert alert-primary" id="alert_{{$product->id}}" role="alert">
                                                                              
                                                                             </div> 
+
+                                                                            <input type="hidden" name="options_ids_{{$product->id}}" id="options_ids_{{$product->id}}" value="<?php echo json_encode($options_js_array);?>">
                                                                             
                                                                             <div id="cart_btn_{{$product->id}}" class="addtocart-btn">
                                                                                 <a onclick="addToCart('{{$product->id}}')" href="#">Add to cart</a>
                                                                             </div>
                                                                         </div><!-- .product-info -->
                                                                     </div><!-- .modal-product -->
+
+                                                                </form>
+
+
                                                                 </div><!-- .modal-body -->
+
+
+
                                                             </div><!-- .modal-content -->
                                                         </div><!-- .modal-dialog -->
                                                     </div>
                                                     <!-- END Modal -->
+
+
 
                                                 @endforeach
                                                 <hr style="margin-top:20px;">

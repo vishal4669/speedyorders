@@ -12,5 +12,5 @@ class TempCart extends Model
         'php_session_id', 'product_id','quantity','unit_price','created_at'
     ];
 
-
+    
 }

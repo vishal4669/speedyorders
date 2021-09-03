@@ -699,15 +699,12 @@ $('.image-popup').magnificPopup({
   function addToCart(productId){
 
     var url = '/addtocart';
-
+    var formdata = $("#product_"+productId).serialize();
+  
     $.ajax({
         url: url,
         type: 'post',
-        data: {
-            "_token": $('meta[name="_token"]').attr('content'),
-            "product_id": productId,            
-            "quantity": $("#quantity_"+productId).val(),
-        },
+        data: formdata + '&product_id=' + productId,
         dataType: 'JSON',
         success: function(data) {
            $("#cart_btn_"+productId).attr('disabled', true); 

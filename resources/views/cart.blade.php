@@ -8,15 +8,16 @@
             <div class="col-lg-12 col-md-12 col-12">
                 <form action="#">               
                     <div class="table-content table-responsive">
-                        <table>
+                        <table width="100%">
                             <thead>
                                 <tr>
-                                    <th class="product-thumbnail">Image</th>
-                                    <th class="product-name">Product</th>
-                                    <th class="product-price">Price</th>
-                                    <th class="product-quantity">Quantity</th>
-                                    <th class="product-subtotal">Total</th>
-                                    <th class="product-remove">Remove</th>
+                                    <th style="width:5%" class="product-thumbnail">Image</th>
+                                    <th style="width:12%"  class="product-name">Product</th>
+                                    <th style="width:8%"  class="product-price">Price</th>
+                                    <th style="width:5%"  class="product-quantity">Quantity</th>
+                                    <th style="width:25%"  class="product-options">Options</th>
+                                    <th style="width:10%"  class="product-subtotal">Total</th>
+                                    <th style="width:5%"  class="product-remove">Remove</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -35,13 +36,29 @@
                                                 $total_amount += ($item->unit_price * $item->quantity); 
                                             @endphp
 
+                                             <td>                                                
+                                                <?php 
+                                                    $options_data = App\Models\TempProductOptionValue::leftjoin('options','options.id','=','temp_product_option_value.option_id')
+                                                                ->where('product_id', $item->product_id)
+                                                                ->where('php_session_id', $php_session_id)
+                                                                ->select(['options.name','temp_product_option_value.option_value'])
+                                                                ->get();
+                                                    if(!empty($options_data)){
+                                                        foreach($options_data as $option_data){
+                                                            echo "<b>".$option_data->name."</b> : ".$option_data->option_value."<br>";
+                                                        }
+                                                    } 
+                                                ?>
+                                            </td>
                                             <td class="product-subtotal">${{$item->unit_price * $item->quantity}}</td>
+                                           
                                             <td class="product-remove"><a href="#" onclick="removeFromCart('{{$item->product_id}}')"><i class="ti-trash"></i></a></td>
                                         </tr>
                                     @endforeach    
-                                @else
+                                @endif
+                                @if(count($cartItems)==0)
                                     <tr>
-
+                                        <th colspan="7">No Item in the cart</th>
                                     </tr>
                                 @endif
                             </tbody>
