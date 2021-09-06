@@ -26,7 +26,7 @@
   
 <div class="container">
   
-    <h1>Stripe Payment<br/> Speedy Orders</h1>
+    <h1 class="text-center">Stripe Payment</h1>
   
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
@@ -46,7 +46,7 @@
   
                     <form role="form" action="{{ route('stripe.post') }}" method="post" class="require-validation"
                                                      data-cc-on-file="false"
-                                                    data-stripe-publishable-key="{{ env('STRIPE_KEY') }}"
+                                                    data-stripe-publishable-key="{{($publisher_key) ? $publisher_key : ''}}"
                                                     id="payment-form">
                         @csrf
   
@@ -93,6 +93,9 @@
                         <div class="row">
                             <div class="col-xs-12">
                                 <button class="btn btn-primary btn-lg btn-block" type="submit">Pay Now @if($final_price) (${{$final_price}}) @endif</button>
+                                <br>
+
+                                <a href="{{route('home')}}" target="_self"><button type="button" class="btn btn-warning  btn-lg btn-block">Continue Shopping</button></a>
                             </div>
                         </div>
                           
@@ -111,7 +114,7 @@
 <script type="text/javascript">
 $(function() {
     var $form         = $(".require-validation");
-  $('form.require-validation').bind('submit', function(e) {
+    $('form.require-validation').bind('submit', function(e) {
     var $form         = $(".require-validation"),
         inputSelector = ['input[type=email]', 'input[type=password]',
                          'input[type=text]', 'input[type=file]',
@@ -122,25 +125,26 @@ $(function() {
         $errorMessage.addClass('hide');
  
         $('.has-error').removeClass('has-error');
-    $inputs.each(function(i, el) {
-      var $input = $(el);
-      if ($input.val() === '') {
-        $input.parent().addClass('has-error');
-        $errorMessage.removeClass('hide');
-        e.preventDefault();
-      }
-    });
+
+        $inputs.each(function(i, el) {
+          var $input = $(el);
+          if ($input.val() === '') {
+            $input.parent().addClass('has-error');
+            $errorMessage.removeClass('hide');
+            e.preventDefault();
+          }
+        });
   
-    if (!$form.data('cc-on-file')) {
-      e.preventDefault();
-      Stripe.setPublishableKey($form.data('stripe-publishable-key'));
-      Stripe.createToken({
-        number: $('.card-number').val(),
-        cvc: $('.card-cvc').val(),
-        exp_month: $('.card-expiry-month').val(),
-        exp_year: $('.card-expiry-year').val()
-      }, stripeResponseHandler);
-    }
+        if (!$form.data('cc-on-file')) {
+          e.preventDefault();
+          Stripe.setPublishableKey($form.data('stripe-publishable-key'));
+          Stripe.createToken({
+            number: $('.card-number').val(),
+            cvc: $('.card-cvc').val(),
+            exp_month: $('.card-expiry-month').val(),
+            exp_year: $('.card-expiry-year').val()
+          }, stripeResponseHandler);
+        }
   
   });
   

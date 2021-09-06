@@ -251,7 +251,7 @@ class CreateShipstationOrderService
 
     #dd("combo");
 
-        $orderuuid = (string) Str::uuid();
+            $orderuuid = (string) Str::uuid();
 
             $shipStation2 = new ShipStation(env('SHIPSTATION_API_KEY'),env('SHIPSTATION_API_SECRET'), env('SHIPSTATION_API_URL'));
 
@@ -259,8 +259,9 @@ class CreateShipstationOrderService
 
             $address2->name = $orderData['shipping_first_name']." ".$orderData['shipping_last_name'];
             $address2->street1 = $orderData['shipping_address_1'];
+            $address2->street2 = $orderData['shipping_address_2'];
             $address2->city = $orderData['shipping_city'];
-            $address2->state = $orderData['address_1'];
+            $address2->state = $orderData['shipping_state'];
             $address2->postalCode = $orderData['shipping_postcode'];
             $address2->country = "US";
             $address2->phone = $orderData['phone'];
@@ -335,6 +336,8 @@ class CreateShipstationOrderService
 
             $porder2->amountPaid = $total_amt_combo;
 
+
+            Log::info("P Order 2:".json_encode($porder2));
 
             $response_combo = $shipStation2->orders->create($porder2);
 

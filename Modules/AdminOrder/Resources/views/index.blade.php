@@ -110,12 +110,8 @@
                                 
                             </td>
                             <td>
-                                @if($item->status < 2)
+                                @if($item->status == 2)
                                     <a class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" data-original-title="Process Order" href="{{ route('admin.orders.process', $item->id  ) }}">
-                                        <i class="fa fa-tasks"></i>
-                                    </a>
-                                @elseif($item->status == 2)
-                                    <a class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" data-original-title="Process Payment" href="{{ route('admin.orders.stripe', $item->id  ) }}">
                                         <i class="fa fa-tasks"></i>
                                     </a>
                                 @endif

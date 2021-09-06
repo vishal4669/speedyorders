@@ -5,13 +5,20 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Session;
 use Stripe;
+use App\Models\TempCart;
 use App\Models\TempCustomerDetail;
 use App\Models\TempCustomerTransaction;
+use App\Models\TempProductOptionValue;
 use DB;
 use Log;
 use App\Models\CustomerUser;
 use App\Models\Customer;
 use Hash;
+use App\Models\Order;
+use App\Models\OrderProduct;
+use App\Models\OrderProductOption;
+use Str;
+use App\Utils\Option;
    
 class MoneySetupController extends Controller
 {
@@ -22,6 +29,21 @@ class MoneySetupController extends Controller
      */
     public function stripe(Request $request)
     {
+
+        //Option::get('stripe_enable_status');
+
+        $publisher_key = Option::get('stripe_key');
+        $stripe_secret = Option::get('stripe_secret');
+
+        $stripe_payment_mode = Option::get('stripe_payment_mode');
+        if($stripe_payment_mode=="SANDBOX"){
+            $publisher_key = Option::get('stripe_key');
+            $stripe_secret = Option::get('stripe_secret');
+        } else if($stripe_payment_mode=="LIVE"){
+            $publisher_key = Option::get('live_stripe_key');
+            $stripe_secret = Option::get('live_stripe_secret');
+        } 
+
 
         $php_session_id = session()->getId();
 
@@ -96,7 +118,7 @@ class MoneySetupController extends Controller
             $tempcustomer->save();
         }
 
-        return view('stripe', compact('final_price'));
+        return view('stripe', compact('final_price', 'publisher_key'));
     }
   
     /**
@@ -106,83 +128,200 @@ class MoneySetupController extends Controller
      */
     public function stripePost(Request $request)
     {
+        try
+        {
+            DB::beginTransaction();
 
-        $php_session_id = session()->getId();
+            $php_session_id = session()->getId();
 
-        $tempcustomer = TempCustomerDetail::where('php_session_id', $php_session_id)->first();
+            $tempcustomer = TempCustomerDetail::where('php_session_id', $php_session_id)->first();
 
-        // Now need to create user if not exists
-        $customer_user_id = CustomerUser::where('email', $tempcustomer->email)->pluck('id')->first();
+            // Now need to create user if not exists
+            $customer_user_id = CustomerUser::where('email', $tempcustomer->email)->pluck('id')->first();
+
+            $total_price = DB::select('SELECT sum(quantity * unit_price) as total FROM `temp_cart` where php_session_id = "'.$php_session_id.'" GROUP BY `php_session_id` ASC');
+
+            $final_price = (isset($total_price[0]->total)) ? $total_price[0]->total : 0;
+
+            \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+
+            $chargeArry = [
+                    "amount" => $final_price * 100,
+                    "currency" => "usd",
+                    "source" => $request->stripeToken,
+                    "description" => "Speedy Order Payment for the user ",
+                    "receipt_email" => $tempcustomer->email
+
+            ];
+
+            $response = \Stripe\Charge::create($chargeArry);
+
+            $paymentStatus = (isset($response->status)) ? $response->status : '';
+            
+            if($paymentStatus && $paymentStatus=="succeeded"){
+
+                Log::info("Payment Success");
+
+                $temptransaction = new TempCustomerTransaction();
+                $temptransaction->description = '';
+                $temptransaction->php_session_id = $php_session_id;
+                $temptransaction->status = $paymentStatus;
+                $temptransaction->amount = $final_price;
+                $temptransaction->created_at = now();
+                $temptransaction->save();
 
 
-        $total_price = DB::select('SELECT sum(quantity * unit_price) as total FROM `temp_cart` where php_session_id = "'.$php_session_id.'" GROUP BY `php_session_id` ASC');
+                Log::info("Check customer user id : ".$customer_user_id);
 
-        $final_price = (isset($total_price[0]->total)) ? $total_price[0]->total : 0;
+                if(!$customer_user_id){
 
-        \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+                    Log::info("Found customer user id : ".$customer_user_id);
 
-        $chargeArry = [
-                "amount" => $final_price * 100,
-                "currency" => "usd",
-                "source" => $request->stripeToken,
-                "description" => "Speedy Order Payment for the user ",
-                "receipt_email" => $tempcustomer->email
+                    $password = Hash::make(rand());
+                    $customeruser = new CustomerUser();
+                    $customeruser->email = $tempcustomer->email;
+                    $customeruser->password = $password;
+                    $customeruser->status = 1;
+                    $customeruser->created_at = now();
+                    $customeruser->save();
 
-        ];
+                    $customer_user_id = $customeruser->id;
 
-        $response = \Stripe\Charge::create($chargeArry);
+                    Log::info("Found customer user id : ".$customer_user_id);
 
-        $paymentStatus = (isset($response->status)) ? $response->status : '';
-        
-        if($paymentStatus && $paymentStatus=="succeeded"){
+                    // create new customer
+                   
+                    $customer = new Customer();
+                    $customer->first_name = $tempcustomer->first_name;
+                    $customer->last_name = $tempcustomer->last_name;
+                    $customer->email = $tempcustomer->email;
+                    $customer->telephone = $tempcustomer->phone;
+                    $customer->status = 1;
+                    $customer->customer_user_id = $customer_user_id;
+                    $customer->phone = $tempcustomer->phone;
+                    $customer->save();
+                }
 
-            $temptransaction = new TempCustomerTransaction();
-            $temptransaction->description = '';
-            $temptransaction->php_session_id = $php_session_id;
-            $temptransaction->status = $paymentStatus;
-            $temptransaction->amount = $final_price;
-            $temptransaction->created_at = now();
-            $temptransaction->save();
+                // create entry in orders table and order products related tables
 
-            if(!$customer_user_id){
-                $password = Hash::make(rand());
-                $customeruser = new CustomerUser();
-                $customeruser->email = $tempcustomer->email;
-                $customeruser->password = $password;
-                $customeruser->status = 1;
-                $customeruser->created_at = now();
-                $customeruser->save();
+                Log::info("get customer details : ".json_encode($tempcustomer));
 
-                $customer_user_id = $customeruser->id;
 
-                // create new customer
-               
-                $customer = new Customer();
-                $customer->first_name = $tempcustomer->first_name;
-                $customer->last_name = $tempcustomer->first_name;
-                $customer->email = $tempcustomer->first_name;
-                $customer->telephone = $tempcustomer->first_name;
-                $customer->status = 1;
-                $customer->customer_user_id = $customer_user_id;
-                $customer->phone = $tempcustomer->first_name;
-                $customer->save();
+                $orderData = new Order();
+                $orderuuid = (string) Str::uuid();
+                $orderData->uuid = $orderuuid;
+                $orderData->customer_user_id = $customer_user_id;
+
+                $orderData->first_name = $tempcustomer->first_name;
+                $orderData->last_name = $tempcustomer->last_name;
+                $orderData->address_1 = $tempcustomer->address_1;
+                $orderData->address_2 = $tempcustomer->address_2;
+                $orderData->email = $tempcustomer->email;
+                $orderData->postcode = $tempcustomer->postcode;
+                $orderData->phone = $tempcustomer->phone;
+
+                $orderData->payment_first_name = $tempcustomer->first_name;
+                $orderData->payment_last_name = $tempcustomer->last_name;
+                $orderData->payment_company = '';
+                $orderData->payment_address_1 = $tempcustomer->address_1;
+                $orderData->payment_address_2 = $tempcustomer->address_2;
+                $orderData->payment_city = $tempcustomer->payment_city;
+                $orderData->payment_region = $tempcustomer->payment_region;
+                $orderData->payment_state = $tempcustomer->payment_region;
+                $orderData->payment_postcode = $tempcustomer->postcode;
+                $orderData->payment_country_name = $tempcustomer->shipping_country_name;
+
+                $orderData->payment_method = 'stripe';
+                $orderData->payment_unique_code = '';
+
+                $orderData->shipping_first_name = $tempcustomer->first_name;
+                $orderData->shipping_last_name = $tempcustomer->last_name;
+                $orderData->shipping_company = '';
+                $orderData->shipping_address_1 = $tempcustomer->address_1;
+                $orderData->shipping_address_2 = $tempcustomer->address_2;
+                $orderData->shipping_city = $tempcustomer->shipping_city;
+                $orderData->shipping_region = $tempcustomer->shipping_region;
+                $orderData->shipping_state = $tempcustomer->shipping_region;
+                $orderData->shipping_postcode = $tempcustomer->postcode;
+                $orderData->shipping_country_name = $tempcustomer->shipping_country_name;
+
+                $orderData->shipping_method = 'shipstation';
+                $orderData->shipping_unique_code = '';
+                $orderData->shipping_tracking_code = '';
+                
+                $orderData->comment = $tempcustomer->comment;
+
+                $orderData->status = 2; // for processing
+                $orderData->currency_code = 'USD';
+                $orderData->currency_value = 50;
+
+                $orderData->save();
+
+                // now add order products 
+                $tempCartItems = TempCart::where('php_session_id', $php_session_id)->get();
+                foreach($tempCartItems as $tempitem){
+                    $itemuuid = (string) Str::uuid();   
+
+                    $orderProduct = OrderProduct::create([
+                        'uuid' => $itemuuid,
+                        'sku' => $tempitem->sku,
+                        'quantity' => $tempitem->quantity,
+                        'price' => $tempitem->unit_price,
+                        'order_id' => $orderData->id,
+                        'product_id' => $tempitem->product_id,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+
+
+                    // check if options found for the cart product
+                    $tempCartItemOptions = TempProductOptionValue::where('php_session_id', $php_session_id)->where('product_id', $tempitem->product_id)->get();
+                    if(!empty($tempCartItemOptions)){
+                        foreach($tempCartItemOptions as $optionItem){
+                            $orderProductOption = OrderProductOption::create([
+                                'order_id' => $orderData->id,
+                                'order_product_id' => $orderProduct->id,
+                                'product_option_id' => $optionItem->option_id,
+                                'value' => $optionItem->option_value,
+                                'type' => 'input',
+                                'created_at' => now(),
+                                'updated_at' => now(),
+                            ]);
+                        }
+                    }
+                }
+
+                // Now delete all temprary data
+                DB::delete('delete from temp_cart where php_session_id = ?',[$php_session_id]);
+                #DB::delete('delete from temp_customer_details where php_session_id = ?',[$php_session_id]);
+                DB::delete('delete from temp_product_option_value where php_session_id = ?',[$php_session_id]);
+                DB::delete('delete from temp_customer_transaction where php_session_id = ?',[$php_session_id]);
+
+
+
+                Log::info('Stripe Response : '.json_encode($response));  
+                Session::flash('success', 'Payment Successful!');
+            } else {
+
+                $temptransaction = new TempCustomerTransaction();
+                $temptransaction->description = '';
+                $temptransaction->php_session_id = $php_session_id;
+                $temptransaction->status = $paymentStatus;
+                $temptransaction->amount = $final_price;
+                $temptransaction->created_at = now();
+                $temptransaction->save();
+
+                Log::info('Stripe Response : '.json_encode($response));  
+                Session::flash('error', 'Something went wrong, please try again');
             }
+            DB::commit();
+        } catch (\Exception $e){
 
-            Log::info('Stripe Response : '.json_encode($response));  
-            Session::flash('success', 'Payment Successful!');
-        } else {
-
-            $temptransaction = new TempCustomerTransaction();
-            $temptransaction->description = '';
-            $temptransaction->php_session_id = $php_session_id;
-            $temptransaction->status = $paymentStatus;
-            $temptransaction->amount = $final_price;
-            $temptransaction->created_at = now();
-            $temptransaction->save();
-
-            Log::info('Stripe Response : '.json_encode($response));  
-            Session::flash('error', 'Something went wrong, please try again');
+            Log::info("Exception : ".$e->getMessage());
+            DB::rollback();
+            return false;
         }
+
           
         return redirect('/stripeform');
    
