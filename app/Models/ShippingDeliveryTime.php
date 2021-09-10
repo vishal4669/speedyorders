@@ -11,4 +11,9 @@ class ShippingDeliveryTime extends Model
 
     protected $table = 'shipping_delivery_times';
 
+    public function getNameAttribute()
+    {
+        return ucfirst($this->attributes['name']);
+    }
+
 }

@@ -737,8 +737,44 @@ $('.image-popup').magnificPopup({
         },
         dataType: 'JSON',
         success: function(data) {
-           location.reload();
-           
+           location.reload();           
+        }
+    });
+  }
+
+
+  function deliveryTimePrice(productId, deliveryTimeId){
+    var url = '/deliverytimeprice';
+    $.ajax({
+        url: url,
+        type: 'post',
+        data: {
+            "_token": $('meta[name="_token"]').attr('content'),
+            "product_id": productId,
+            "delivery_time_id": deliveryTimeId
+        },
+        dataType: 'JSON',
+        success: function(data) {
+             var span_data = '$' + data ;
+             $("#deliveryprice_"+productId).text(span_data);
+
+
+             var product_price = $("#price_product_"+productId).text();
+             var product_qty = $("#qty_product_"+productId).text();
+
+             var total_p = parseFloat(product_price) * parseInt(product_qty);
+
+             var total_price = parseFloat(total_p) + parseFloat(data);
+             $("#total_"+productId).text(total_price.toFixed(2));
+
+
+              var sum = 0;
+              $('.product-subtotal').each(function(){
+
+                  sum += parseFloat($(this).text());
+              });
+
+              $("#grand_total").text(" $"+sum);
         }
     });
   }

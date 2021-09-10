@@ -15,12 +15,14 @@
                                     <th style="width:12%"  class="product-name">Product</th>
                                     <th style="width:8%"  class="product-price">Price</th>
                                     <th style="width:5%"  class="product-quantity">Quantity</th>
-                                    <th style="width:25%"  class="product-options">Options</th>
-                                    <th style="width:10%"  class="product-subtotal">Total</th>
+                                    <th style="width:15%"  class="product-options">Options</th>
+                                    <th style="width:10%"  class="product-options">Delivery Time</th>
+                                    <th style="width:10%" >Total</th>
                                     <th style="width:5%"  class="product-remove">Remove</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                <?php $grand_total = 0;?>
                                 @if(!empty($cartItems))
                                     @php
                                         $total_amount = 0;
@@ -29,8 +31,8 @@
                                         <tr>
                                             <td class="product-thumbnail"><a href="#"><img src="images/products/{{$item->image}}" alt="product img" /></a></td>
                                             <td class="product-name"><a href="#">{{$item->name}}</a></td>
-                                            <td class="product-price"><span class="amount">${{$item->unit_price}}</span></td>
-                                            <td class="product-quantity">{{$item->quantity}}</td>
+                                            <td class="product-price"><span class="amount">${{$item->unit_price}}</span> <span style="display: none" id="price_product_{{$item->product_id}}">{{$item->unit_price}}</span></td>
+                                            <td class="product-quantity" id="qty_product_{{$item->product_id}}">{{$item->quantity}}</td>
 
                                             @php
                                                 $total_amount += ($item->unit_price * $item->quantity); 
@@ -45,12 +47,57 @@
                                                                 ->get();
                                                     if(!empty($options_data)){
                                                         foreach($options_data as $option_data){
-                                                            echo "<b>".$option_data->name."</b> : ".$option_data->option_value."<br>";
+                                                            if($option_data->option_value!=''){
+                                                                echo "<b>".$option_data->name."</b> : ".$option_data->option_value."<br>";
+                                                            }
                                                         }
                                                     } 
                                                 ?>
                                             </td>
-                                            <td class="product-subtotal">${{$item->unit_price * $item->quantity}}</td>
+                                            <td>
+                                                
+                                                <?php 
+
+                                                $productData = App\Models\Product::with('delivery_time')->where('id',$item->product_id)->first();
+
+                                                if(isset($productData->delivery_time)){
+                                                $productTimes = $productData->delivery_time->toArray();
+
+                                                 
+                                                    if(isset($productTimes) && !empty($productTimes)){
+                                                       
+                                                            ?>
+                                                                <div class="quick-desc">
+                                                                   
+                                                                   <select onchange="deliveryTimePrice('{{$item->product_id}}', this.value)" class="themes-select-all-2" name="delivery_time_{{$item->product_id}}" id="delivery_time_{{$item->product_id}}">
+                                                                        <option value="">Select Delivery Time</option>
+                                                                        <?php  foreach ($productTimes as $productTime) {
+                                                                                // get delivery time name
+                                                                                $deliveryTimeName = App\Models\ShippingDeliveryTime::where('id',$productTime["shipping_delivery_times_id"])->pluck('name')->first();
+
+                                                                                #echo $deliveryTimeNameData["product_delivery_time_id"];
+                                                                             
+
+                                                                            ?>
+                                                                            <option <?php echo (isset($item["product_delivery_time_id"]) && ($item["product_delivery_time_id"]==$productTime["id"])) ? 'selected' : '';?> value="<?php echo $productTime["id"];?>"><?php
+
+                                                                             echo $deliveryTimeName;?></option>
+                                                                        <?php }?>
+                                                                    </select>
+                                                                    <br>
+                                                                    <div style="display:none" id="deliveryprice_{{$item->product_id}}"></div>
+                                                                </div>
+
+
+
+                                                            <?php 
+                                                    }
+                                                }
+                                                ?>
+
+
+                                            </td>
+                                            <td class="product-subtotal" id="total_{{$item->product_id}}">{{($item->unit_price * $item->quantity) + $item->shipping_zone_price}} <?php $grand_total += (floatval($item->unit_price) * $item->quantity) + floatval($item->shipping_zone_price); ?></td>
                                            
                                             <td class="product-remove"><a href="#" onclick="removeFromCart('{{$item->product_id}}')"><i class="ti-trash"></i></a></td>
                                         </tr>
@@ -76,9 +123,9 @@
                                     <tbody>
                                       
                                         <tr class="order-total">
-                                            <th>Total</th>
+                                            <th>Total&nbsp;&nbsp;&nbsp;</th>
                                             <td>
-                                                <strong><span class="amount">&nbsp;&nbsp;&nbsp;${{$total_amount}}</span></strong>
+                                                <strong><span class="amount" id="grand_total">${{$grand_total}}</span></strong>
                                             </td>
                                         </tr>                                           
                                     </tbody>
