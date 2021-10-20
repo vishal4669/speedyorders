@@ -18,6 +18,7 @@ class UpdateGeneralRequest extends FormRequest
             'company_address' => 'required|max:255|string',
             'company_email' => 'required|string|max:255',
             'company_phone' => 'required|digits:10',
+            'site_logo' => 'nullable|image|mimes:jpg,jpeg,png|max:4096'
         ];
     }
 

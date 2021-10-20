@@ -1,5 +1,17 @@
+
+<style type="text/css">
+    
+    .col-1-5 {
+    flex: 0 0 12.3%;
+    max-width: 12.3%;
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+</style>
 <div class="row">
-            <div class="col-md-6">
+            <?php /*<div class="col-md-6">
                 <label for="option">Option Required</label>
                 <select name="option_required" class="form-control">
                     <option value="1"
@@ -10,6 +22,7 @@
                     No</option>
                 </select>
             </div>
+            */?>
             <div class="col-md-6">
                 <label for="option">Options</label>
                 <select class="form-control js-dropdown-select2" list="options" id="options">
@@ -29,12 +42,26 @@
 
                         @switch($productOption->option->type)
                             @case('input')
+
+
                             <div class="hpanel">
                                 <div class="panel-heading">
                                     <div class="row">
                                         <div class="col-md-3">
                                             <h5><strong>{{ $productOption->option->name }}</strong> </h5>
                                         </div>
+
+                                         <div class="col-md-2">
+                                            <h5>Is Required</h5>
+                                         </div>
+
+                                        <div class="col-md-3">                
+                                            <select name="option[required][{{$productOption->option->id}}]" id="option[required][{{$productOption->option->id}}]" class="form-control">
+                                                <option {{(isset($productOption->required) && $productOption->required==0) ? 'selected' : ''}} value="0">No</option>
+                                                <option {{(isset($productOption->required) && $productOption->required==1) ? 'selected' : ''}} value="1" >Yes</option>                                                
+                                            </select>
+                                        </div>
+
                                         <div class="col-md-4 pull-right text-right">
                                             <button class="btn btn-danger delete-hpanel"><i class="pe-7s-close-circle"></i></button>
                                         </div>
@@ -64,6 +91,9 @@
                             </div>
 
                             @break
+
+
+                            <?php /*
                             @case('select')
                             <div class="hpanel">
                                 <input type="text" class="hidden" name="option_id[{{ $counter }}]"
@@ -158,6 +188,9 @@
                                 </div>
                             </div>
                             @break
+
+*/?>
+
                         @endswitch
                     @endif    
                 @empty
@@ -252,13 +285,18 @@
                 },
                 });
             }
+
+
+
+
+
         });
 
 
         $('#addGalleryImage').on('click',function(e)
         {
             e.preventDefault();
-            $('#gallery-table tbody').append("<tr id='' style='display: table-row;' class='footable-even'><td class='footable-visible footable-first-column'> <input type='file' class='form-control' name='gallery_image[]'/> </td><td class='footable-visible'> <input type='number' class='form-control' name='gallery_image_order[]'' placeholder='Sort Order' value='1' min='1'/> </td><td class='footable-visible footable-last-column'> <button type='button' class='btn btn-danger deleteGalleryImage'><i class='fa fa-trash'></i> </button> </td></tr>");
+            $('#gallery-table tbody').append("<tr id='' style='display: table-row;' class='footable-even'><td class='footable-visible footable-first-column'> <input type='file' class='form-control gallery_images_inputs' name='gallery_image[]'/> </td><td class='footable-visible'> <input type='number' class='form-control' name='gallery_image_order[]'' placeholder='Sort Order' value='1' min='1'/> </td><td class='footable-visible footable-last-column'> <button type='button' class='btn btn-danger deleteGalleryImage'><i class='fa fa-trash'></i> </button> </td></tr>");
             $('#uploadImagesBtn').show();
         });
 
@@ -329,35 +367,87 @@
 
         });
 
-        $('#uploadProductMediaForm').on('submit',function(e)
-        {
-            e.preventDefault();
-            var action = $(this).attr('action');
-            var formData =  new FormData(this);
+    
 
-            $.ajax({
-            url: action,
-            type: "POST",
-            data: formData,
-            dataType: 'JSON',
-            contentType: false,
-            cache: false,
-            processData: false,
-            beforeSend :function(){
-                $('#uploadImagesBtn').prop('disabled', true);
-                $('#uploadImagesBtn').html("<span class='spinner-border spinner-border-sm' id='uploadImagesBtn' role='status' aria-hidden='true'></span> Please Wait...");
-            },
-            success:function(res){
-                $('#uploadImagesBtn').prop('disabled',false);
-                $('#uploadImagesBtn').html("<span id='uploadImagesBtn' role='status' aria-hidden='true'></span> Upload Image");
-                $('#uploadImagesBtn').hide();
-                var oldId = $('#galleryId').val();
-                $('#galleryId').val(res['id']+','+oldId);
-                assignIdToRow(res['data'],res['id']);
-            },
+        $('#uploadImagesBtn').on('click',function(){
+            var files_data = [];
+            formdata = new FormData(); 
 
+
+
+            $('.gallery_images_inputs').each(function(index, field){
+               var file = field.files[0];
+               formdata.append('gallery_images[]',file);
             });
+
+            var action = "{{ route('admin.products.upload.media') }}";
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                }
+            });
+                
+               $.ajax({
+                    url: action,
+                    type: "POST",
+                    data: formdata,
+                    dataType: 'JSON',
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    beforeSend :function(){
+                        $('#uploadImagesBtn').prop('disabled', true);
+                        $('#uploadImagesBtn').html("<span class='spinner-border spinner-border-sm' id='uploadImagesBtn' role='status' aria-hidden='true'></span> Please Wait...");
+                    },
+                    success:function(res){
+                        $('#uploadImagesBtn').prop('disabled',false);
+                        $('#uploadImagesBtn').html("<span id='uploadImagesBtn' role='status' aria-hidden='true'></span> Upload Image");
+                        $('#uploadImagesBtn').hide();
+                        var oldId = $('#galleryId').val();
+                        $('#galleryId').val(res['id']+','+oldId);
+                        assignIdToRow(res['data'],res['id']);
+                    },
+            });
+
+                event.preventDefault();
+             
         });
+
+
+        // $('#uploadProductMediaForm').on('submit',function(e)
+        // {
+        //     e.preventDefault();
+        //     var action = $(this).attr('action');
+        //     var formData =  new FormData(this);
+
+
+        //     console.log(formData);
+
+
+
+            // $.ajax({
+            //     url: action,
+            //     type: "POST",
+            //     data: formData,
+            //     dataType: 'JSON',
+            //     contentType: false,
+            //     cache: false,
+            //     processData: false,
+            //     beforeSend :function(){
+            //         $('#uploadImagesBtn').prop('disabled', true);
+            //         $('#uploadImagesBtn').html("<span class='spinner-border spinner-border-sm' id='uploadImagesBtn' role='status' aria-hidden='true'></span> Please Wait...");
+            //     },
+            //     success:function(res){
+            //         $('#uploadImagesBtn').prop('disabled',false);
+            //         $('#uploadImagesBtn').html("<span id='uploadImagesBtn' role='status' aria-hidden='true'></span> Upload Image");
+            //         $('#uploadImagesBtn').hide();
+            //         var oldId = $('#galleryId').val();
+            //         $('#galleryId').val(res['id']+','+oldId);
+            //         assignIdToRow(res['data'],res['id']);
+            //     },
+
+            // });
+        // });
 
         function assignIdToRow(responseDataArray,responseIdArray){
             var htmlELement = '';

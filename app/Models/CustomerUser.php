@@ -10,6 +10,7 @@ class CustomerUser extends Authenticatable
 
 {
     use HasApiTokens;
+
     protected $fillable = [
         'email','password','status','password_reset_at','token',
     ];
@@ -22,6 +23,7 @@ class CustomerUser extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    
     /**Full name*/
     public function getFullNameAttribute()
     {

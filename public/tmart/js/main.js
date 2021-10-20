@@ -725,7 +725,7 @@ $('.image-popup').magnificPopup({
 });
 
   function removeFromCart(productId){
-
+    
     var url = '/removefromcart';
 
     $.ajax({
@@ -743,6 +743,8 @@ $('.image-popup').magnificPopup({
   }
 
 
+
+
   function deliveryTimePrice(productId, deliveryTimeId){
     var url = '/deliverytimeprice';
     $.ajax({
@@ -755,7 +757,7 @@ $('.image-popup').magnificPopup({
         },
         dataType: 'JSON',
         success: function(data) {
-             var span_data = '$' + data ;
+             var span_data = data ;
              $("#deliveryprice_"+productId).text(span_data);
 
 
@@ -763,6 +765,8 @@ $('.image-popup').magnificPopup({
              var product_qty = $("#qty_product_"+productId).text();
 
              var total_p = parseFloat(product_price) * parseInt(product_qty);
+
+             $("#shipping_price_"+productId).text(data.toFixed(2));
 
              var total_price = parseFloat(total_p) + parseFloat(data);
              $("#total_"+productId).text(total_price.toFixed(2));
@@ -774,11 +778,8 @@ $('.image-popup').magnificPopup({
                   sum += parseFloat($(this).text());
               });
 
-              $("#grand_total").text(" $"+sum);
+              $("#grand_total").text(" $" + sum.toFixed(2));
         }
     });
   }
-
-
-
 

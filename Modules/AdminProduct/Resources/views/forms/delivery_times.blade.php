@@ -3,9 +3,9 @@
     <div class="col-md-7">
         <div class="row">
             <div class="col-md-5">
-                <label for="option">Zone</label>
+                <label for="option">Group</label>
                 <select name="shipping_zone_groups_id" id="shipping_zone_groups_id"  class="form-control js-dropdown-select2">
-                    <option value="">Select Zone</option>
+                    <option value="">Select Group</option>
                     @foreach ($groups as $group)
                         <option {{(isset($productDeliveryTimeGroup) && $productDeliveryTimeGroup==$group->id) ? 'selected' : ''}} value="{{ $group->id }}">{{ $group->group_name }}</option>
                     @endforeach

@@ -50,6 +50,16 @@ class Handler extends ExceptionHandler
             return $this->handleApiException($request, $exception);
         }
 
+        // custom error message
+        if ($exception instanceof \ErrorException) {
+            
+            $message = $exception->getMessage();
+          
+            return redirect()->route('errors');
+        } else {
+            return parent::render($request, $exception);
+        }
+
         return parent::render($request, $exception);
     }
 

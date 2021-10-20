@@ -180,8 +180,6 @@ return [
         App\Providers\MinIOStorageServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
         LaravelShipStation\ShipStationServiceProvider::class,
-        Srmklive\PayPal\Providers\PayPalServiceProvider::class,
-        Cartalyst\Stripe\Laravel\StripeServiceProvider::class,
 
     ],
 
@@ -239,8 +237,6 @@ return [
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         'License' => \App\Utils\License::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
-        'PayPal' => Srmklive\PayPal\Facades\PayPal::class,
-        'Stripe' => Cartalyst\Stripe\Laravel\Facades\Stripe::class,
     ],
 
 ];

@@ -40,6 +40,25 @@
                                     <span class="help-block">{{ $errors->first('company_phone') }}</span>
                                 @endif
                             </div>
+
+                             <div class="form-group col-md-6{{ $errors->has('site_logo') ? ' has-error' :'' }}">
+                                <label for="">Site Logo</label>
+                                <input type="file" name="site_logo" class="form-control" value="{{ Option::get('site_logo') }}">
+                                @if($errors->has('site_logo'))
+                                    <span class="help-block">{{ $errors->first('site_logo') }}</span>
+                                @endif
+                            </div>
+
+                            @if(Option::get('site_logo')!='')
+                                <div class="form-group col-md-6">
+                                    <label class="col-md-2 control-label"></label>
+                                    <div class="col-md-8">
+                                        <img src="{{url('images/'.Option::get('site_logo'))}}" width="200px">
+                                    </div>
+                                </div>
+                            @endif
+
+
                         </div>
 
                         <div class="col-md-12 text-right">

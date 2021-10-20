@@ -2,6 +2,7 @@
     <label for="parent_id" class="control-label">{{ 'Parent Id' }}</label>
 
     <select name="parent_id" class="form-control js-dropdown-select2" id="parent_id">
+         <option value="" selected>Select Parent</option>
         @foreach ($pages as $optionValue)
             <option value="{{ $optionValue->id }}" {{ (isset($adminpage->parent_id) && $adminpage->parent_id == $optionValue->id) ? 'selected' : ''}}>{{ $optionValue->title }}</option>
         @endforeach

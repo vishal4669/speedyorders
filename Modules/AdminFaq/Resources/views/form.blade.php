@@ -1,5 +1,5 @@
 <div class="form-group {{ $errors->has('faq_category_id') ? 'has-error' : ''}}">
-    <label for="faq_category_id" class="control-label">{{ 'Faq Category Id' }}</label>
+    <label for="faq_category_id" class="control-label">{{ 'Category Id' }}</label>
      <select name="faq_category_id" class="form-control js-dropdown-select2" id="faq_category" required>
         @foreach ($categories as $optionValue)
             <option value="{{ $optionValue->id }}" {{ (isset($faq->faq_category_id) && $faq->faq_category_id == $optionValue->id) ? 'selected' : ''}}>{{ $optionValue->name }}</option>
@@ -7,6 +7,18 @@
     </select>
     {!! $errors->first('faq_category_id', '<p class="help-block">:message</p>') !!}
 </div>
+
+<div class="form-group {{ $errors->has('faq_category_id') ? 'has-error' : ''}}">
+    <label for="faq_category_id" class="control-label">{{ 'Type' }}</label>
+     <select name="type" class="form-control js-dropdown-select2" id="type" required>
+        
+        <option value="faq" {{ (isset($faq->type) && $faq->type == 'faq') ? 'selected' : ''}}>FAQ</option>
+        <option value="support" {{ (isset($faq->type) && $faq->type == 'support') ? 'selected' : ''}}>Support</option>
+        
+    </select>
+    {!! $errors->first('faq_category_id', '<p class="help-block">:message</p>') !!}
+</div>
+
 <div class="form-group {{ $errors->has('question') ? 'has-error' : ''}}">
     <label for="question" class="control-label">{{ 'Question' }}</label>
     <input class="form-control" type="text" name="question" id="question" value="{{ isset($faq->question) ? $faq->question : ''}}" required> </input>

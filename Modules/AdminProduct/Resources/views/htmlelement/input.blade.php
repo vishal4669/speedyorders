@@ -4,6 +4,18 @@
             <div class="col-md-3">
                 <h5><strong>{{$option_data['name']}}</strong> </h5>
             </div>
+
+             <div class="col-md-2">
+                <h5>Is Required</h5>
+             </div>
+
+            <div class="col-md-3">                
+                <select name="option[required][{{$option_data['id']}}]" id="option[required][{{$option_data['id']}}]" class="form-control">
+                    <option value="0">No</option>
+                    <option value="1" selected >Yes</option>
+                </select>
+            </div>
+
             <div class="col-md-4 pull-right text-right">
                 <button class="btn btn-danger delete-hpanel"><i class="pe-7s-close-circle"></i></button>
             </div>

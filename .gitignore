@@ -1,16 +1,12 @@
 /node_modules
 /public/hot
-/public/images
 /public/storage
-/storage
+/storage/*.key
 /vendor
 .env.backup
-.env
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
 .idea
-laravel.log
-sftp-config.json

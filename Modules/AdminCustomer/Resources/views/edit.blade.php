@@ -70,7 +70,7 @@ $('.edit-address-btn').on('click',function(e){
             $.each(res, function(key,value) {
                 if(key == 'id')
                 {
-
+                    $('#address_id').empty().val(value);
                 }
                 $('#'+key).empty().val(value);
             });
@@ -82,6 +82,30 @@ $('.edit-address-btn').on('click',function(e){
         }
     });
 });
+
+
+$('.delete-address-btn').on('click',function(e){
+
+    if(confirm('Are you sure to delete selected address?')){
+        var actionUrl = $(this).attr('data-delete-url');
+        var address_id = $(this).attr('data-address-id');
+
+        $.ajax({
+            url: actionUrl,
+            type: "GET",
+            dataType: 'JSON',
+            success:function(res){
+               // alert(res.message);
+                $("#address_"+address_id).remove();
+            },
+
+            error:function(xhr){
+
+            }
+        });
+    }
+});
+
 
 $('#resetEditAddress').on('click',function(e){
     e.preventDefault()

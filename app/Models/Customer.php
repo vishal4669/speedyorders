@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CustomerAddress;
 
 class Customer extends Model
 {
@@ -13,10 +14,10 @@ class Customer extends Model
 
    
 
-    public function addresses()
-    {
-        return $this->hasMany('App\Models\CustomerAddress');
-    }
+    // public function addresses()
+    // {
+    //     return $this->hasMany('App\Models\CustomerAddress');
+    // }
 
     public function customers()
     {
@@ -26,6 +27,20 @@ class Customer extends Model
     public function customerUser()
     {
         return $this->belongsTo('App\Models\CustomerUser');
+    }
+
+    public function addresses(){
+        return $this->hasMany('App\Models\CustomerAddress', 'customer_user_id', 'id');
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany('App\Models\CustomerTransaction', 'customer_user_id', 'id');
+    }
+
+    public function ips()
+    {
+        return $this->hasMany('App\Models\CustomerIpAddress', 'customer_id', 'id');
     }
 
 }

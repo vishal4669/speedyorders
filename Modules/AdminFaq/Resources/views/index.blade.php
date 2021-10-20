@@ -33,7 +33,11 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Faq Category</th><th>Question</th><th>Answer</th><th>Sort Order</th>
+                        <th>Faq Category</th>
+                        <th>Type</th>
+                        <th>Question</th>
+                        <th>Answer</th>
+                        <th>Sort Order</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -42,7 +46,11 @@
                     @forelse($faq as $item)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $item->faqCategory->name ?? '' }}</td><td>{{ $item->question }}</td><td>{{ $item->answer }}</td><td>{{ $item->sort_order }}</td>
+                            <td>{{ $item->faqCategory->name ?? '' }}</td>
+                            <td>{{ ucfirst($item->type)}}</td>
+                            <td>{{ $item->question }}</td>
+                            <td>{{ $item->answer }}</td>
+                            <td>{{ $item->sort_order }}</td>
                             <td>
                                 {{ $item->status=='1' ? 'Active':'Inactive'  }}
                                 <a href="{{ route('admin.faqs.update.status',$item->id) }}" class="text-danger"><strong>Change</strong></a>

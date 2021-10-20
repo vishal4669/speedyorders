@@ -445,7 +445,7 @@ function processOrderDetails(){
         dataType: 'JSON',
         success: function(data) {
             alert('Order successfull processed at shipstation');
-           //window.location = "{{ route('admin.orders.index') }}";
+           window.location = "{{ route('admin.orders.index') }}";
         }
     });
 }
@@ -533,6 +533,7 @@ function getProductPackages(productId, shipping_postcode){
             data: {
                 "_token": "{{ csrf_token() }}",
                 "productId": productId,
+                "orderId" : orderId,
                 "shipping_postcode" : shipping_postcode,
                 "selectname" : "single_product_package_"+productId,
                 "productZones" : productZones

@@ -16,7 +16,8 @@ class CreateFaqRequest extends FormRequest
         return [
             'faq_category_id' => 'required|exists:faq_categories,id',
 			'question' => 'required|string|max:255',
-			'answer' => 'required|string|max:255',
+            'type' => 'required',
+			'answer' => 'required|string',
 			'sort_order' => 'required|integer',
 			'status' => 'required|in:1,0'
         ];

@@ -31,7 +31,7 @@ class Category extends Model
      *
      * @var array
      */
-    protected $fillable = ['id','category_id', 'name', 'slug', 'image', 'description','return_policy', 'status'];
+    protected $fillable = ['id','category_id', 'name', 'slug', 'image', 'description','return_policy', 'status', 'show_on_homepage'];
 
       /**
      * The attributes that should be hidden for arrays.

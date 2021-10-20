@@ -34,6 +34,8 @@ class UpdateProductService
                 $validatedData['image'] = $image_name;
             }
 
+            $validatedData['slug'] = $this->slugify($validatedData['name']);
+
             $product->update($validatedData);
 
             if (isset($validatedData['galleryId']))
@@ -80,7 +82,7 @@ class UpdateProductService
                     ProductOptionValue::whereIn('product_option_id',$ids)->delete();
                 }
 
-
+         
                 foreach ($validatedData['option'] as $optionKey => $option) {
                     switch ($optionKey) {
                         case 'input':
@@ -88,10 +90,7 @@ class UpdateProductService
                                 $productOption = ProductOption::create([
                                     'product_id' => $product->id,
                                     'option_id' => $key,
-                                    'required' =>
-                                        (bool) $validatedData[
-                                            'option_required'
-                                        ],
+                                    'required' =>$validatedData['option']['required'][$key],
                                 ]);
 
                                 ProductOptionValue::create([
@@ -102,7 +101,7 @@ class UpdateProductService
                             }
                             break;
 
-                        case 'select':
+                        /*case 'select':
                             Log::info(array("option" => $option));
                             foreach ($option['option_values'] as $counter => $optionValue) {
                                
@@ -152,7 +151,7 @@ class UpdateProductService
                                     ProductOptionValue::create($productOptionValueData);
                                 }
                             }
-                            break;
+                            break;*/
                     }
                     
                 }
@@ -230,5 +229,39 @@ class UpdateProductService
             \DB::rollback();
             return false;
         }
+    }
+
+    public function slugify($text, string $divider = '-')
+    {
+
+           
+            // replace non letter or digits by divider
+          $text = preg_replace('~[^\pL\d]+~u', $divider, $text);
+
+          // transliterate
+          $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+
+          // remove unwanted characters
+          $text = preg_replace('~[^-\w]+~', '', $text);
+
+          // trim
+          $text = trim($text, $divider);
+
+          // remove duplicate divider
+          $text = preg_replace('~-+~', $divider, $text);
+
+          // lowercase
+          $text = strtolower($text);
+
+          if (empty($text)) {
+            $text =  'n-a';
+          }
+          
+
+         return $text;
+          
+     
+
+
     }
 }

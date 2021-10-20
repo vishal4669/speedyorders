@@ -118,6 +118,7 @@
 
      <!-- jquery latest version -->
     <script src="{{url('tmart/js/vendor/jquery-v1.12.4.min.js')}}"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
     <!-- Bootstrap framework js -->
     <script src="{{url('tmart/js/popper.js')}}"></script>
     <script src="{{url('tmart/js/bootstrap.min.js')}}"></script>

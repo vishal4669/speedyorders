@@ -10,6 +10,7 @@ use App\Models\CustomerIpAddress;
 use Illuminate\Routing\Controller;
 use App\Models\CustomerTransaction;
 use Modules\AdminCustomer\Services\CreateCustomerService;
+use Modules\AdminCustomer\Services\UpdateCustomerService;
 use Modules\AdminCustomer\Http\Requests\CreateCustomerRequest;
 use Modules\AdminCustomer\Http\Requests\UpdateCustomerRequest;
 
@@ -83,7 +84,8 @@ class AdminCustomerController extends Controller
         $data = [
             'menu' => 'customers',
         ];
-        $customer = Customer::where('id',$id)->first();
+        $customer = Customer::with('addresses', 'transactions', 'ips')->where('id',$id)->first();
+
         return view('admincustomer::edit',compact('customer'),$data);
     }
 
@@ -93,9 +95,21 @@ class AdminCustomerController extends Controller
      * @param int $id
      * @return Response
      */
-    public function update(UpdateCustomerRequest $request, $id)
+    public function update(UpdateCustomerRequest $request, UpdateCustomerService $service, $id)
     {
-        dd($request->all());
+
+        $validatedData = $request->validated();
+
+        if($service->handle($validatedData,$id))
+        {
+            session()->flash('success_message','Customer updated successfully.');
+        }
+        else
+        {
+            session()->flash('error_message','Customer could not be updated.');
+            return redirect()->back()->withInput();
+        }
+        return redirect()->route('admin.customers.index');
     }
 
     /**
@@ -105,7 +119,15 @@ class AdminCustomerController extends Controller
      */
     public function destroy($id)
     {
-        //
+       try{
+            Customer::find($id)->delete();
+            session()->flash('success_message', 'Customer deleted successfully.');
+        }
+        catch (\Exception $e){
+            session()->flash('error_message','Customer could not be deleted.');
+        }
+
+        return redirect()->route('admin.customers.index');
     }
 
     public function getCustomerAddressDetails($id)
@@ -151,6 +173,28 @@ class AdminCustomerController extends Controller
         }
 
         return redirect()->route('admin.customers.index');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     * @param int $id
+     * @return Response
+     */
+    public function deleteAddressDetails($id)
+    {
+        try{
+            if(isset($id) && $id!=''){
+                CustomerAddress::find($id)->delete();
+                return response()->json(array('status' => true, 'message' => 'Customer Address deleted successfully'), 200);
+            } else{
+                return response()->json(array('status' => true, 'message' => 'Customer could not be deleted.'), 200);
+            }
+            
+        }
+        catch (\Exception $e){
+            return response()->json(array('status' => true, 'message' => 'Customer could not be deleted.'), 200);
+        }
+        
     }
 
 }

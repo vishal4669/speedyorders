@@ -23,6 +23,9 @@ Route::group(['prefix' => 'admin/customers', 'middleware' => 'auth:admin','as'=>
     Route::delete('/delete/{id}', 'AdminCustomerController@destroy')->name('delete')->middleware('can:delete-customer');
 
     Route::get('/address-details/{id}', 'AdminCustomerController@getCustomerAddressDetails')->name('address.details')->middleware('can:get-customer-address-details');
+
+    Route::get('/address-delete/{id}', 'AdminCustomerController@deleteAddressDetails')->name('address.delete')->middleware('can:delete-address-details');
+
     Route::get('/transaction-details/{id}', 'AdminCustomerController@getCustomerTransactionDetails')->name('transaction.details')->middleware('can:get-customer-transaction-details');
     Route::get('/ip-details/{id}', 'AdminCustomerController@getCustomerIpAddressDetails')->name('ipaddress.details')->middleware('can:get-customer-ipaddress-details');
 

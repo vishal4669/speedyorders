@@ -16,23 +16,23 @@ class CreateCustomerRequest extends FormRequest
         return [
             'first_name' =>'required|string|max:255',
             'last_name' =>'required|string|max:255',
-            'email' =>'required|string|max:255',
+            'email' =>'required|email|string|max:255',
             'telephone' =>'required|digits:10',
             'newsletter' =>'required|in:0,1',
             'safe' =>'required|in:0,1',
             'status' =>'required|in:0,1',
 
-            'c_first_name' =>'nullable|string|max:255',
-            'c_last_name' =>'nullable|string|max:255',
+            'a_first_name' =>'nullable|string|max:255',
+            'a_last_name' =>'nullable|string|max:255',
             'address_1' =>'nullable|string',
             'address_2' =>'nullable|string',
-            'c_telephone' =>'nullable|digits:10',
+            //'c_telephone' =>'nullable|digits:10',
             'city' =>'nullable|string|max:255',
-            'country' =>'nullable|string|max:255',
-            'region_id' =>'nullable|numeric',
+            //'country' =>'nullable|string|max:255',
+            //'region_id' =>'nullable|numeric',
 
-            'description' =>'nullable|string',
-            'region_id' =>'nullable|numeric',
+            //'description' =>'nullable|string',
+            //'region_id' =>'nullable|numeric',
 
         ];
     }

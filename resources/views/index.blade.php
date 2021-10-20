@@ -1,244 +1,209 @@
-@extends('layouts.app')
+@extends('layouts.frontend')
 
 @section('content')
 
-        <!-- Start Feature Product -->
-        <section class="categories-slider-area bg__white">
-            <div class="container">
-                <div class="row flex-row-reverse">
-                    <!-- Start Left Feature -->
-                    <div class="col-lg-12 col-xl-12 col-md-12 col-xs-12">
-                        <!-- Start Slider Area -->
-                        <div class="slider__container slider--one">
-                            <div class="slider__activation__wrap owl-carousel owl-theme">
-                                <!-- Start Single Slide -->
-                                <div class="slide slider__full--screen slider-height-inherit slider-text-right" style="background: rgba(0, 0, 0, 0) url(images/products/Product_90Lgj05s91.jpg) no-repeat scroll center center / cover ;">
-                                    <div class="container">
-                                        <div class="row">
-                                            <div class="col-lg-10 col-xl-8 ms-auto col-md-12 col-xs-12">
-                                                <div class="slider__inner">
-                                                    <h1>Featured <span class="text--theme">Collection</span></h1>
-                                                    
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- End Single Slide -->
-                                <!-- Start Single Slide -->
-                                <div class="slide slider__full--screen slider-height-inherit  slider-text-left" style="background: rgba(0, 0, 0, 0) url(images/products/Product_AxoBZJA44Z.jpg) no-repeat scroll center center / cover ;">
-                                    <div class="container">
-                                        <div class="row">
-                                            <div class="col-lg-8 col-xl-8 col-md-12 col-xs-12">
-                                                <div class="slider__inner">
-                                                    <h1>Latest <span class="text--theme">Collection</span></h1>
-                                                   
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- End Single Slide -->
-                            </div>
-                        </div>
-                        <!-- Start Slider Area -->
-                    </div>
-                   
+@php
+$homepage_categories = App\Models\Category::where('show_on_homepage', 1)->get();
+$featured_categories = App\Models\Category::with('products')->where('is_featured', 1)->get();
+@endphp
+<section class="intro-block block-fade-out-bottom block-negative-bottom">
+    <div class="intro-block-slider">
+        <div class="slider-item">
+            <div class="d-flex justify-content-end justify-content-md-center flex-column info">
+                <div class="title">Discover our new collection of wedding signs.</div>
+                <div class="text">Text Lorem ipsum dolor sit amet, consecte</div>
+            </div>
+            <picture>
+                <source media="(max-width: 767px)" srcset="frontend_assets/img/base_layout/m-home-intro.jpg">
+                <img src="frontend_assets/img/base_layout/home-intro.jpg" alt="Discover our new collection of wedding signs">
+            </picture>
+        </div>
+        <div class="slider-item">
+            <div class="d-flex justify-content-end justify-content-md-center flex-column info">
+                <div class="title">Discover our new collection 2022!</div>
+            </div>
+            <picture>
+                <source media="(max-width: 767px)" srcset="frontend_assets/img/base_layout/m-home-intro-2.jpg">
+                <img src="frontend_assets/img/base_layout/home-intro-2.jpg" alt="Discover our new collection of wedding signs">
+            </picture>
+        </div>
+    </div>
+</section>
+
+<section class="container services-highlight-wrapper">
+    <div class="row gutter-16">
+        <div class="col-6 col-md">
+            <div class="rounded bg-white mb-4 p-md-2 py-lg-3 px-lg-4 d-flex align-items-center"><i class="icon-home-qualified"></i>
+                <div class="text">Dedicated to quality</div>
+            </div>
+        </div>
+        <div class="col-6 col-md">
+            <div class="rounded bg-white mb-4 p-md-2 py-lg-3 px-lg-4 d-flex align-items-center"><i class="icon-home-bestprice"></i>
+                <div class="text">Best price quality</div>
+            </div>
+        </div>
+        <div class="col-6 col-md">
+            <div class="rounded bg-white mb-4 p-md-2 py-lg-3 px-lg-4 d-flex align-items-center"><i class="icon-home-speed"></i>
+                <div class="text">Speed and Flexibility</div>
+            </div>
+        </div>
+        <div class="col-6 col-md">
+            <div class="rounded bg-white mb-4 p-md-2 py-lg-3 px-lg-4 d-flex align-items-center"><i class="icon-home-professional"></i>
+                <div class="text">Professional Consultancy</div>
+            </div>
+        </div>
+        <div class="col-6 col-md">
+            <div class="rounded bg-white mb-4 p-md-2 py-lg-3 px-lg-4 d-flex align-items-center"><i class="icon-home-products"></i>
+                <div class="text">3 Thousand Products</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container mb-5">
+    <div class="row">
+        <div class="col-lg-1">
+            <div class="rounded bg-light-gray vertical-text-wrapper">
+                <div class="vertical-text-placer">
+                    <h2 class="vertical-text">Most Searched</h2>
                 </div>
             </div>
-        </section>
-      
-      
-
-        
-        <!-- Start Our Product Area -->
-        <section class="htc__product__area ptb--100 bg__white">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="product-style-tab">
-                      
-                            <div class="tab-content another-product-style">
-                                <div class="tab-pane active" id="home9">
-                                    <div class="product-slider-active2">
-                                        <div class="row">
-
-                                            @if(!empty($products))
-                                                @foreach($products as $product)
-                                                    <div class="col-lg-4 single__pro col-xl-4 cat--1 col-md-4 col-sm-6 col-xs-12">
-                                                        <div class="product">
-                                                            <div class="product__inner">
-                                                                <div class="pro__thumb">
-                                                                    <a href="#">
-                                                                        <img src="images/products/{{$product->image}}" alt="product images">
-                                                                    </a>
-                                                                </div>
-                                                                <div class="product__hover__info">
-                                                                    <ul class="product__action">
-                                                                        <li><a data-bs-toggle="modal" data-bs-target="#productModal_{{$product->id}}" title="Quick View" class="quick-view modal-view detail-link" href="#"><span class="ti-plus"></span></a></li>
-                                                                        <li><a title="Add TO Cart" href="{{route('cart')}}"><span class="ti-shopping-cart"></span></a></li>
-                                                                       
-                                                                    </ul>
-                                                                </div>
-                                                            </div>
-                                                            <div class="product__details">
-                                                                <h2><a href="product-details.html">{{$product->name}}</a></h2>
-                                                                <ul class="product__price">
-                                                                    <li class="old__price">${{$product->base_price}}</li>
-                                                                    <li class="new__price">${{$product->sale_price}}</li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-
-                                                    <?php 
-
-                                                    // Code to get options data
-                                                    $option_detail_array = [];
-                                                    $options = $product->options;
-                                                    if(!empty($options)){
-                                                        $options_data = $options->toArray();
-                                                        $index = 0;
-                                                        foreach ($options_data as $option_data) {
-                                                            $option_details = App\Models\Option::where('id',$option_data["option_id"])->get()->first();
-
-                                                            if(!empty($option_details) && isset($option_details->type) && $option_details->type=='input'){
-                                                                $option_detail_array[$index]["id"] =  $option_details->id;
-                                                                $option_detail_array[$index]["name"] =  $option_details->name;
-
-                                                                $index++;
-                                                            }
-
-                                                           
-                                                        }
-                                                    }
-
-                                                    ?>
-
-                                                     <!-- Modal -->
-                                                    <div class="modal fade" id="productModal_{{$product->id}}" tabindex="-1" role="dialog">
-                                                        <div class="modal-dialog modal__container" role="document">
-                                                            <div class="modal-content">
-
-
-
-                                                                <div class="modal-header">
-                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                </div>
-                                                                <div class="modal-body">
-
-                                                                    <form name="product_{{$product->id}}" id="product_{{$product->id}}" action="#">
-
-                                                                        @csrf
-
-
-
-                                                                    <div class="modal-product">
-                                                                        <!-- Start product images -->
-                                                                        <div class="product-images">
-                                                                            <div class="main-image images">
-                                                                                <img alt="big images" src="images/products/{{$product->image}}">
-                                                                            </div>
-                                                                        </div>
-                                                                        <!-- end product images -->
-                                                                        <div class="product-info">
-                                                                            <h1>{{$product->name}}</h1>
-                                                                            <div class="price-box-3">
-                                                                                <div class="s-price-box">
-                                                                                    <span class="new-price">${{$product->base_price}}</span>
-                                                                                    <span class="old-price">${{$product->sale_price}}</span>
-                                                                                </div>
-                                                                            </div>
-
-
-                                                                            
-
-                                                                            
-                                                                            <div class="quick-desc">
-                                                                                <label>Quantity</label>
-                                                                                <select class="themes-select-all-2" name="quantity_{{$product->id}}" id="quantity_{{$product->id}}">
-                                                                                    <?php for($i=1;$i<=15;$i++){?>
-                                                                                        <option value="<?php echo $i?>"><?php echo $i?></option>
-                                                                                    <?php }?>
-                                                                                </select>
-                                                                            </div>
-
-                                                                            <?php 
-                                                                                $options_js_array = [];
-                                                                                if(!empty($option_detail_array)){
-                                                                                    foreach ($option_detail_array as $option_detail_data) {
-                                                                                        ?>
-                                                                                            <div class="quick-desc">
-                                                                                                <label><?php echo $option_detail_data["name"]?></label>
-                                                                                               <input id="option_value_<?php echo $option_detail_data["id"]?>_{{$product->id}}" type="text" name="option_<?php echo $option_detail_data["id"]?>_{{$product->id}}">
-                                                                                            </div>
-
-
-
-                                                                                        <?php 
-
-                                                                                        $options_js_array[] = $option_detail_data["id"];
-                                                                                    }
-                                                                                }
-                                                                            ?>
-
-                                                                            <div style="display: none;" class="alert alert-primary" id="alert_{{$product->id}}" role="alert">
-                                                                             
-                                                                            </div> 
-
-                                                                            <input type="hidden" name="options_ids_{{$product->id}}" id="options_ids_{{$product->id}}" value="<?php echo json_encode($options_js_array);?>">
-                                                                            
-                                                                            <div id="cart_btn_{{$product->id}}" class="addtocart-btn">
-                                                                                <a onclick="addToCart('{{$product->id}}')" href="#">Add to cart</a>
-                                                                            </div>
-                                                                        </div><!-- .product-info -->
-                                                                    </div><!-- .modal-product -->
-
-                                                                </form>
-
-
-                                                                </div><!-- .modal-body -->
-
-
-
-                                                            </div><!-- .modal-content -->
-                                                        </div><!-- .modal-dialog -->
-                                                    </div>
-                                                    <!-- END Modal -->
-
-
-
-                                                @endforeach
-                                                <hr style="margin-top:20px;">
-                                                {{$products->links()}}
-
-                                            @endif
-
-                                           
-                                        </div>
-                                    </div>
-                                </div>
-                               
-                               
-                              
-                            </div>
+        </div>
+            
+            @if(count($most_searched_products) > 0)
+                <div class="col d-flex flex-wrap gutter-16  grid-img-menu-wrapper" data-gridify="3-columns">
+                    @foreach($most_searched_products as $search_product)
+                        <div class="item">
+                            <a href="{{url('/product-details/'.$search_product->slug)}}" title="{{$search_product->name}}" class="grid-img-menu-item card border-0">
+                                <img src="{{(isset($search_product->image) && $search_product->image!='') ? url('images/products/'.$search_product->image) : 'https://via.placeholder.com/545x500'}}" class="w-100 rounded">
+                               <div class="info info-floating pt-2 text-center d-flex flex-column align-items-center justify-content-center w-100 rounded">
+                                    <h3 class="title">{{$search_product->name}}</h3>
+                               </div>
+                            </a>
+                            
                         </div>
+                    @endforeach    
+                </div>
+            @else
+                <div class="col d-flex flex-wrap gutter-16  grid-img-menu-wrapper" style="min-height: 215px;">
+                    <div class="col-md-12">
+                        <div class="rounded">
+                           
+                                <h3 class="prod-title">Currently no any products available to display.</h3>
+                         
+                        </div>
+                    </div>                         
+                </div>    
+            @endif
+    </div>
+</section>
+
+@if(count($latest_products) > 0)
+
+    <section class="container mb-5">
+        <div class="row">
+            <div class="col-lg-1">
+                <div class="rounded bg-light-gray vertical-text-wrapper">
+                    <div class="vertical-text-placer">
+                        <h2 class="vertical-text">Our Greatest Launch</h2>
                     </div>
                 </div>
             </div>
-        </section>
-        <!-- End Our Product Area -->
+            <div class="col d-flex flex-wrap gutter-16">
+                @foreach($latest_products as $latest_product)
+                    <div class="col-6 col-lg-3">
+                        <a href="{{url('/product-details/'.$latest_product->slug)}}" title="{{$latest_product->name}}" class="card border-0">
+                            <img style="min-height:410px;" src="{{(isset($latest_product->image) && $latest_product->image!='') ? url('images/products/'.$latest_product->image) : 'https://via.placeholder.com/545x500'}}" class="w-100 rounded">
+                            <div class="info pt-2 mb-4 mb-lg-0">                                
+                                <div class="text-small">{{$latest_product->name}}</div>
+                            </div>
+                        </a>
+                    </div>
+                @endforeach               
+            </div>
+        </div>
+        <div class="row justify-content-center mt-3 mt-lg-5">
+            <div class="col-auto">
+                <a href="{{route('store')}}" title="Go to store" class="btn btn-primary w-xs-100">Go to store</a>
+            </div>
+        </div>
+    </section>
+@endif  
 
+<script>
+ function showtab(category_id){
+     $(".tab-pane").removeClass('show active');
+     
+     $("#pills-category-"+category_id+"-tab").addClass('show active');
+ }
+</script>  
 
-<style type="text/css">
-    
-    .modal {
-  overflow-y:auto;
-}
-</style>
+<section class="bg-light-gray mb-5 home-more-ideas-wrapper">
+    <div class="container text-center">
+        <h2 class="section-title">More ideas for you</h2>
+        <div class="row">
+            <div class="col-12">
+                <ul class="nav nav-pills justify-content-md-center flex-nowrap" id="tabs" role="tablist">
+                    @php
+                        $index_cat = 0;
+                    @endphp
+                    @foreach($featured_categories as $feature_category)
+                        <li class="nav-item">
+                            <a class="nav-link {{($index_cat==0) ? 'active' : ''}}" onclick="showtab('{{$feature_category->id}}')" data-id="{{$feature_category->id}}" id="pills-category-{{$feature_category->id}}" data-toggle="pill" href="#pills-category-{{$feature_category->id}}" role="tab" aria-controls="pills-category-{{$feature_category->id}}" aria-selected="true">{{$feature_category->name}}</a>
+                        </li>   
+                         @php
+                            $index_cat++;
+                        @endphp
+                    @endforeach  
+                </ul>
+            </div>
 
+            <div class="col-12 px-0 tab-content" id="home-more-ideasContent">
+                 @php
+                    $index_cat = 0;
+                @endphp
+                @foreach($featured_categories as $feature_category)
+                
+                    <div class="tab-pane fade {{($index_cat==0) ? 'show active' : ''}}" id="pills-category-{{$feature_category->id}}-tab" role="tabpanel" aria-labelledby="pills-category-{{$feature_category->id}}-tab">
+                          <div class="col-12 d-flex flex-wrap gutter-16  grid-img-menu-wrapper">
+                                @if(count($feature_category->products) > 0)
+                                    @foreach($feature_category->products as $featureproduct)
+                                            <div class="col-6 col-lg-3">
+                                                <a href="#" title="" class="grid-img-menu-item card border-0"><img src="https://modban.com/images/products/{{$featureproduct->image}}" class="w-100 rounded"></a>
+                                            </div>
+                                    @endforeach
+                                @else
+                                    <div class="col d-flex flex-wrap gutter-16  grid-img-menu-wrapper" style="min-height: 215px;">
+                                        <div class="col-md-12">
+                                            <div class="rounded">                                           
+                                                    <h3 class="prod-title">Currently no any products available to display.</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                                
+                            </div>
+                            
+                    </div>
+                @php
+                    $index_cat++;
+                @endphp
+                @endforeach    
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="banner-block">
+    <div class="d-flex flex-column align-items-start justify-content-center block-fade-out-left info col-lg-5">
+        <div class="title">B2B Text Lorem ipsum dolor sit amet, consecte</div>
+        <div class="text">Text Lorem ipsum dolor sit amet, consecte</div>
+        <a href="{{route('b2b_home')}}" title="Find out more" class="btn btn-small btn-primary">Find out more</a>
+    </div>
+    <picture>
+        <source media="(max-width: 767px)" srcset="frontend_assets/img/base_layout/m-home-b2b.jpg">
+        <img src="/frontend_assets/img/base_layout/home-b2b.jpg" alt="Discover B2B Store">
+    </picture>
+</section>
 
 @endsection
-
-

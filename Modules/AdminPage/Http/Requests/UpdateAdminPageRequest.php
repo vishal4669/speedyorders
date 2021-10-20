@@ -14,7 +14,7 @@ class UpdateAdminPageRequest extends FormRequest
     public function rules()
     {
         return [
-            'parent_id' => 'nullable|exists:pages,id',
+            //'parent_id' => 'nullable|exists:pages,id',
 			'slug' => 'required',
 			'title' => 'required|string',
 			'content' => 'required|string',

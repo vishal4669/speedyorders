@@ -38,7 +38,6 @@ class UpdateProductRequest extends FormRequest
             'file.*'=>'nullable|numeric',
             'galleryId'=>'sometimes',
             'related_products.*'=>'nullable|exists:products,id',
-            'option_required'=>'required|boolean',
             'option'=>'nullable',
             'option_id'=>'nullable',
             'is_featured'=>'required|in:0,1',

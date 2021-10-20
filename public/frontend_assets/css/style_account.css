@@ -1,0 +1,231 @@
+.account-side-info h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.account-side-info hr {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    border-top: 1px solid #707070;
+}
+
+.account-side-info .btn-link {
+    font-size: 12px;
+    color: #fff;
+    padding: 2px 10px;
+    border-radius: 5px;
+    background-color: #6F7070;
+}
+
+.account-side-info .btn-link:hover {
+    text-decoration: none;
+    background-color: #3f3f3f;
+}
+
+.account-side-img {
+    display: block;
+    width: 50%;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.last-purchase-img {
+    overflow: hidden;
+}
+
+.last-purchase-img .img {
+    -ms-flex-preferred-size: 0;
+    flex-basis: 0;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+.last-purchase-img .see-more {
+    color: #000000;
+    font-size: 21px;
+    margin-left: 10px;
+}
+
+.last-purchase-img .see-more:hover {
+    opacity: .7;
+}
+
+.account-notification-wrapper .item {
+    padding: 5px 0 5px 43px;
+}
+
+.account-notification-wrapper .item i {
+    font-size: 21px;
+    margin-right: 20px;
+    margin-left: -43px;
+}
+
+.discounts-wrapper {
+    font-size: 20px;
+    padding: 13px;
+    margin-top: 30px;
+}
+
+.discounts-wrapper b {
+    text-transform: uppercase;
+}
+
+.my-account-cards-intro {
+    position: relative;
+}
+
+.my-account-cards-intro::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    height: 100%;
+    background: linear-gradient(0deg, #fff, rgba(255, 255, 255, 0));
+}
+
+.my-account-cards-wrapper .card {
+    height: 100%;
+    -webkit-transition: background-color .3s ease-in-out;
+    transition: background-color .3s ease-in-out;
+}
+
+.my-account-cards-wrapper .card:hover {
+    background-color: #f5f5f5;
+}
+
+.my-account-cards-wrapper .card i {
+    font-size: 30px;
+    line-height: 30px;
+}
+
+.my-account-cards-wrapper .card i.icon-wishlist {
+    font-size: 38px;
+}
+
+.my-account-cards-wrapper .card .title {
+    font-size: 18px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: .08rem;
+}
+
+.order-history-search {
+    position: relative;
+    z-index: 2;
+    margin-bottom: 15px;
+}
+
+.order-history-card {
+    font-size: 16px;
+}
+
+.order-history-card .info {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.order-history-card .info .label,
+.order-detail-wrapper .header .label {
+    text-transform: uppercase;
+    opacity: .7;
+}
+
+.order-history-card .info .order-number, .order-history-card .info .order-date, .order-history-card .info .order-status,
+.order-detail-wrapper .order-date, .order-detail-wrapper .order-status {
+    font-weight: 700;
+    font-style: normal;
+    margin-right: 15px;
+}
+.order-history-card .order-prods {
+    margin-top: 5px;
+}
+.order-history-card .order-prods>a {
+    width: 100px;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+.order-detail-wrapper .header {
+    padding-bottom: 30px;
+    border-bottom: 1px solid #eaeaea;
+    margin-bottom: 30px;
+}
+.order-prod-info {
+    font-size: 12px;
+    padding: 0 10px 15px;
+}
+
+.account-change-img {
+    position: relative;
+    max-width: 250px;
+}
+.account-change-img .btn {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    width: 44px;
+    padding-right: 0;
+    padding-left: 0;
+}
+.account-change-img .btn input {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+@media (max-width: 767.98px) {
+    .account-side-title {
+        position: relative;
+        font-size: 20px;
+        font-weight: 700;
+        text-transform: uppercase;
+        border-radius: 5px;
+        padding: 6px 30px 6px 15px;
+        margin-top: 20px;
+        margin-bottom: 0;
+        background-color: #F3F2F2;
+    }
+    .account-side-title i {
+        position: absolute;
+        top: 7px;
+        right: 15px;
+    }
+    .account-side-title.open i::before {
+        content: "\f0d8";
+    }
+    .account-side-info {
+        display: none;
+        text-align: center;
+        margin-top: 20px;
+        padding-bottom: 30px;
+        border-bottom: 1px solid #707070;
+    }
+}
+
+@media (min-width: 768px) {
+    .account-side-info {
+        display: block!important;
+        font-size: 15px;
+    }
+    .account-side-info h3 {
+        font-size: 20px;
+    }
+    .account-side-img {
+        width: 100%;
+    }
+    .order-history-card .info {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom-width: 0;
+        border-right: 1px solid #eaeaea;
+    }    
+}
+
+.test{color:black;}

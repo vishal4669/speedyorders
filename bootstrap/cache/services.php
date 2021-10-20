@@ -48,8 +48,6 @@
     44 => 'App\\Providers\\MinIOStorageServiceProvider',
     45 => 'Maatwebsite\\Excel\\ExcelServiceProvider',
     46 => 'LaravelShipStation\\ShipStationServiceProvider',
-    47 => 'Srmklive\\PayPal\\Providers\\PayPalServiceProvider',
-    48 => 'Cartalyst\\Stripe\\Laravel\\StripeServiceProvider',
   ),
   'eager' => 
   array (
@@ -86,8 +84,6 @@
     30 => 'App\\Providers\\MinIOStorageServiceProvider',
     31 => 'Maatwebsite\\Excel\\ExcelServiceProvider',
     32 => 'LaravelShipStation\\ShipStationServiceProvider',
-    33 => 'Srmklive\\PayPal\\Providers\\PayPalServiceProvider',
-    34 => 'Cartalyst\\Stripe\\Laravel\\StripeServiceProvider',
   ),
   'deferred' => 
   array (

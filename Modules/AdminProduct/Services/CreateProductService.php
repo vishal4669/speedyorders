@@ -31,6 +31,8 @@ class CreateProductService
                 $validatedData['image'] = $imageName;
             }
 
+            $validatedData['slug'] = $this->slugify($validatedData['name']);
+
             $product = Product::create($validatedData);
 
             if (isset($validatedData['galleryId']))
@@ -79,10 +81,7 @@ class CreateProductService
                                 $productOption = ProductOption::create([
                                     'product_id' => $product->id,
                                     'option_id' => $key,
-                                    'required' =>
-                                        (bool) $validatedData[
-                                            'option_required'
-                                        ],
+                                    'required' =>$validatedData['option']['required'][$key],
                                 ]);
 
                                 ProductOptionValue::create([
@@ -93,7 +92,7 @@ class CreateProductService
                             }
                             break;
 
-                        case 'select':
+                        /*case 'select':
                             foreach ($option['option_values'] as $counter => $optionValue) {
                                 $productOption = ProductOption::create([
                                     'product_id' => $product->id,
@@ -129,7 +128,7 @@ class CreateProductService
                                     ]);
                                 }
                             }
-                            break;
+                            break;*/
                     }
                 }
             }
@@ -189,4 +188,39 @@ class CreateProductService
             return false;
         }
     }
+
+
+    public function slugify($text, string $divider = '-')
+    {
+
+            // replace non letter or digits by divider
+          $text = preg_replace('~[^\pL\d]+~u', $divider, $text);
+
+          // transliterate
+          $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+
+          // remove unwanted characters
+          $text = preg_replace('~[^-\w]+~', '', $text);
+
+          // trim
+          $text = trim($text, $divider);
+
+          // remove duplicate divider
+          $text = preg_replace('~-+~', $divider, $text);
+
+          // lowercase
+          $text = strtolower($text);
+
+          if (empty($text)) {
+            $text =  'n-a';
+          }
+          
+
+         return $text;
+          
+     
+
+
+    }
+
 }

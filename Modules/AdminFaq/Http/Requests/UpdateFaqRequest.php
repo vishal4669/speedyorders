@@ -15,8 +15,9 @@ class UpdateFaqRequest extends FormRequest
     {
         return [
             'faq_category_id' => 'required|exists:faq_categories,id',
+            'type' => 'required',
 			'question' => 'required|string|max:255',
-			'answer' => 'required|string|max:255',
+			'answer' => 'required|string',
 			'sort_order' => 'required|integer',
 			'status' => 'required|in:1,0'
         ];

@@ -16,4 +16,5 @@ class ProductCategory extends Model
     public function category(){
         return $this->belongsTo('categories','category_id');
     }
+    
 }

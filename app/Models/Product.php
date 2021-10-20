@@ -16,7 +16,7 @@ class Product extends Model
 
     protected $fillable = [
 
-        'id','uuid','sku','name','description','base_price','sale_price','length','breadth','height','width','quantity','min_quantity','subtract_stock','sort_order','status', 'available','meta_title','meta_description','meta_keywords','return_policy_days','category_id','image','video','trending','is_featured',
+        'id','uuid','sku','name','slug','description','base_price','sale_price','length','breadth','height','width','quantity','min_quantity','subtract_stock','sort_order','status', 'available','meta_title','meta_description','meta_keywords','return_policy_days','category_id','image','video','trending','is_featured',
     ];
 
     public function scopeProductDeleteStatus($query)

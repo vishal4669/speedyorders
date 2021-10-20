@@ -3,14 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\ProductCategory;
 use App\Models\TempCart;
 use App\Models\TempCustomerDetail;
 use App\Models\TempProductOptionValue;
 use DB;
 use Illuminate\Http\Request;
+use App\Models\Category;
 use session;
 
 class HomeController extends Controller {
+
+	
 	/**
 	 * Handle the incoming request.
 	 *
@@ -22,15 +26,24 @@ class HomeController extends Controller {
 	}
 
 	public function index() {
-
-		$products = Product::with('options')->with('delivery_time')->select('products.id', 'products.name', 'products.sku', 'products.base_price', 'products.sale_price', 'products.image', 'products.quantity', 'products.description', 'products.status', 'products.return_policy_days')
+        $activePage = 'home';
+        
+		$products = Product::with('options')->with('delivery_time')->select('products.id', 'products.name','products.slug', 'products.sku', 'products.base_price', 'products.sale_price', 'products.image', 'products.quantity', 'products.description', 'products.status', 'products.return_policy_days')
 			->orderByDesc('id')
-			->paginate(6);
+			->paginate(20);
 
-		#print_r($products);die;
+		$most_searched_products = Product::select('products.id', 'products.name','products.slug', 'products.sku', 'products.base_price', 'products.sale_price', 'products.image', 'products.quantity', 'products.description', 'products.status', 'products.return_policy_days')
+			->orderByDesc('search_counts')
+			->paginate(11);
 
-		return view('index', compact('products'));
+		$latest_products = Product::select('products.id', 'products.name','products.slug', 'products.sku', 'products.base_price', 'products.sale_price', 'products.image', 'products.quantity', 'products.description', 'products.status', 'products.return_policy_days')
+			->orderByDesc('created_at')
+			->paginate(4);
+
+		return view('index', compact('products', 'activePage', 'most_searched_products', 'latest_products'));
 	}
+	
+	
 
 	public function addToCart(Request $request) {
 
@@ -47,6 +60,7 @@ class HomeController extends Controller {
 		$product_id = $request->product_id;
 		$quantity_input = "quantity_" . $product_id;
 		$quantity = $request->input($quantity_input);
+
 		$unit_price = Product::where("id", $request->product_id)->pluck('base_price')->first();
 
 		$existsData = TempCart::where('php_session_id', $php_session_id)->where('product_id', $product_id)->first();
@@ -75,23 +89,41 @@ class HomeController extends Controller {
 		// Insert new values
 		$option_ids_input = "options_ids_" . $product_id;
 		$option_ids = json_decode($request->input($option_ids_input));
-		foreach ($option_ids as $option_id) {
-			$option_input = "option_" . $option_id . "_" . $product_id;
-			$option_value = $request->input($option_input);
+		if(!empty($option_ids)){
+			foreach ($option_ids as $option_id) {
+				$option_input = "option_" . $option_id . "_" . $product_id;
+				$option_value = $request->input($option_input);
 
-			$productOptionValue = new TempProductOptionValue();
-			$productOptionValue->php_session_id = $php_session_id;
-			$productOptionValue->product_id = $product_id;
-			$productOptionValue->option_id = $option_id;
-			$productOptionValue->option_value = $option_value;
-			$productOptionValue->created_at = now();
-			$productOptionValue->save();
+				$productOptionValue = new TempProductOptionValue();
+				$productOptionValue->php_session_id = $php_session_id;
+				$productOptionValue->product_id = $product_id;
+				$productOptionValue->option_id = $option_id;
+				$productOptionValue->option_value = $option_value;
+				$productOptionValue->created_at = now();
+				$productOptionValue->save();
+			}
 		}
+
+		$cart_items_count = TempCart::where('php_session_id', $php_session_id)->count();
+
+		return json_encode(array('success' => true, 'cart_items_count' => $cart_items_count));
+	}
+
+	public function updateProductQty(Request $request) {
+
+		$php_session_id = session()->getId();
+		$product_id = $request->product_id;
+		$quantity = $request->product_qty;
+
+		$existsData = TempCart::where('php_session_id', $php_session_id)->where('product_id', $product_id)->first();
+		$newquantity = $quantity;
+		$existsData->quantity = $newquantity;
+		$existsData->save();
 
 		return json_encode(array('success' => true));
 	}
 
-	public function cart() {
+	public function cart_old() {
 		$php_session_id = session()->getId();
 		$cartItems = TempCart::leftjoin("products", "products.id", "=", "temp_cart.product_id")
 			->where('php_session_id', $php_session_id)
@@ -106,12 +138,14 @@ class HomeController extends Controller {
 	}
 
 	public function removeFromCart(Request $request) {
-
+		$php_session_id = session()->getId();
 		$product_id = $request->product_id;
 
-		TempCart::where('product_id', $product_id)->delete();
+		TempCart::where('product_id', $product_id)->where('php_session_id' , $php_session_id)->delete();
 
-		return json_encode(array('success' => true));
+		$cart_items_count = TempCart::where('php_session_id', $php_session_id)->count();
+
+		return json_encode(array('success' => true, 'cart_items_count' => $cart_items_count));
 	}
 
 	public function checkout() {
@@ -142,5 +176,121 @@ class HomeController extends Controller {
 
 		return view('checkout', compact('final_price', 'tempcustomer'));
 	}
+
+	
+	public function cart() {
+		$activePage = 'Cart';
+     
+		$php_session_id = session()->getId();
+		$cartItems = TempCart::leftjoin("products", "products.id", "=", "temp_cart.product_id")
+			->where('php_session_id', $php_session_id)
+			->select(['php_session_id', 'product_id', 'name', 'sku', 'image', 'temp_cart.quantity', 'unit_price', 'product_delivery_time_id', 'shipping_zone_price'])
+			->get();
+
+		return view('cart.items', compact('cartItems', 'php_session_id', 'activePage'));
+	}	
+	
+	public function delivery() {
+		$php_session_id = session()->getId();
+
+		$activePage = 'Delivery';
+       $tempcustomer = TempCustomerDetail::where('php_session_id', $php_session_id)->first();
+
+		//print_r($tempcustomer);die;
+
+		$total_price_arr = DB::select('SELECT `temp_cart`.quantity, `temp_cart`.unit_price, shipping_zone_price FROM `temp_cart` where `temp_cart`.php_session_id = "' . $php_session_id . '" ');
+
+		$grandtotal = 0;
+
+		foreach($total_price_arr as $pricearr){
+			$product_total = 0;
+			$qty = $pricearr->quantity;
+			$unit_price = $pricearr->unit_price;
+			$shippingcharge = $pricearr->shipping_zone_price;
+
+			$product_total = floatval($unit_price) * intval($qty);
+
+			if($shippingcharge){
+				$product_total = floatval($product_total) + floatval($shippingcharge);
+			}
+
+			$grandtotal += $product_total;
+
+		}
+
+		$final_price = $grandtotal;
+
+		return view('cart.delivery', compact('activePage', 'final_price', 'tempcustomer'));
+	}	
+	
+	public function payment() {
+		$activePage = 'Payment';
+   
+		return view('cart.payment', compact('activePage'));
+	}	
+	
+	public function receipt() {
+		$activePage = 'Receipt';       
+		return view('cart.receipt', compact('activePage'));
+	}	
+
+
+	public function slugify($text, string $divider = '-')
+	{
+
+	  $products = Product::all();	
+
+	  foreach($products as $product){
+	  		$text = $product->name;
+
+	  		
+
+	  		// replace non letter or digits by divider
+		  $text = preg_replace('~[^\pL\d]+~u', $divider, $text);
+
+		  // transliterate
+		  $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+
+		  // remove unwanted characters
+		  $text = preg_replace('~[^-\w]+~', '', $text);
+
+		  // trim
+		  $text = trim($text, $divider);
+
+		  // remove duplicate divider
+		  $text = preg_replace('~-+~', $divider, $text);
+
+		  // lowercase
+		  $text = strtolower($text);
+
+		  if (empty($text)) {
+		    $text =  'n-a';
+		  }
+		  
+
+		  $product->slug = $text;
+		  $product->save();
+	  }
+
+	  echo "Done";
+
+
+	}
+
+	public function updateToSearch(Request $request) {
+		$php_session_id = session()->getId();
+		$product_id = $request->product_id;
+		
+		$existsData = Product::where('id', $product_id)->first();
+		if (!empty($existsData)) {
+
+			$existsData->search_counts += intval(1);
+			$existsData->save();
+
+		} 
+		return json_encode(array('success' => true, 'search_counts' => $existsData->search_counts));
+	}
+
+	
 
 }

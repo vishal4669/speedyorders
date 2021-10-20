@@ -2,10 +2,10 @@
 <div id="header">
     <div class="color-line">
     </div>
-    <div id="logo" class="light-version" style="background-color: #231f20;padding: 0px 10px 18px 0px;">
-        <a href="{{ route('admin.dashboard') }}">
-            <span title="eSewa Travels">
-                <img src="{{ asset('images/.png') }}" class="m-b" alt="logo" style=" max-height: 52px;">
+    <div id="logo" class="light-version">
+        <a href="{{ route('home') }}">
+            <span title="Speedy Orders">
+                <img src="{{url('images/'.Option::get('site_logo'))}}" class="m-b" alt="logo" style="width: 100%; max-height: 52px;">
             </span>
         </a>
     </div>

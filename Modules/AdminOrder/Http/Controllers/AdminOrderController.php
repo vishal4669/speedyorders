@@ -187,7 +187,7 @@ class AdminOrderController extends Controller
             }
         }*/
 
-#        print_r($packages);die;
+#        print_r($order->orderedProducts);die;
 
         return view('adminorder::process', compact('order'),$data);
     }
@@ -338,6 +338,7 @@ class AdminOrderController extends Controller
 
        $shipping_postcode = (isset($request->shipping_postcode)) ? $request->shipping_postcode : '';
        $productId = $request->productId;
+       $orderId = $request->orderId;
 
        $groups = ProductDeliveryTime::where('products_id',$productId)->get();
      
@@ -385,11 +386,15 @@ class AdminOrderController extends Controller
         $orderedProduct = OrderProduct::where('product_id',$productId)->first();
         $deliveryData = $orderedProduct->product->delivery_time;
        
+
+        $orderProductData = OrderProduct::where('order_id', $orderId)->where('product_id', $productId)->first();
+
         $responseHtmlDeliveryTime = view('adminorder::htmlelement.orderdeliverytime',[
             'option'=> 'DeliveryTime',
             'productDeliveryTimes'=>$deliveryData,
             'productId'=>$productId,
-            'selectnamedeliverytime' => $selectnamedeliverytime
+            'selectnamedeliverytime' => $selectnamedeliverytime,
+            'selectedId' => (isset($orderProductData->shipping_delivery_times_id) && $orderProductData->shipping_delivery_times_id!='') ? $orderProductData->shipping_delivery_times_id : ''
         ])->render();  
         
         return response()->json(array('success' => true, 'html'=>$returnHTML, 'deliveryHtml' => $responseHtmlDeliveryTime));

@@ -202,17 +202,22 @@ class AdminProductController extends Controller
     }
 
     public function uploadProductMedia(Request $request)
-    {
+    {   
+
+        $gallery_images = $request->file('gallery_images');
+
         $galleries = array();
         $galleryId = array();
-        for($i=0;$i<count($request->gallery_image);$i++)
+
+
+        for($i=0;$i<count($gallery_images);$i++)
         {
-            $image = $request->gallery_image[$i];
+            $image = $gallery_images[$i];
             $imageName = uniqid().time().$image->getClientOriginalName();
             $upload_success = $image->move(public_path('images/products'),$imageName);
             $gallery = ProductGallery::create([
-                'image'=>$imageName,
-                'order'=>$request->gallery_image_order[$i]
+                'image'=> $imageName,
+                'order'=> $i
             ]);
             $galleryId[] = $gallery->id;
             $galleries[] = $gallery;

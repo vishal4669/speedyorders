@@ -57,7 +57,7 @@ return [
             'collation' => 'utf8_general_ci',
             'prefix' => '',
             'prefix_indexes' => true,
-            'strict' => false,
+            'strict' => true,
 	    'engine' => 'InnoDB ROW_FORMAT=DYNAMIC',
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),

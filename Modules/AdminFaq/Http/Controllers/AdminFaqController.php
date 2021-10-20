@@ -34,6 +34,7 @@ class AdminFaqController extends Controller
             $faq = Faq::where('faq_category_id', 'LIKE', "%$keyword%")
                 ->with('faqCategory')
                 ->orWhere('question', 'LIKE', "%$keyword%")
+                ->orWhere('type', 'LIKE', "%$keyword%")
                 ->orWhere('answer', 'LIKE', "%$keyword%")
                 ->orWhere('sort_order', 'LIKE', "%$keyword%")
                 ->orWhere('status', 'LIKE', "%$keyword%")

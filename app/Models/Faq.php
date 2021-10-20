@@ -25,7 +25,7 @@ class Faq extends Model
      *
      * @var array
      */
-    protected $fillable = ['faq_category_id', 'question', 'answer', 'sort_order', 'status'];
+    protected $fillable = ['faq_category_id','type', 'question', 'answer', 'sort_order', 'status'];
 
     public function faqCategory()
     {

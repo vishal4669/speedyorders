@@ -21,6 +21,7 @@ use Session;
 use Str;
 use Stripe;
 use App\Models\ProductDeliveryTime;
+use App\Models\Category;
 
 class MoneySetupController extends Controller {
 	/**
@@ -82,7 +83,7 @@ class MoneySetupController extends Controller {
 			$region = $request->region;
 			$city = $request->city;
 			$postcode = $request->postcode;
-			$comment = $request->comment;
+			$comment = (isset($request->comment)) ? $request->comment : '';
 
 			$tempcustomer = TempCustomerDetail::where('php_session_id', $php_session_id)->first();
 			if (empty($tempcustomer)) {
@@ -135,21 +136,19 @@ class MoneySetupController extends Controller {
 			$tempcustomer->save();
 		}
 
-		return view('stripe', compact('final_price', 'publisher_key'));
+		$activePage = "Payment";
+		
+		return view('cart.payment', compact('activePage', 'final_price', 'publisher_key'));
+		
 	}
 
-	/**
-	 * success response method.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
 	public function stripePost(Request $request) {
 		try
 		{
+
 			DB::beginTransaction();
 
 			$php_session_id = session()->getId();
-
 			$tempcustomer = TempCustomerDetail::where('php_session_id', $php_session_id)->first();
 
 			// Now need to create user if not exists
@@ -164,7 +163,6 @@ class MoneySetupController extends Controller {
 				$qty = $pricearr->quantity;
 				$unit_price = $pricearr->unit_price;
 				$shippingcharge = $pricearr->shipping_zone_price;
-
 				$product_total = floatval($unit_price) * intval($qty);
 
 				if($shippingcharge){
@@ -294,6 +292,12 @@ class MoneySetupController extends Controller {
 				foreach ($tempCartItems as $tempitem) {
 					$itemuuid = (string) Str::uuid();
 
+
+					$productDeliveryTimeId = '';
+					if(isset($tempitem->product_delivery_time_id) && $tempitem->product_delivery_time_id!=''){
+						$productDeliveryTimeId = ProductDeliveryTime::where('id',$tempitem->product_delivery_time_id)->pluck('shipping_delivery_times_id')->first();
+					}
+
 					$orderProduct = OrderProduct::create([
 						'uuid' => $itemuuid,
 						'sku' => $tempitem->sku,
@@ -301,8 +305,10 @@ class MoneySetupController extends Controller {
 						'price' => $tempitem->unit_price,
 						'order_id' => $orderData->id,
 						'product_id' => $tempitem->product_id,
+						'shipping_delivery_times_id' => (isset($productDeliveryTimeId) && $productDeliveryTimeId!='') ? $productDeliveryTimeId : null,
+						'shipping_price' => $tempitem->shipping_zone_price,
 						'created_at' => now(),
-						'updated_at' => now(),
+						'updated_at' => now()
 					]);
 
 					// check if options found for the cart product
@@ -330,6 +336,10 @@ class MoneySetupController extends Controller {
 
 				Log::info('Stripe Response : ' . json_encode($response));
 				Session::flash('success', 'Payment Successful!');
+
+				DB::commit();
+
+				return redirect('/stripeformsuccess/'.$orderuuid);
 			} else {
 
 				$temptransaction = new TempCustomerTransaction();
@@ -342,46 +352,81 @@ class MoneySetupController extends Controller {
 
 				Log::info('Stripe Response : ' . json_encode($response));
 				Session::flash('error', 'Something went wrong, please try again');
+
+				DB::commit();
+
+				return redirect('/stripeform');
 			}
-			DB::commit();
+
+
+
+			
 		} catch (\Exception $e) {
 
 			Log::info("Exception : " . $e->getMessage());
 			DB::rollback();
 			return false;
-		}
+		}		
 
-		return redirect('/stripeform');
+	}  
 
+
+	public function stripeSuccess($orderid){
+		$activePage = "Receipt";
+		
+		$sucess = 'You have successfully completed order and order id : '.$orderid;
+		return view('cart.receipt',compact('sucess', 'homepage_categories', 'activePage'));
 	}
 
-	public function deliverytime_price(Request $request) {
-		$productId = $request->product_id;
-		$product_delivery_time_id = $request->delivery_time_id;
+	// public function deliverytime_price(Request $request) {
+	// 	$productId = $request->product_id;
+	// 	$product_delivery_time_id = $request->delivery_time_id;
 
-		if ($productId == '' || $product_delivery_time_id == '') {
-			return 0;
-		}
+	// 	if ($productId == '' || $product_delivery_time_id == '') {
+	// 		return 0;
+	// 	}
 
-		$deliveryData = ProductDeliveryTime::find($product_delivery_time_id);
+	// 	$deliveryData = ProductDeliveryTime::find($product_delivery_time_id);
 
-		$shipping_zone_groups_id = $deliveryData->shipping_zone_groups_id;
-		$shipping_packages_id = $deliveryData->shipping_packages_id;
-		$shipping_delivery_times_id = $deliveryData->shipping_delivery_times_id;
+	// 	$shipping_zone_groups_id = $deliveryData->shipping_zone_groups_id;
+	// 	$shipping_packages_id = $deliveryData->shipping_packages_id;
+	// 	$shipping_delivery_times_id = $deliveryData->shipping_delivery_times_id;
 
-		$priceDetails = ShippingZonePrice::where('shipping_zone_groups_id', $shipping_zone_groups_id)->where('shipping_packages_id', $shipping_packages_id)->where('shipping_delivery_times_id', $shipping_delivery_times_id)->first();
-
-
-		$shipping_zone_price = $priceDetails["price"];
-		$shipping_zone_price_id = $priceDetails["id"];
-
-		$php_session_id = session()->getId();
-		$tempcartdetails = TempCart::where('php_session_id', $php_session_id)->where('product_id', $productId);
-		$tempdata = array("shipping_zone_price" => $shipping_zone_price,
-		"product_delivery_time_id" => $product_delivery_time_id);
-		$tempcartdetails->update($tempdata);
+	// 	$priceDetails = ShippingZonePrice::where('shipping_zone_groups_id', $shipping_zone_groups_id)->where('shipping_packages_id', $shipping_packages_id)->where('shipping_delivery_times_id', $shipping_delivery_times_id)->first();
 
 
-		return $shipping_zone_price;
-	}
+	// 	$shipping_zone_price = $priceDetails["price"];
+	// 	$shipping_zone_price_id = $priceDetails["id"];
+
+	// 	$php_session_id = session()->getId();
+	// 	$tempcartdetails = TempCart::where('php_session_id', $php_session_id)->where('product_id', $productId);
+	// 	$tempdata = array("shipping_zone_price" => $shipping_zone_price,
+	// 	"product_delivery_time_id" => $product_delivery_time_id);
+	// 	$tempcartdetails->update($tempdata);
+
+
+	// 	return $shipping_zone_price;
+	// }
+
+	// public function checkProductAvailability(Request $request) {
+	// 	$productId = $request->product_id;
+	// 	$pincode = $request->pincode;
+
+	// 	if ($productId == '' || $pincode == '') {
+	// 		return 0;
+	// 	}
+
+	// 	$deliveryData = ProductDeliveryTime::leftjoin('shipping_zone_prices', 'shipping_zone_prices.shipping_zone_groups_id', '=', 'product_deliverytime.shipping_zone_groups_id')
+	// 					->where('product_deliverytime.products_id',$productId)
+	// 					->where('shipping_zone_prices.zip_code',$pincode)
+	// 					->pluck("shipping_zone_prices.id")
+	// 					->first();
+
+	// 	if($deliveryData){
+	// 		return json_encode(array("msg" => "Available"));;	
+	// 	}	else {
+	// 		return json_encode(array("msg" => "Not Available"));;	
+	// 	}			
+
+	// }
 }

@@ -30,7 +30,7 @@
                         <th>Parent Page</th>
                         <th>Slug</th>
                         <th>Title</th>
-                        <th>Content</th>
+                        <!-- <th>Content</th> -->
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -40,8 +40,8 @@
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $item->page->title ?? '' }}</td>
                             <td>{{ $item->slug }}</td>
-                            <td>{{ $item->title }}</td>
-                            <td>{!! $item->content !!}</td>
+                            <td>{{ $item->title }}</td><!-- 
+                            <td>{!! $item->content !!}</td> -->
                             <td>
                                 <a class="btn btn-primary btn-sm" href="{{ route('admin.pages.edit', $item->id  ) }}">
                                     <i class="fa fa-edit"></i>
