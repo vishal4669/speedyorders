@@ -38,7 +38,6 @@ class CreateProductRequest extends FormRequest
             'galleryId'=>'sometimes',
             'categories.*'=>'required|exists:categories,id',
             'related_products.*'=>'nullable|exists:products,id',
-            'option_required_*'=>'required|boolean',
             'option'=>'nullable',
             'option_id'=>'nullable',
             'is_featured'=>'required|in:0,1',

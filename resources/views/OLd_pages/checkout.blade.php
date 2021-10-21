@@ -38,14 +38,6 @@
                                         <input type="text" placeholder="City*" value="{{($tempcustomer && isset($tempcustomer->shipping_city)) ? $tempcustomer->shipping_city : ''}}" name="city">
                                         <input type="text" placeholder="Postcode*" value="{{($tempcustomer && isset($tempcustomer->postcode)) ? $tempcustomer->postcode : ''}}" name="postcode">
                                     </div>
-                                     <!--<div class="single-checkout-box">
-                                        <textarea name="comment" placeholder="Comments">{{($tempcustomer && isset($tempcustomer->comment)) ? $tempcustomer->comment : ''}}</textarea>
-                                       
-                                    </div>
-                                    <div class="single-checkout-box checkbox">
-                                        <input id="remind-me" type="checkbox">
-                                        <label for="remind-me"><span></span>Create a Account ?</label>
-                                    </div>-->
                                 </div>
                                 <div class="contact-btn">
                                     <button type="submit" class="fv-btn">Make Payment @if($final_price) (${{$final_price}}) @endif</button>

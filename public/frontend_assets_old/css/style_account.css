@@ -1,0 +1,115 @@
+.account-side-info h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.account-side-info hr {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    border-top: 1px solid #707070;
+}
+
+.account-side-info .btn-link {
+    font-size: 12px;
+    color: #fff;
+    padding: 2px 10px;
+    border-radius: 5px;
+    background-color: #6F7070;
+}
+
+.account-side-info .btn-link:hover {
+    text-decoration: none;
+    background-color: #3f3f3f;
+}
+
+.account-side-img {
+    display: block;
+    width: 50%;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.last-purchase-img {
+    overflow: hidden;
+}
+
+.last-purchase-img .img {
+    -ms-flex-preferred-size: 0;
+    flex-basis: 0;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+.last-purchase-img .see-more {
+    color: #000000;
+    font-size: 21px;
+    margin-left: 10px;
+}
+
+.last-purchase-img .see-more:hover {
+    opacity: .7;
+}
+
+.account-notification-wrapper .item {
+    padding: 5px 0 5px 43px;
+}
+
+.account-notification-wrapper .item i {
+    font-size: 21px;
+    margin-right: 20px;
+    margin-left: -43px;
+}
+
+.discounts-wrapper {
+    font-size: 20px;
+    padding: 13px;
+    margin-top: 30px;
+}
+
+.discounts-wrapper b {
+    text-transform: uppercase;
+}
+
+@media (max-width: 767.98px) {
+    .account-side-title {
+        position: relative;
+        font-size: 20px;
+        font-weight: 700;
+        text-transform: uppercase;
+        border-radius: 5px;
+        padding: 6px 30px 6px 15px;
+        margin-top: 20px;
+        margin-bottom: 0;
+        background-color: #F3F2F2;
+    }
+    .account-side-title i {
+        position: absolute;
+        top: 7px;
+        right: 15px;
+    }
+    .account-side-title.open i::before {
+        content: "\f0d8";
+    }
+    .account-side-info {
+        display: none;
+        text-align: center;
+        margin-top: 20px;
+        padding-bottom: 30px;
+        border-bottom: 1px solid #707070;
+    }
+}
+
+@media (min-width: 768px) {
+    .account-side-info {
+        display: block!important;
+        font-size: 15px;
+    }
+    .account-side-info h3 {
+        font-size: 20px;
+    }
+    .account-side-img {
+        width: 100%;
+    }
+}

@@ -1,143 +1,138 @@
 @extends('layouts.main')
-@section('ext_css')
 
-@endsection
 @section('content')
 
+
+
 <div class="row">
-    <div class="col-lg-3" style="">
-        <div class="hpanel">
-            <div class="panel-body text-center h-200">
-                <i class="pe-7s-graph1 fa-4x"></i>
-
-                <h1 class="m-xs">{{ $orderCount??0 }}</h1>
-
-                <h3 class="font-extra-bold no-margins text-success">
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3>{{ $orderCount??0 }}</h3>
+                <p>
                     Total Orders
-                </h3>
-                <a href="{{ route('admin.orders.index') }}">view more</a>
+                </p>              
             </div>
+            <div class="icon">
+                <i class="ion ion-bag"></i>
+              </div>
 
         </div>
     </div>
-    <div class="col-lg-3" style="">
-        <div class="hpanel">
-            <div class="panel-body text-center h-200">
-                <i class="pe-7s-cash fa-4x"></i>
-
-                <h1 class="m-xs">{{ $saleCount ?? 0}}</h1>
-
-                <h3 class="font-extra-bold no-margins text-success">
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>{{ $saleCount ?? 0}}</h3>
+                <p>
                     Total Sales
-                </h3>
-                <a href="{{ route('admin.orders.index') }}">view more</a>
+                </p>              
             </div>
-
+            <div class="icon">
+                <i class="ion ion-stats-bars"></i>
+              </div>
         </div>
     </div>
-    <div class="col-lg-3" style="">
-        <div class="hpanel">
-            <div class="panel-body text-center h-200">
-                <i class="pe-7s-monitor fa-4x"></i>
-
-                <h1 class="m-xs">{{ $customerCount ?? 0 }}</h1>
-
-                <h3 class="font-extra-bold no-margins text-success">
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h3>{{ $customerCount ?? 0 }}</h3>
+                <p>
                     Total Customer
-                </h3>
-                <a href="{{ route('admin.customers.index') }}">view more</a>
+                </p>              
             </div>
-
+             <div class="icon">
+                <i class="ion ion-person-add"></i>
+              </div>
         </div>
     </div>
-    <div class="col-lg-3" style="">
-        <div class="hpanel">
-            <div class="panel-body text-center h-200">
-                <i class="pe-7s-graph1 fa-4x"></i>
-
-                <h2 class="m-xs">{{ $todayOrder??0 }} | ${{ $todayIncome??0 }}</h2>
-
-                <h3 class="font-extra-bold no-margins text-success">
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-danger">
+            <div class="inner">
+                <h3>{{ $todayOrder??0 }} | ${{ $todayIncome??0 }}</h3>
+                <p>
                     Today Orders
-                </h3>
-                <a href="{{ route('admin.orders.index') }}">view more</a>
+                </p>              
             </div>
-
+            <div class="icon">
+                <i class="ion ion-pie-graph"></i>
+              </div>
         </div>
     </div>
 </div>
 
 
-<div class="row">
-
-    <div class="col-lg-12">
-        <div class="hpanel">
-            <div class="panel-heading">
-                Recent Orders
-            </div>
-            <div class="panel-body list">
-                <div class="table-responsive project-list">
-                    <table class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th>S.N.</th>
-                            <th>Order number</th>
-                            <th>Customer</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Total Order item</th>
-                            <th>Total Cost</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($lastestOrders as $order)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $order->invoice_number }}</td>
-                                <td>{{ $order->first_name. ' '. $order->last_name }}</td>
-                                <td>{{ $order->email }}</td>
-                                <td>{{ $order->phone }}</td>
-                                <td>{{ $order->orderItems->count() }}</td>
-                                <td>{{ $order->orderItems->sum('price') }}</td>
-                                <td><a href="{{ route('admin.orders.edit',$order->id) }}"><i class="fa fa-eye text-success"></i></a></td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+ <div class="card">
+  <div class="card-header border-0">
+    <h3 class="card-title">Recent Orders</h3>
+    <div class="card-tools">
+     
     </div>
+  </div>
+  <div class="card-body table-responsive p-0">
+    <table class="table table-striped table-valign-middle">
+      <thead>
+      <tr>
+        <th>S.N.</th>
+        <th>Order number</th>
+        <th>Customer</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Total Order item</th>
+        <th>Total Cost</th>
+        <th>Action</th>
+      </tr>
+      </thead>
+      <tbody>
+        @if(count($lastestOrders) > 0)
+            @foreach ($lastestOrders as $order)
+            <tr>
+                <td>{{ $loop->iteration }}</td>
+                <td>{{ $order->invoice_number }}</td>
+                <td>{{ $order->first_name. ' '. $order->last_name }}</td>
+                <td>{{ $order->email }}</td>
+                <td>{{ $order->phone }}</td>
+                <td>{{ $order->orderItems->count() }}</td>
+                <td>{{ $order->orderItems->sum('price') }}</td>
+                <td><a href="{{ route('admin.orders.edit',$order->id) }}"><i class="fa fa-eye text-success"></i></a></td>
+            </tr>
+            @endforeach
+        @else
+            <tr class="text-center">
+                <td colspan="8">No Records found</td>
+            </tr>
+        @endif
+    </tbody>
+    </table>
+  </div>
 
-    <div class="col-md-12">
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="hpanel">
-                    <div class="panel-heading">
-                       
+</div>
 
-                    </div>
-                    <div class="panel-body">
-                        <div>
-                                <div class="col-md-4 pull-right">
-                                    <select name="frequency" id="frequency" class="form-control">
-                                        <option value="Month">This Month</option>
-                                        <option value="Week" selected>This Week</option>
-                                        <option value="Year">This Year</option>
-                                    </select>
-                                </div>
-                            <canvas id="lineOptions" height="140"></canvas>
-                            <canvas id="barOptions" height="140"></canvas>
+<div class="col-lg-6">
+    <div class="card">
+      <div class="card-header border-0">
+        <div class="d-flex justify-content-between">
+          <h3 class="card-title">Orders</h3>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="position-relative mb-4">
+            <div class="col-md-4 pull-right">
+                            <select name="frequency" id="frequency" class="form-control">
+                                <option value="Month">This Month</option>
+                                <option value="Week" selected>This Week</option>
+                                <option value="Year">This Year</option>
+                            </select>
                         </div>
-                    </div>
-                </div>
-            </div>
+
+            <!-- <canvas id="sales-chart-canvas"></canvas> -->
         </div>
-
+      </div>
     </div>
-
+    <!-- /.card -->
 </div>
+
+
+
 @endsection
 @section('ext_js')
 <script>

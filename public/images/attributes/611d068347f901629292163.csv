@@ -1,0 +1,3 @@
+Attribute Name,"Input Type (1=>Multiple Selection,0=>Single Selection )","Is Required (1=>Required,0=>Not Required)",Attribute Code,"Include In Filter (1=>Yes,0=>No)",Attribute Values (Value1::Value2::Value3)
+Size,1,1,Size001,1,Lorem Ipsum dor simit de nur 1 :: Lorem Ipsum dor simit de nur 2 :: Lorem Ipsum dor simit de nur 3 :: Lorem Ipsum dor simit de nur 4
+Material,1,1,MAT001,1,Lorem Ipsum dor simit de nur 1 :: Lorem Ipsum dor simit de nur 2 :: Lorem Ipsum dor simit de nur 3 :: Lorem Ipsum dor simit de nur 4
