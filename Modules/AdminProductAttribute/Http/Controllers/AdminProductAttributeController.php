@@ -34,9 +34,9 @@ class AdminProductAttributeController extends Controller
             $attributes = Attribute::where('attribute_label', 'LIKE', "%$keyword%")
                 ->with('attributeValues')
                 ->orderByDesc('id')
-                ->latest()->paginate($perPage);
+                ->get();
         } else {
-            $attributes = Attribute::with('attributeValues')->orderByDesc('id')->latest()->paginate($perPage);
+            $attributes = Attribute::with('attributeValues')->orderByDesc('id')->get();
         }
          return view('adminproductattribute::index',compact('attributes'),$data);
     }

@@ -1,91 +1,86 @@
 @extends('layouts.main')
 
 @section('content')
-<div class="hpanel">
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-md-4 pull-left text-left">
-                <h4>Attribute List</h4>
-            </div>
-             <div class="col-md-4 pull-left text-right">
-                <form method="GET" action="{{ route('admin.product.attributes.index') }}" accept-charset="UTF-8" role="search">
-                    <div class="input-group"><input type="text" class="form-control" placeholder="Search" name="keyword">
-                        <span class="input-group-btn">
-                                <button type="button" class="btn btn-primary-fade"><i class="fa fa-search"></i></button>
-                        </span>
-                    </div>
-                </form>
-            </div>
 
-            <div class="col-md-1 pull-right text-right">
-                
 
-                <button data-toggle="modal" data-target="#attribute-modal"
-                    class="btn btn-secondary">
-                    <i class="fa fa-download"></i>
-                </button>
+<section class="content">
+    <!-- Default box -->
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Attribute List</h3>
 
-                <a href="{{ route('admin.product.attributes.create') }}" class="btn btn-primary-fade" data-toggle="tooltip" data-placement="top" data-original-title="Create Product">
-                    <i class="fa fa-plus"></i>
-                </a>
-            </div>
-            
-        </div>
-        <div class="table-responsive">
-            <table id="productTable" class="table table-bordered table-striped speedy-table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>Attribute Values</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($attributes as $item)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $item->attribute_label }}</td>
-                            <td>{{ $item->input_type }}</td>
-                            <td>
-                                @if(!empty($item->attributeValues))
-                                    @foreach($item->attributeValues as $attr_value)
-                                        {{$attr_value->name}} <br>
-                                    @endforeach
-                                @endif
+      <div class="card-tools">
+        <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+          <i class="fas fa-minus"></i>
+        </button>
+        <!-- <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+          <i class="fas fa-times"></i>
+        </button> -->
+      </div>
 
-                            </td>
-                            <td>
-                                <a class="btn btn-primary btn-sm" href="{{ route('admin.product.attributes.edit', $item->id  ) }}">
-                                    <i class="fa fa-edit"></i>
-                                </a>
-                                <button data-toggle="modal" data-target="#delete-modal"
-                                    data-url="{{route('admin.product.attributes.delete',$item->id)}}"
-                                    class="btn btn-danger delete">
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    @empty
-                    <tr>
-                        <td class="text-center" colspan="6">
-                            <span>No data available in the table...</span>
-                        </td>
-                    </tr>
-                    @endforelse
-                    <tfoot>
-                        <tr>
-                            <td class="text-center" colspan="6">
-                                <span>{!! $attributes->render() !!}</span>
-                            </td>
-                        </tr>
-                    </tfoot>
-                </tbody>
-            </table>
+      <div class="row no-print">
+        <div class="col-12">            
+
+            <a href="{{ route('admin.product.attributes.create') }}" class="btn btn-primary float-right mr-1" data-toggle="tooltip" data-placement="top" data-original-title="Create Option">
+                <i class="fa fa-plus"></i>
+            </a>
+
+            <a href="javascript:void(0)" data-toggle="modal" data-target="#attribute-modal" class="btn btn-info float-right mr-1"><i class="fa fa-download"></i></a>
+
         </div>
     </div>
-</div>
+
+    </div>
+    <div class="card-body">
+      <table id="commonTable" class="table table-bordered">
+         <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Attribute Values</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($attributes as $item)
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $item->attribute_label }}</td>
+                    <td>{{ $item->input_type }}</td>
+                    <td>
+                        @if(!empty($item->attributeValues))
+                            @foreach($item->attributeValues as $attr_value)
+                                {{$attr_value->name}} <br>
+                            @endforeach
+                        @endif
+
+                    </td>
+                    <td>
+                        <a class="btn btn-primary btn-sm" href="{{ route('admin.product.attributes.edit', $item->id  ) }}">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                        <button data-toggle="modal" data-target="#delete-modal"
+                            data-url="{{route('admin.product.attributes.delete',$item->id)}}"
+                            class="btn btn-danger delete">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            @empty
+            <tr>
+                <td class="text-center" colspan="6">
+                    <span>No data available in the table...</span>
+                </td>
+            </tr>
+            @endforelse
+        </tbody>
+      </table>
+    </div>
+    <!-- /.card-body -->
+  </div>
+  <!-- /.card -->
+</section>
 
 @include('commons.delete_modal')
 

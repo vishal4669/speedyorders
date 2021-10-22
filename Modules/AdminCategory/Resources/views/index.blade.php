@@ -29,8 +29,8 @@
     </div>
 
     </div>
-    <div class="card-body p-0">
-      <table id="productTable" class="table table-striped projects">
+    <div class="card-body">
+      <table id="commonTable" class="table table-bordered">
          <thead>
             <tr>
                 <th>#</th>
@@ -76,13 +76,6 @@
                 </td>
             </tr>
             @endforelse
-            <tfoot>
-                <tr>
-                    <td class="text-center" colspan="6">
-                        <span>{!! $categories->render() !!}</span>
-                    </td>
-                </tr>
-            </tfoot>
         </tbody>
       </table>
     </div>

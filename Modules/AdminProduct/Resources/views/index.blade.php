@@ -28,8 +28,8 @@
     </div>
 
     </div>
-    <div class="card-body p-0">
-      <table id="productTable" class="table table-striped projects">
+    <div class="card-body">
+      <table id="commonTable" class="table table-bordered">
          <thead>
             <tr>
                 <th style="width:47%">Name</th>
@@ -84,16 +84,7 @@
 @endsection
 @section('ext_js')
     <script>
-         $(document).ready(function() {
-                $('#productTable').DataTable({
-                    "pageLength" : 10
-                });
-            });
-         
         $(document).on('click', '.delete', function () {
-
-
-
             var actionUrl = $(this).attr('data-url');
 
             $('#delete-form').attr('action', actionUrl);

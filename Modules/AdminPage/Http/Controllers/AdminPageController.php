@@ -40,9 +40,9 @@ class AdminPageController extends Controller
                 ->orWhere('status', 'LIKE', "%$keyword%")
                 ->with('page')
                 ->orderByDesc('id')
-                ->latest()->paginate($perPage);
+                ->get();
         } else {
-            $adminpage = Page::with('page')->orderByDesc('id')->latest()->paginate($perPage);
+            $adminpage = Page::with('page')->orderByDesc('id')->get();
         }
 
         return view('adminpage::index', compact('adminpage'),$data);

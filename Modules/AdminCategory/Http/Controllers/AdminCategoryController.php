@@ -37,9 +37,9 @@ class AdminCategoryController extends Controller
                 ->orWhere('description', 'LIKE', "%$keyword%")
                 ->orWhere('status', 'LIKE', "%$keyword%")
                 ->orderByDesc('id')
-                ->latest()->paginate($perPage);
+                ->get();
         } else {
-            $categories = Category::latest()->paginate($perPage);
+            $categories = Category::all();
         }
 
         return view('admincategory::index', compact('categories'),$data);
