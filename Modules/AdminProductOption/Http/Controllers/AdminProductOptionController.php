@@ -46,9 +46,9 @@ class AdminProductOptionController extends Controller
                 ->orWhere('sort_order', 'LIKE', "%$keyword%")
                 ->with('optionValues')
                 ->orderByDesc('id')
-                ->latest()->paginate($perPage);
+                ->get();
         } else {
-            $options = Option::with('optionValues')->orderByDesc('id')->latest()->paginate($perPage);
+            $options = Option::with('optionValues')->orderByDesc('id')->get();
         }
          return view('adminproductoption::index',compact('options'),$data);
     }

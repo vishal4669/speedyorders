@@ -690,14 +690,24 @@ $('.image-popup').magnificPopup({
         minWidth: 767,
     });
     
-    
+    $("form").submit(function(){
+        $("#"+this.name).validate();
+
+        if($("#"+this.name).valid()){
+            var frm_name = this.name;
+            var ar_data = frm_name.split('_');
+            var productId = ar_data[1];
+
+            addToCart(productId);
+        }       
+      return false;
+    });
     
     
 })(jQuery);
 
 
   function addToCart(productId){
-
     var url = '/addtocart';
     var formdata = $("#product_"+productId).serialize();
   

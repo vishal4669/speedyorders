@@ -1,0 +1,10 @@
+/* all styles */
+@import "style.css";
+@import "style_icons.css";
+@import "style_header.css";
+@import "style_footer.css";
+@import "style_blocks_layout.css";
+@import "style_template_pages.css";
+@import "style_product.css";
+@import "style_cart_checkout.css";
+@import "style_account.css";
